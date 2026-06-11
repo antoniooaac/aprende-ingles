@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Aprende Inglés</title>
+<style>
+  :root{
+    --bg:#0F1420;
+    --bg-raised:#1A2232;
+    --bg-card:#161D2C;
+    --line:#28334A;
+    --text:#EDF1F8;
+    --text-dim:#8A97AE;
+    --es:#9FB3D1;          /* palabra en español: tono frío, discreto */
+    --en:#FFB454;          /* palabra en inglés: ámbar protagonista */
+    --accent:#FFB454;
+    --accent-ink:#231503;
+    --ok:#5BD6A2;
+    --progress:#5B8DEF;
+    --danger:#F2737F;
+    --radius:18px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;
+    background:var(--bg);color:var(--text);
+    -webkit-font-smoothing:antialiased;
+    overscroll-behavior:none;
+    padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+  }
+  .view{display:none;min-height:100dvh;flex-direction:column;padding:16px 18px calc(24px + env(safe-area-inset-bottom))}
+  .view.active{display:flex}
+  /* ---------- cabecera ---------- */
+  .topbar{display:flex;align-items:center;gap:12px;padding:10px 0 18px}
+  .topbar h1{font-size:21px;font-weight:800;letter-spacing:-.02em;flex:1}
+  .btn-back{
+    background:var(--bg-raised);border:1px solid var(--line);color:var(--text);
+    width:40px;height:40px;border-radius:13px;font-size:19px;
+    display:flex;align-items:center;justify-content:center;flex:none;
+  }
+  .btn-icon{
+    background:var(--bg-raised);border:1px solid var(--line);color:var(--text);
+    width:40px;height:40px;border-radius:13px;font-size:18px;
+    display:flex;align-items:center;justify-content:center;flex:none;
+  }
+  button{font-family:inherit;border:none;cursor:pointer}
+  button:active{transform:scale(.97)}
+  /* ---------- inicio ---------- */
+  .hero{padding:26px 4px 24px}
+  .hero .eyebrow{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+  .hero h1{font-size:34px;font-weight:800;letter-spacing:-.03em;line-height:1.08}
+  .hero p{color:var(--text-dim);font-size:15px;margin-top:10px;line-height:1.45}
+  .module{
+    display:flex;align-items:center;gap:16px;width:100%;text-align:left;
+    background:var(--bg-card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:20px 18px;margin-bottom:14px;color:var(--text);
+  }
+  .module .mod-emoji{
+    width:52px;height:52px;border-radius:15px;flex:none;
+    display:flex;align-items:center;justify-content:center;font-size:26px;
+    background:linear-gradient(145deg,#243049,#1A2336);
+  }
+  .module .mod-body{flex:1;min-width:0}
+  .module .mod-title{font-size:18px;font-weight:700;letter-spacing:-.01em}
+  .module .mod-sub{font-size:13.5px;color:var(--text-dim);margin-top:3px;line-height:1.35}
+  .module .mod-arrow{color:var(--text-dim);font-size:18px}
+  .module.locked{opacity:.45}
+  .home-stats{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px;
+  }
+  .home-stat{
+    background:var(--bg-card);border:1px solid var(--line);border-radius:14px;
+    padding:14px 10px;text-align:center;
+  }
+  .home-stat b{display:block;font-size:22px;font-weight:800;letter-spacing:-.02em}
+  .home-stat span{font-size:11.5px;color:var(--text-dim)}
+  /* ---------- lista de capítulos ---------- */
+  .chapter{
+    display:flex;align-items:center;gap:14px;width:100%;text-align:left;
+    background:var(--bg-card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:16px;margin-bottom:11px;color:var(--text);
+  }
+  .chapter .ch-num{
+    width:44px;height:44px;border-radius:12px;flex:none;font-size:21px;
+    display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(145deg,#243049,#1A2336);
+  }
+  .chapter.done .ch-num{background:linear-gradient(145deg,#1D4034,#163026)}
+  .chapter .ch-body{flex:1;min-width:0}
+  .chapter .ch-title{font-size:16.5px;font-weight:700;letter-spacing:-.01em}
+  .chapter .ch-meta{font-size:12.5px;color:var(--text-dim);margin-top:3px}
+  .badge{
+    font-size:11px;font-weight:700;padding:4px 9px;border-radius:99px;flex:none;letter-spacing:.02em;
+  }
+  .badge.new{background:#26314A;color:#9FB3D1}
+  .badge.prog{background:#3A2E14;color:var(--en)}
+  .badge.done{background:#15382B;color:var(--ok)}
+  /* ---------- reproductor ---------- */
+  #view-player{justify-content:space-between}
+  .pl-head{display:flex;align-items:center;gap:12px}
+  .pl-head .pl-ch{flex:1;min-width:0}
+  .pl-head .pl-ch b{display:block;font-size:16px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pl-head .pl-ch span{font-size:12.5px;color:var(--text-dim)}
+  .word-stage{
+    flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:10px 6px;min-height:0;
+  }
+  .lang-tag{font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px}
+  #w-es{font-size:clamp(26px,7.5vw,34px);font-weight:600;color:var(--es);letter-spacing:-.01em;min-height:1.3em}
+  #w-en{
+    font-size:clamp(40px,12vw,58px);font-weight:800;color:var(--en);
+    letter-spacing:-.025em;line-height:1.05;margin-top:18px;min-height:1.1em;
+    transition:opacity .18s;
+  }
+  #w-en.waiting{opacity:.16}
+  .speaking-dot{
+    width:9px;height:9px;border-radius:50%;background:var(--ok);margin-top:22px;
+    opacity:0;transition:opacity .2s;
+  }
+  .speaking-dot.on{opacity:1;animation:pulse 1s infinite}
+  @keyframes pulse{50%{transform:scale(1.55);opacity:.45}}
+  .cycle-wrap{padding:4px 2px 14px}
+  .cycle-row{display:flex;justify-content:space-between;font-size:13px;color:var(--text-dim);margin-bottom:8px;font-variant-numeric:tabular-nums}
+  .bar{height:7px;background:var(--bg-raised);border-radius:99px;overflow:hidden}
+  .bar i{display:block;height:100%;width:0%;background:var(--progress);border-radius:99px;transition:width .3s}
+  .bar.cycle i{background:var(--en)}
+  .bar+.cycle-row{margin-top:12px}
+  .pl-controls{display:flex;gap:12px;align-items:center;justify-content:center;padding-bottom:6px}
+  .btn-main{
+    flex:1;height:62px;border-radius:18px;font-size:18px;font-weight:800;letter-spacing:-.01em;
+    background:var(--accent);color:var(--accent-ink);
+  }
+  .btn-main:disabled{opacity:.4;transform:none}
+  .btn-side{
+    width:62px;height:62px;border-radius:18px;font-size:22px;flex:none;
+    background:var(--bg-raised);border:1px solid var(--line);color:var(--text);
+  }
+  .pl-note{text-align:center;font-size:12.5px;color:var(--text-dim);padding:10px 14px 0;line-height:1.4;min-height:2.6em}
+  .pl-note.ok{color:var(--ok)}
+  /* ---------- ajustes ---------- */
+  .sheet-bg{
+    position:fixed;inset:0;background:rgba(5,8,14,.66);z-index:40;
+    opacity:0;pointer-events:none;transition:opacity .22s;
+  }
+  .sheet-bg.open{opacity:1;pointer-events:auto}
+  .sheet{
+    position:fixed;left:0;right:0;bottom:0;z-index:41;
+    background:var(--bg-raised);border-radius:24px 24px 0 0;
+    padding:22px 20px calc(28px + env(safe-area-inset-bottom));
+    transform:translateY(105%);transition:transform .26s cubic-bezier(.3,.9,.3,1);
+    max-height:86dvh;overflow-y:auto;
+  }
+  .sheet.open{transform:translateY(0)}
+  .sheet h2{font-size:19px;font-weight:800;margin-bottom:4px}
+  .sheet .sheet-sub{font-size:13px;color:var(--text-dim);margin-bottom:18px}
+  .field{margin-bottom:20px}
+  .field-label{display:flex;justify-content:space-between;font-size:14.5px;font-weight:600;margin-bottom:10px}
+  .field-label output{color:var(--accent);font-weight:700;font-variant-numeric:tabular-nums}
+  input[type=range]{width:100%;accent-color:var(--accent);height:30px}
+  .switch-row{display:flex;align-items:center;justify-content:space-between;padding:4px 0}
+  .switch-row .sw-txt b{display:block;font-size:14.5px;font-weight:600}
+  .switch-row .sw-txt span{font-size:12.5px;color:var(--text-dim)}
+  .switch{position:relative;width:52px;height:31px;flex:none}
+  .switch input{opacity:0;width:0;height:0}
+  .switch i{
+    position:absolute;inset:0;background:#39455F;border-radius:99px;transition:.2s;
+  }
+  .switch i::after{
+    content:"";position:absolute;width:27px;height:27px;border-radius:50%;
+    background:#fff;top:2px;left:2px;transition:.2s;
+  }
+  .switch input:checked+i{background:var(--ok)}
+  .switch input:checked+i::after{transform:translateX(21px)}
+  .btn-sheet{
+    width:100%;height:54px;border-radius:16px;font-size:16.5px;font-weight:700;
+    background:var(--accent);color:var(--accent-ink);margin-top:6px;
+  }
+  /* ---------- estadísticas ---------- */
+  .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:22px}
+  .stat-card{background:var(--bg-card);border:1px solid var(--line);border-radius:16px;padding:16px 14px}
+  .stat-card b{display:block;font-size:26px;font-weight:800;letter-spacing:-.02em}
+  .stat-card span{font-size:12.5px;color:var(--text-dim)}
+  .sec-title{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);margin:6px 0 12px}
+  .ch-stat{display:flex;align-items:center;gap:12px;padding:9px 0}
+  .ch-stat .cs-name{flex:1;font-size:14px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ch-stat .cs-bar{flex:1.1;height:7px;background:var(--bg-raised);border-radius:99px;overflow:hidden}
+  .ch-stat .cs-bar i{display:block;height:100%;background:var(--progress);border-radius:99px}
+  .ch-stat .cs-n{width:30px;text-align:right;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--text-dim)}
+  .empty{color:var(--text-dim);font-size:14px;text-align:center;padding:30px 10px;line-height:1.5}
+  /* ---------- toast ---------- */
+  #toast{
+    position:fixed;left:50%;bottom:calc(34px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);
+    background:#222C42;border:1px solid var(--line);color:var(--text);
+    padding:12px 20px;border-radius:14px;font-size:14px;font-weight:600;
+    opacity:0;pointer-events:none;transition:.25s;z-index:60;white-space:nowrap;
+    box-shadow:0 8px 30px rgba(0,0,0,.45);
+  }
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<!-- ============ VISTA: INICIO ============ -->
+<div class="view active" id="view-home">
+  <div class="hero">
+    <div class="eyebrow">Tu curso de inglés</div>
+    <h1>Aprende Inglés</h1>
+    <p>Elige un módulo para empezar la sesión de hoy.</p>
+  </div>
+
+  <button class="module" onclick="App.openChapters()">
+    <div class="mod-emoji">🎧</div>
+    <div class="mod-body">
+      <div class="mod-title">Vocabulario</div>
+      <div class="mod-sub" id="home-vocab-sub">10 capítulos · 200 palabras</div>
+    </div>
+    <div class="mod-arrow">›</div>
+  </button>
+
+  <button class="module locked">
+    <div class="mod-emoji">🎤</div>
+    <div class="mod-body">
+      <div class="mod-title">Pronunciación</div>
+      <div class="mod-sub">Próximamente</div>
+    </div>
+  </button>
+
+  <button class="module" onclick="App.openStats()">
+    <div class="mod-emoji">📊</div>
+    <div class="mod-body">
+      <div class="mod-title">Estadísticas</div>
+      <div class="mod-sub">Tu progreso y rachas</div>
+    </div>
+    <div class="mod-arrow">›</div>
+  </button>
+
+  <div class="home-stats">
+    <div class="home-stat"><b id="hs-streak">0</b><span>días seguidos</span></div>
+    <div class="home-stat"><b id="hs-cycles">0</b><span>ciclos totales</span></div>
+    <div class="home-stat"><b id="hs-done">0/10</b><span>capítulos</span></div>
+  </div>
+</div>
+
+<!-- ============ VISTA: CAPÍTULOS ============ -->
+<div class="view" id="view-chapters">
+  <div class="topbar">
+    <button class="btn-back" onclick="App.goHome()">‹</button>
+    <h1>Vocabulario</h1>
+    <button class="btn-icon" onclick="App.openSettings()" aria-label="Ajustes">⚙︎</button>
+  </div>
+  <div id="chapter-list"></div>
+</div>
+
+<!-- ============ VISTA: REPRODUCTOR ============ -->
+<div class="view" id="view-player">
+  <div class="pl-head">
+    <button class="btn-back" onclick="Player.exit()">‹</button>
+    <div class="pl-ch">
+      <b id="pl-ch-title">Capítulo</b>
+      <span id="pl-ch-sub"></span>
+    </div>
+    <button class="btn-icon" onclick="App.openSettings()" aria-label="Ajustes">⚙︎</button>
+  </div>
+
+  <div class="word-stage">
+    <div class="lang-tag">Español</div>
+    <div id="w-es">—</div>
+    <div class="lang-tag" style="margin-top:26px">English</div>
+    <div id="w-en" class="waiting">—</div>
+    <div class="speaking-dot" id="dot"></div>
+  </div>
+
+  <div class="cycle-wrap">
+    <div class="cycle-row"><span>Palabra</span><span id="prog-word">0 / 20</span></div>
+    <div class="bar"><i id="bar-word"></i></div>
+    <div class="cycle-row"><span>Ciclo</span><span id="prog-cycle">0 / 10</span></div>
+    <div class="bar cycle"><i id="bar-cycle"></i></div>
+  </div>
+
+  <div class="pl-controls">
+    <button class="btn-side" id="btn-stop" onclick="Player.stop()" aria-label="Detener">■</button>
+    <button class="btn-main" id="btn-play" onclick="Player.toggle()">▶&nbsp; Empezar</button>
+  </div>
+  <div class="pl-note" id="pl-note">Toca Empezar para iniciar la escucha.</div>
+</div>
+
+<!-- ============ VISTA: ESTADÍSTICAS ============ -->
+<div class="view" id="view-stats">
+  <div class="topbar">
+    <button class="btn-back" onclick="App.goHome()">‹</button>
+    <h1>Estadísticas</h1>
+  </div>
+  <div class="stat-grid">
+    <div class="stat-card"><b id="st-streak">0</b><span>días seguidos</span></div>
+    <div class="stat-card"><b id="st-days">0</b><span>días de uso</span></div>
+    <div class="stat-card"><b id="st-cycles">0</b><span>ciclos completados</span></div>
+    <div class="stat-card"><b id="st-time">0 min</b><span>tiempo de escucha</span></div>
+    <div class="stat-card"><b id="st-words">0</b><span>palabras escuchadas</span></div>
+    <div class="stat-card"><b id="st-chdone">0/10</b><span>capítulos completados</span></div>
+  </div>
+  <div class="sec-title">Veces completado por capítulo</div>
+  <div id="st-chapters"></div>
+  <div class="empty" id="st-empty" style="display:none">Aún no hay datos.<br>Completa tu primer capítulo para verlos aquí.</div>
+</div>
+
+<!-- ============ AJUSTES ============ -->
+<div class="sheet-bg" id="sheet-bg" onclick="App.closeSettings()"></div>
+<div class="sheet" id="sheet">
+  <h2>Ajustes</h2>
+  <div class="sheet-sub">Se aplican a todas las sesiones.</div>
+
+  <div class="field">
+    <div class="field-label"><span>Ciclos por capítulo</span><output id="o-cycles">10</output></div>
+    <input type="range" id="in-cycles" min="1" max="20" step="1" value="10">
+  </div>
+  <div class="field">
+    <div class="field-label"><span>Velocidad de la voz</span><output id="o-rate">Normal</output></div>
+    <input type="range" id="in-rate" min="0.6" max="1.2" step="0.05" value="0.95">
+  </div>
+  <div class="field">
+    <div class="field-label"><span>Pausa entre palabras</span><output id="o-pause">1,0 s</output></div>
+    <input type="range" id="in-pause" min="300" max="3000" step="100" value="1000">
+  </div>
+  <div class="switch-row">
+    <div class="sw-txt"><b>Repetir la palabra en inglés dos veces</b><span>La oirás dos veces seguidas</span></div>
+    <label class="switch"><input type="checkbox" id="in-twice"><i></i></label>
+  </div>
+  <div class="switch-row">
+    <div class="sw-txt"><b>Saltar al siguiente capítulo</b><span>Al terminar todos los ciclos</span></div>
+    <label class="switch"><input type="checkbox" id="in-autonext" checked><i></i></label>
+  </div>
+  <button class="btn-sheet" onclick="App.closeSettings()">Listo</button>
+</div>
+
+<div id="toast"></div>
+
+<script>
+"use strict";
+
+/* ==================================================================
+   DATOS: 10 capítulos × 20 palabras
+================================================================== */
+const CHAPTERS = [
+{ id:"c01", emoji:"🙋", title:"Supervivencia básica", words:[
+  ["hola","hello"],["adiós","goodbye"],["sí","yes"],["no","no"],
+  ["por favor","please"],["gracias","thank you"],["de nada","you're welcome"],
+  ["perdón","sorry"],["ayuda","help"],["vale","okay"],
+  ["buenos días","good morning"],["buenas tardes","good afternoon"],
+  ["buenas noches","good night"],["quizás","maybe"],["claro","of course"],
+  ["aquí","here"],["allí","there"],["ahora","now"],["después","later"],["nada","nothing"]
+]},
+{ id:"c02", emoji:"🏃", title:"Verbos esenciales I", words:[
+  ["ser","to be"],["tener","to have"],["hacer","to do"],["ir","to go"],
+  ["querer","to want"],["venir","to come"],["ver","to see"],["decir","to say"],
+  ["poder","can"],["necesitar","to need"],["hablar","to speak"],["comer","to eat"],
+  ["beber","to drink"],["dormir","to sleep"],["trabajar","to work"],["vivir","to live"],
+  ["comprar","to buy"],["llamar","to call"],["mirar","to look"],["escuchar","to listen"]
+]},
+{ id:"c03", emoji:"🔧", title:"Verbos esenciales II", words:[
+  ["dar","to give"],["coger","to take"],["saber","to know"],["pensar","to think"],
+  ["encontrar","to find"],["ayudar","to help"],["abrir","to open"],["cerrar","to close"],
+  ["empezar","to start"],["terminar","to finish"],["esperar","to wait"],["buscar","to search"],
+  ["usar","to use"],["leer","to read"],["escribir","to write"],["entender","to understand"],
+  ["aprender","to learn"],["jugar","to play"],["pagar","to pay"],["salir","to leave"]
+]},
+{ id:"c04", emoji:"👨‍👩‍👧‍👦", title:"Personas y familia", words:[
+  ["hombre","man"],["mujer","woman"],["niño","child"],["amigo","friend"],
+  ["familia","family"],["padre","father"],["madre","mother"],["hijo","son"],
+  ["hija","daughter"],["hermano","brother"],["hermana","sister"],["marido","husband"],
+  ["esposa","wife"],["abuelo","grandfather"],["abuela","grandmother"],["gente","people"],
+  ["persona","person"],["nombre","name"],["bebé","baby"],["vecino","neighbor"]
+]},
+{ id:"c05", emoji:"⏰", title:"El tiempo", words:[
+  ["día","day"],["semana","week"],["mes","month"],["año","year"],
+  ["hoy","today"],["mañana","tomorrow"],["ayer","yesterday"],["hora","hour"],
+  ["minuto","minute"],["tiempo","time"],["noche","night"],["tarde","afternoon"],
+  ["lunes","Monday"],["viernes","Friday"],["domingo","Sunday"],["fin de semana","weekend"],
+  ["temprano","early"],["siempre","always"],["nunca","never"],["a veces","sometimes"]
+]},
+{ id:"c06", emoji:"🏠", title:"Casa y objetos", words:[
+  ["casa","house"],["puerta","door"],["ventana","window"],["mesa","table"],
+  ["silla","chair"],["cama","bed"],["cocina","kitchen"],["baño","bathroom"],
+  ["habitación","room"],["llave","key"],["teléfono","phone"],["ordenador","computer"],
+  ["televisión","television"],["luz","light"],["ropa","clothes"],["zapatos","shoes"],
+  ["bolso","bag"],["reloj","watch"],["dinero","money"],["espejo","mirror"]
+]},
+{ id:"c07", emoji:"🍞", title:"Comida y bebida", words:[
+  ["agua","water"],["pan","bread"],["leche","milk"],["café","coffee"],
+  ["té","tea"],["cerveza","beer"],["vino","wine"],["carne","meat"],
+  ["pollo","chicken"],["pescado","fish"],["fruta","fruit"],["manzana","apple"],
+  ["naranja","orange"],["huevo","egg"],["queso","cheese"],["arroz","rice"],
+  ["sal","salt"],["azúcar","sugar"],["desayuno","breakfast"],["cena","dinner"]
+]},
+{ id:"c08", emoji:"🔢", title:"Números y cantidades", words:[
+  ["uno","one"],["dos","two"],["tres","three"],["cuatro","four"],
+  ["cinco","five"],["seis","six"],["siete","seven"],["ocho","eight"],
+  ["nueve","nine"],["diez","ten"],["veinte","twenty"],["cien","one hundred"],
+  ["mil","one thousand"],["primero","first"],["último","last"],["mucho","a lot"],
+  ["poco","a little"],["más","more"],["menos","less"],["todo","everything"]
+]},
+{ id:"c09", emoji:"🎨", title:"Adjetivos básicos", words:[
+  ["grande","big"],["pequeño","small"],["bueno","good"],["malo","bad"],
+  ["nuevo","new"],["viejo","old"],["fácil","easy"],["difícil","difficult"],
+  ["rápido","fast"],["lento","slow"],["caliente","hot"],["frío","cold"],
+  ["alto","tall"],["bajo","short"],["bonito","beautiful"],["feo","ugly"],
+  ["caro","expensive"],["barato","cheap"],["abierto","open"],["cerrado","closed"]
+]},
+{ id:"c10", emoji:"🏙️", title:"Trabajo y ciudad", words:[
+  ["trabajo","work"],["oficina","office"],["empresa","company"],["jefe","boss"],
+  ["reunión","meeting"],["calle","street"],["ciudad","city"],["tienda","shop"],
+  ["coche","car"],["autobús","bus"],["tren","train"],["avión","airplane"],
+  ["aeropuerto","airport"],["hospital","hospital"],["escuela","school"],["banco","bank"],
+  ["restaurante","restaurant"],["hotel","hotel"],["parque","park"],["mercado","market"]
+]}
+];
+
+/* ==================================================================
+   PERSISTENCIA  (window.storage del artifact, con respaldo en memoria)
+================================================================== */
+const Store = {
+  KEY: "aprende-ingles-v1",
+  mem: null,
+  persistent: true,
+  defaults(){
+    return {
+      settings:{ cycles:10, rate:0.95, pauseMs:1000, twice:false, autoNext:true },
+      chapters:{},   // id -> {timesCompleted, started, lastDate}
+      stats:{ totalCycles:0, totalWords:0, totalSeconds:0, days:[] }
+    };
+  },
+  hasClaudeStorage(){
+    return typeof window.storage !== "undefined" && window.storage && typeof window.storage.get === "function";
+  },
+  applyData(raw){
+    const d = JSON.parse(raw);
+    this.mem = Object.assign(this.defaults(), d);
+    this.mem.settings = Object.assign(this.defaults().settings, d.settings||{});
+    this.mem.stats = Object.assign(this.defaults().stats, d.stats||{});
+  },
+  async load(){
+    // 1º: almacenamiento de Claude (cuando se ejecuta como artifact)
+    if(this.hasClaudeStorage()){
+      try{
+        const r = await window.storage.get(this.KEY);
+        if(r && r.value){ this.applyData(r.value); return; }
+      }catch(e){ /* clave inexistente */ }
+    }
+    // 2º: localStorage (cuando se ejecuta en Safari / fuera de Claude)
+    try{
+      const raw = localStorage.getItem(this.KEY);
+      if(raw){ this.applyData(raw); return; }
+    }catch(e){}
+    if(!this.mem) this.mem = this.defaults();
+    // Comprobar si algún almacenamiento funciona
+    this.persistent = false;
+    if(this.hasClaudeStorage()){
+      try{ await window.storage.set(this.KEY, JSON.stringify(this.mem)); this.persistent = true; }catch(e){}
+    }
+    if(!this.persistent){
+      try{ localStorage.setItem(this.KEY, JSON.stringify(this.mem)); this.persistent = true; }catch(e){}
+    }
+  },
+  async save(){
+    const raw = JSON.stringify(this.mem);
+    let ok = false;
+    if(this.hasClaudeStorage()){
+      try{ await window.storage.set(this.KEY, raw); ok = true; }catch(e){}
+    }
+    try{ localStorage.setItem(this.KEY, raw); ok = true; }catch(e){}
+    this.persistent = ok;
+  }
+};
+
+/* ==================================================================
+   UTILIDADES
+================================================================== */
+const $ = id => document.getElementById(id);
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+function todayStr(){
+  const d = new Date();
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+function calcStreak(days){
+  if(!days.length) return 0;
+  const set = new Set(days);
+  let streak = 0;
+  const d = new Date();
+  // La racha cuenta si has usado la app hoy o ayer
+  if(!set.has(todayStr())) d.setDate(d.getDate()-1);
+  for(;;){
+    const s = d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+    if(set.has(s)){ streak++; d.setDate(d.getDate()-1); }
+    else break;
+  }
+  return streak;
+}
+function fmtTime(sec){
+  if(sec < 3600) return Math.round(sec/60)+" min";
+  return (sec/3600).toFixed(1).replace(".",",")+" h";
+}
+let toastT = null;
+function toast(msg){
+  const t = $("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastT);
+  toastT = setTimeout(()=>t.classList.remove("show"), 2600);
+}
+
+/* ==================================================================
+   VOCES (Web Speech API)
+================================================================== */
+const Voices = {
+  es:null, en:null,
+  init(){
+    const pick = () => {
+      const vs = speechSynthesis.getVoices();
+      if(!vs.length) return;
+      const prefer = (lang, names) => {
+        const byLang = vs.filter(v => v.lang && v.lang.toLowerCase().startsWith(lang));
+        for(const n of names){
+          const f = byLang.find(v => v.name.includes(n));
+          if(f) return f;
+        }
+        return byLang.find(v => v.localService) || byLang[0] || null;
+      };
+      this.es = prefer("es-es", ["Mónica","Monica","Marisol","Paulina"]) || prefer("es", []);
+      this.en = prefer("en-us", ["Samantha","Ava","Allison"]) || prefer("en-gb", ["Daniel","Kate"]) || prefer("en", []);
+    };
+    pick();
+    if(typeof speechSynthesis !== "undefined"){
+      speechSynthesis.onvoiceschanged = pick;
+    }
+  }
+};
+
+/* ==================================================================
+   REPRODUCTOR
+================================================================== */
+const Player = {
+  chapter:null,        // capítulo actual
+  order:[],            // orden aleatorio del ciclo actual
+  wordIdx:0,
+  cycle:1,
+  state:"idle",        // idle | playing | paused | finished
+  watchdog:null,
+  pauseTimer:null,
+  sessionStart:0,      // para contar tiempo de escucha
+  wakeLock:null,
+  utt:null,
+
+  open(chId){
+    this.chapter = CHAPTERS.find(c => c.id === chId);
+    this.resetSession();
+    $("pl-ch-title").textContent = this.chapter.title;
+    this.updateHeader();
+    App.show("view-player");
+    this.renderIdle();
+  },
+
+  resetSession(){
+    this.cancelTimers();
+    try{ speechSynthesis.cancel(); }catch(e){}
+    this.order = shuffle(this.chapter.words);
+    this.wordIdx = 0;
+    this.cycle = 1;
+    this.state = "idle";
+  },
+
+  updateHeader(){
+    const s = Store.mem.settings;
+    $("pl-ch-sub").textContent = this.chapter.words.length+" palabras · "+s.cycles+" ciclos · orden aleatorio";
+  },
+
+  renderIdle(){
+    $("w-es").textContent = "—";
+    $("w-en").textContent = "—";
+    $("w-en").classList.add("waiting");
+    $("dot").classList.remove("on");
+    $("btn-play").innerHTML = "▶&nbsp; Empezar";
+    $("pl-note").textContent = "Toca Empezar para iniciar la escucha.";
+    $("pl-note").classList.remove("ok");
+    this.updateBars();
+  },
+
+  updateBars(){
+    const total = this.order.length;
+    const cycles = Store.mem.settings.cycles;
+    const shownWord = this.state==="finished" ? total : this.wordIdx + (this.state==="idle"?0:1);
+    const shownCycle = this.state==="finished" ? cycles : this.cycle;
+    $("prog-word").textContent = Math.min(shownWord,total)+" / "+total;
+    $("prog-cycle").textContent = Math.min(shownCycle,cycles)+" / "+cycles;
+    $("bar-word").style.width = (Math.min(shownWord,total)/total*100)+"%";
+    const cycDone = this.state==="finished" ? cycles : (this.cycle-1) + this.wordIdx/total;
+    $("bar-cycle").style.width = (Math.min(cycDone,cycles)/cycles*100)+"%";
+  },
+
+  toggle(){
+    if(this.state==="playing"){ this.pause(); }
+    else if(this.state==="paused"){ this.resume(); }
+    else { this.start(); }
+  },
+
+  start(){
+    if(typeof speechSynthesis === "undefined"){
+      toast("Este navegador no soporta voz");
+      return;
+    }
+    if(this.state==="finished") this.resetSession();
+    this.state = "playing";
+    this.sessionStart = Date.now();
+    this.markStarted();
+    this.acquireWakeLock();
+    $("btn-play").innerHTML = "❚❚&nbsp; Pausa";
+    $("pl-note").textContent = "Mantén la pantalla encendida durante la escucha.";
+    $("pl-note").classList.remove("ok");
+    // "Desbloquear" el audio en iOS dentro del gesto del usuario
+    try{
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(" ");
+      u.volume = 0;
+      speechSynthesis.speak(u);
+    }catch(e){}
+    this.speakCurrent();
+  },
+
+  pause(){
+    this.state = "paused";
+    this.cancelTimers();
+    try{ speechSynthesis.cancel(); }catch(e){}
+    this.flushTime();
+    this.releaseWakeLock();
+    $("btn-play").innerHTML = "▶&nbsp; Continuar";
+    $("pl-note").textContent = "En pausa. La palabra actual se repetirá al continuar.";
+    $("dot").classList.remove("on");
+    Store.save();
+  },
+
+  resume(){
+    this.state = "playing";
+    this.sessionStart = Date.now();
+    this.acquireWakeLock();
+    $("btn-play").innerHTML = "❚❚&nbsp; Pausa";
+    $("pl-note").textContent = "";
+    this.speakCurrent();
+  },
+
+  stop(){
+    if(this.state==="idle") return;
+    const wasFinished = this.state==="finished";
+    this.cancelTimers();
+    try{ speechSynthesis.cancel(); }catch(e){}
+    if(!wasFinished) this.flushTime();
+    this.releaseWakeLock();
+    this.resetSession();
+    this.renderIdle();
+    Store.save();
+  },
+
+  exit(){
+    this.cancelTimers();
+    try{ speechSynthesis.cancel(); }catch(e){}
+    if(this.state==="playing") this.flushTime();
+    this.releaseWakeLock();
+    this.state = "idle";
+    Store.save();
+    App.openChapters();
+  },
+
+  /* ---- núcleo de reproducción: ES → pausa → EN → pausa → siguiente ---- */
+  speakCurrent(){
+    if(this.state!=="playing") return;
+    const [es,en] = this.order[this.wordIdx];
+    $("w-es").textContent = es;
+    $("w-en").textContent = en;
+    $("w-en").classList.add("waiting");
+    this.updateBars();
+    this.say(es, "es", () => {
+      this.wait(Math.min(Store.mem.settings.pauseMs, 1200), () => {
+        $("w-en").classList.remove("waiting");
+        this.say(en, "en", () => {
+          if(Store.mem.settings.twice){
+            this.wait(450, () => {
+              this.say(en, "en", () => this.afterWord());
+            });
+          } else {
+            this.afterWord();
+          }
+        });
+      });
+    });
+  },
+
+  afterWord(){
+    if(this.state!=="playing") return;
+    Store.mem.stats.totalWords++;
+    this.wait(Store.mem.settings.pauseMs, () => this.nextWord());
+  },
+
+  nextWord(){
+    if(this.state!=="playing") return;
+    this.wordIdx++;
+    if(this.wordIdx >= this.order.length){
+      // ciclo completado
+      Store.mem.stats.totalCycles++;
+      this.cycle++;
+      this.wordIdx = 0;
+      Store.save();
+      if(this.cycle > Store.mem.settings.cycles){
+        this.finishChapter();
+        return;
+      }
+      this.order = shuffle(this.chapter.words); // nuevo orden en cada ciclo
+    }
+    this.speakCurrent();
+  },
+
+  finishChapter(){
+    this.flushTime();
+    const ch = this.chRecord(this.chapter.id);
+    ch.timesCompleted++;
+    ch.lastDate = todayStr();
+    Store.save();
+    this.state = "finished";
+    this.updateBars();
+    $("dot").classList.remove("on");
+
+    const idx = CHAPTERS.indexOf(this.chapter);
+    const next = CHAPTERS[idx+1];
+    if(Store.mem.settings.autoNext && next){
+      $("pl-note").textContent = "✓ Capítulo completado. Pasando a «"+next.title+"»…";
+      $("pl-note").classList.add("ok");
+      toast("✓ "+this.chapter.title+" completado");
+      this.wait(2200, () => {
+        this.chapter = next;
+        $("pl-ch-title").textContent = next.title;
+        this.updateHeader();
+        this.resetSession();
+        this.state = "playing";
+        this.sessionStart = Date.now();
+        this.markStarted();
+        $("pl-note").classList.remove("ok");
+        $("pl-note").textContent = "";
+        this.speakCurrent();
+      });
+    } else {
+      $("btn-play").innerHTML = "↻&nbsp; Repetir";
+      $("pl-note").textContent = "✓ Capítulo completado. ¡Buen trabajo!";
+      $("pl-note").classList.add("ok");
+      this.releaseWakeLock();
+      toast("✓ "+this.chapter.title+" completado");
+    }
+  },
+
+  /* ---- síntesis con vigilancia anti-bloqueo ---- */
+  say(text, lang, onDone){
+    if(this.state!=="playing" && this.state!=="finished") return;
+    let finished = false;
+    const done = () => {
+      if(finished) return;
+      finished = true;
+      clearTimeout(this.watchdog);
+      $("dot").classList.remove("on");
+      onDone();
+    };
+    try{
+      const u = new SpeechSynthesisUtterance(text);
+      const voice = lang==="es" ? Voices.es : Voices.en;
+      if(voice) u.voice = voice;
+      u.lang = lang==="es" ? "es-ES" : (voice ? voice.lang : "en-US");
+      u.rate = Store.mem.settings.rate;
+      u.onstart = () => $("dot").classList.add("on");
+      u.onend = done;
+      u.onerror = done;
+      this.utt = u; // evitar que iOS lo recolecte antes de tiempo
+      speechSynthesis.speak(u);
+      // Vigilante: si onend no llega (fallo conocido de iOS), avanzar igualmente
+      const est = 1800 + text.length * 130 / Store.mem.settings.rate;
+      this.watchdog = setTimeout(done, est + 3500);
+    }catch(e){ done(); }
+  },
+
+  wait(ms, fn){
+    clearTimeout(this.pauseTimer);
+    this.pauseTimer = setTimeout(fn, ms);
+  },
+
+  cancelTimers(){
+    clearTimeout(this.watchdog);
+    clearTimeout(this.pauseTimer);
+  },
+
+  /* ---- registro de progreso ---- */
+  chRecord(id){
+    if(!Store.mem.chapters[id]) Store.mem.chapters[id] = { timesCompleted:0, started:false, lastDate:null };
+    return Store.mem.chapters[id];
+  },
+  markStarted(){
+    const ch = this.chRecord(this.chapter.id);
+    ch.started = true;
+    ch.lastDate = todayStr();
+    const t = todayStr();
+    if(!Store.mem.stats.days.includes(t)) Store.mem.stats.days.push(t);
+    Store.save();
+  },
+  flushTime(){
+    if(this.sessionStart){
+      Store.mem.stats.totalSeconds += Math.round((Date.now()-this.sessionStart)/1000);
+      this.sessionStart = 0;
+    }
+  },
+
+  /* ---- wake lock: mantener pantalla encendida ---- */
+  async acquireWakeLock(){
+    try{
+      if("wakeLock" in navigator){
+        this.wakeLock = await navigator.wakeLock.request("screen");
+      }
+    }catch(e){ /* no disponible: avisamos en pantalla igualmente */ }
+  },
+  releaseWakeLock(){
+    try{ if(this.wakeLock){ this.wakeLock.release(); this.wakeLock = null; } }catch(e){}
+  }
+};
+
+/* Si la app pasa a segundo plano, iOS corta la voz: pausamos limpiamente */
+document.addEventListener("visibilitychange", () => {
+  if(document.hidden && Player.state==="playing"){
+    Player.pause();
+    $("pl-note").textContent = "La reproducción se pausó al salir de la app. Toca Continuar.";
+  } else if(!document.hidden && Player.state==="playing"){
+    Player.acquireWakeLock();
+  }
+});
+
+/* ==================================================================
+   APP: vistas y render
+================================================================== */
+const App = {
+  show(id){
+    document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+    $(id).classList.add("active");
+    window.scrollTo(0,0);
+  },
+  goHome(){ this.renderHome(); this.show("view-home"); },
+  openChapters(){ this.renderChapters(); this.show("view-chapters"); },
+  openStats(){ this.renderStats(); this.show("view-stats"); },
+
+  renderHome(){
+    const st = Store.mem.stats;
+    const done = CHAPTERS.filter(c => (Store.mem.chapters[c.id]||{}).timesCompleted > 0).length;
+    $("hs-streak").textContent = calcStreak(st.days);
+    $("hs-cycles").textContent = st.totalCycles;
+    $("hs-done").textContent = done+"/"+CHAPTERS.length;
+  },
+
+  renderChapters(){
+    const box = $("chapter-list");
+    box.innerHTML = "";
+    CHAPTERS.forEach(c => {
+      const rec = Store.mem.chapters[c.id] || {};
+      const n = rec.timesCompleted || 0;
+      let badge = '<span class="badge new">Nuevo</span>';
+      let meta = c.words.length+" palabras";
+      let cls = "chapter";
+      if(n > 0){
+        badge = '<span class="badge done">✓ ×'+n+'</span>';
+        meta = "Completado "+n+(n===1?" vez":" veces");
+        cls += " done";
+      } else if(rec.started){
+        badge = '<span class="badge prog">En progreso</span>';
+        meta = "Empezado, sin completar";
+      }
+      const b = document.createElement("button");
+      b.className = cls;
+      b.innerHTML =
+        '<div class="ch-num">'+c.emoji+'</div>'+
+        '<div class="ch-body"><div class="ch-title">'+c.title+'</div>'+
+        '<div class="ch-meta">'+meta+'</div></div>'+badge;
+      b.onclick = () => Player.open(c.id);
+      box.appendChild(b);
+    });
+  },
+
+  renderStats(){
+    const st = Store.mem.stats;
+    const done = CHAPTERS.filter(c => (Store.mem.chapters[c.id]||{}).timesCompleted > 0).length;
+    $("st-streak").textContent = calcStreak(st.days);
+    $("st-days").textContent = st.days.length;
+    $("st-cycles").textContent = st.totalCycles;
+    $("st-time").textContent = fmtTime(st.totalSeconds);
+    $("st-words").textContent = st.totalWords;
+    $("st-chdone").textContent = done+"/"+CHAPTERS.length;
+
+    const box = $("st-chapters");
+    box.innerHTML = "";
+    const max = Math.max(1, ...CHAPTERS.map(c => (Store.mem.chapters[c.id]||{}).timesCompleted||0));
+    let any = false;
+    CHAPTERS.forEach(c => {
+      const n = (Store.mem.chapters[c.id]||{}).timesCompleted || 0;
+      if(n > 0) any = true;
+      const row = document.createElement("div");
+      row.className = "ch-stat";
+      row.innerHTML =
+        '<div class="cs-name">'+c.emoji+' '+c.title+'</div>'+
+        '<div class="cs-bar"><i style="width:'+(n/max*100)+'%"></i></div>'+
+        '<div class="cs-n">'+n+'</div>';
+      box.appendChild(row);
+    });
+    $("st-empty").style.display = any ? "none" : "block";
+    box.style.display = any ? "block" : "none";
+  },
+
+  /* ---- ajustes ---- */
+  openSettings(){
+    const s = Store.mem.settings;
+    $("in-cycles").value = s.cycles;
+    $("in-rate").value = s.rate;
+    $("in-pause").value = s.pauseMs;
+    $("in-twice").checked = s.twice;
+    $("in-autonext").checked = s.autoNext;
+    this.refreshOutputs();
+    $("sheet-bg").classList.add("open");
+    $("sheet").classList.add("open");
+  },
+  closeSettings(){
+    $("sheet-bg").classList.remove("open");
+    $("sheet").classList.remove("open");
+    Store.save();
+    if($("view-player").classList.contains("active")){
+      Player.updateHeader();
+      Player.updateBars();
+    }
+  },
+  refreshOutputs(){
+    const s = Store.mem.settings;
+    $("o-cycles").textContent = s.cycles;
+    $("o-rate").textContent = s.rate <= 0.75 ? "Lenta" : (s.rate <= 1.0 ? "Normal" : "Rápida");
+    $("o-pause").textContent = (s.pauseMs/1000).toFixed(1).replace(".",",")+" s";
+  }
+};
+
+/* listeners de ajustes */
+$("in-cycles").addEventListener("input", e => { Store.mem.settings.cycles = +e.target.value; App.refreshOutputs(); });
+$("in-rate").addEventListener("input", e => { Store.mem.settings.rate = +e.target.value; App.refreshOutputs(); });
+$("in-pause").addEventListener("input", e => { Store.mem.settings.pauseMs = +e.target.value; App.refreshOutputs(); });
+$("in-twice").addEventListener("change", e => { Store.mem.settings.twice = e.target.checked; });
+$("in-autonext").addEventListener("change", e => { Store.mem.settings.autoNext = e.target.checked; });
+
+/* ==================================================================
+   ARRANQUE
+================================================================== */
+(async function init(){
+  Voices.init();
+  await Store.load();
+  App.renderHome();
+  if(!Store.persistent){
+    toast("Aviso: el progreso no se guardará en este entorno");
+  }
+})();
+</script>
+</body>
+</html>
