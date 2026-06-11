@@ -14,13 +14,14 @@
     --line:#28334A;
     --text:#EDF1F8;
     --text-dim:#8A97AE;
-    --es:#9FB3D1;          /* palabra en español: tono frío, discreto */
-    --en:#FFB454;          /* palabra en inglés: ámbar protagonista */
+    --es:#9FB3D1;
+    --en:#FFB454;
     --accent:#FFB454;
     --accent-ink:#231503;
     --ok:#5BD6A2;
+    --warn:#F5C964;
+    --bad:#F2737F;
     --progress:#5B8DEF;
-    --danger:#F2737F;
     --radius:18px;
   }
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -34,19 +35,14 @@
   }
   .view{display:none;min-height:100dvh;flex-direction:column;padding:16px 18px calc(24px + env(safe-area-inset-bottom))}
   .view.active{display:flex}
-  /* ---------- cabecera ---------- */
   .topbar{display:flex;align-items:center;gap:12px;padding:10px 0 18px}
   .topbar h1{font-size:21px;font-weight:800;letter-spacing:-.02em;flex:1}
-  .btn-back{
+  .btn-back,.btn-icon{
     background:var(--bg-raised);border:1px solid var(--line);color:var(--text);
     width:40px;height:40px;border-radius:13px;font-size:19px;
     display:flex;align-items:center;justify-content:center;flex:none;
   }
-  .btn-icon{
-    background:var(--bg-raised);border:1px solid var(--line);color:var(--text);
-    width:40px;height:40px;border-radius:13px;font-size:18px;
-    display:flex;align-items:center;justify-content:center;flex:none;
-  }
+  .btn-icon{font-size:18px}
   button{font-family:inherit;border:none;cursor:pointer}
   button:active{transform:scale(.97)}
   /* ---------- inicio ---------- */
@@ -68,16 +64,11 @@
   .module .mod-title{font-size:18px;font-weight:700;letter-spacing:-.01em}
   .module .mod-sub{font-size:13.5px;color:var(--text-dim);margin-top:3px;line-height:1.35}
   .module .mod-arrow{color:var(--text-dim);font-size:18px}
-  .module.locked{opacity:.45}
-  .home-stats{
-    display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px;
-  }
-  .home-stat{
-    background:var(--bg-card);border:1px solid var(--line);border-radius:14px;
-    padding:14px 10px;text-align:center;
-  }
+  .home-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px}
+  .home-stat{background:var(--bg-card);border:1px solid var(--line);border-radius:14px;padding:14px 10px;text-align:center}
   .home-stat b{display:block;font-size:22px;font-weight:800;letter-spacing:-.02em}
   .home-stat span{font-size:11.5px;color:var(--text-dim)}
+  .version{text-align:center;color:#4A5670;font-size:12px;padding-top:22px;font-weight:600}
   /* ---------- lista de capítulos ---------- */
   .chapter{
     display:flex;align-items:center;gap:14px;width:100%;text-align:left;
@@ -93,13 +84,11 @@
   .chapter .ch-body{flex:1;min-width:0}
   .chapter .ch-title{font-size:16.5px;font-weight:700;letter-spacing:-.01em}
   .chapter .ch-meta{font-size:12.5px;color:var(--text-dim);margin-top:3px}
-  .badge{
-    font-size:11px;font-weight:700;padding:4px 9px;border-radius:99px;flex:none;letter-spacing:.02em;
-  }
+  .badge{font-size:11px;font-weight:700;padding:4px 9px;border-radius:99px;flex:none;letter-spacing:.02em}
   .badge.new{background:#26314A;color:#9FB3D1}
   .badge.prog{background:#3A2E14;color:var(--en)}
   .badge.done{background:#15382B;color:var(--ok)}
-  /* ---------- reproductor ---------- */
+  /* ---------- reproductor vocabulario ---------- */
   #view-player{justify-content:space-between}
   .pl-head{display:flex;align-items:center;gap:12px}
   .pl-head .pl-ch{flex:1;min-width:0}
@@ -117,10 +106,9 @@
     transition:opacity .18s;
   }
   #w-en.waiting{opacity:.16}
-  .speaking-dot{
-    width:9px;height:9px;border-radius:50%;background:var(--ok);margin-top:22px;
-    opacity:0;transition:opacity .2s;
-  }
+  .phon{font-size:clamp(16px,4.5vw,20px);color:var(--text-dim);margin-top:12px;min-height:1.3em;font-style:italic;letter-spacing:.01em}
+  .phon b{color:var(--text);font-weight:700;font-style:italic}
+  .speaking-dot{width:9px;height:9px;border-radius:50%;background:var(--ok);margin-top:20px;opacity:0;transition:opacity .2s}
   .speaking-dot.on{opacity:1;animation:pulse 1s infinite}
   @keyframes pulse{50%{transform:scale(1.55);opacity:.45}}
   .cycle-wrap{padding:4px 2px 14px}
@@ -130,22 +118,53 @@
   .bar.cycle i{background:var(--en)}
   .bar+.cycle-row{margin-top:12px}
   .pl-controls{display:flex;gap:12px;align-items:center;justify-content:center;padding-bottom:6px}
-  .btn-main{
-    flex:1;height:62px;border-radius:18px;font-size:18px;font-weight:800;letter-spacing:-.01em;
-    background:var(--accent);color:var(--accent-ink);
-  }
+  .btn-main{flex:1;height:62px;border-radius:18px;font-size:18px;font-weight:800;letter-spacing:-.01em;background:var(--accent);color:var(--accent-ink)}
   .btn-main:disabled{opacity:.4;transform:none}
-  .btn-side{
-    width:62px;height:62px;border-radius:18px;font-size:22px;flex:none;
-    background:var(--bg-raised);border:1px solid var(--line);color:var(--text);
-  }
+  .btn-side{width:62px;height:62px;border-radius:18px;font-size:22px;flex:none;background:var(--bg-raised);border:1px solid var(--line);color:var(--text)}
   .pl-note{text-align:center;font-size:12.5px;color:var(--text-dim);padding:10px 14px 0;line-height:1.4;min-height:2.6em}
   .pl-note.ok{color:var(--ok)}
-  /* ---------- ajustes ---------- */
-  .sheet-bg{
-    position:fixed;inset:0;background:rgba(5,8,14,.66);z-index:40;
-    opacity:0;pointer-events:none;transition:opacity .22s;
+  /* ---------- módulo pronunciación ---------- */
+  #view-pron{justify-content:space-between}
+  .pron-stage{
+    flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:6px;min-height:0;
   }
+  #p-es{font-size:clamp(20px,5.5vw,26px);font-weight:600;color:var(--es)}
+  #p-en{font-size:clamp(38px,11vw,54px);font-weight:800;color:var(--en);letter-spacing:-.025em;line-height:1.05;margin-top:12px}
+  #p-phon{font-size:clamp(16px,4.5vw,20px);color:var(--text-dim);margin-top:10px;font-style:italic}
+  .verdict{
+    margin-top:22px;min-height:84px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  }
+  .verdict .v-big{font-size:26px;font-weight:800;letter-spacing:-.01em;opacity:0;transition:opacity .2s}
+  .verdict .v-heard{font-size:14px;color:var(--text-dim);opacity:0;transition:opacity .2s;padding:0 16px}
+  .verdict.show .v-big,.verdict.show .v-heard{opacity:1}
+  .verdict.bien .v-big{color:var(--ok)}
+  .verdict.regular .v-big{color:var(--warn)}
+  .verdict.mal .v-big{color:var(--bad)}
+  .v-dots{display:flex;gap:6px;margin-top:4px;flex-wrap:wrap;justify-content:center;max-width:280px}
+  .v-dots i{width:9px;height:9px;border-radius:50%;background:#2A3650}
+  .v-dots i.bien{background:var(--ok)}
+  .v-dots i.regular{background:var(--warn)}
+  .v-dots i.mal{background:var(--bad)}
+  .v-dots i.cur{outline:2px solid var(--text-dim);outline-offset:2px}
+  .pron-controls{display:flex;gap:12px;align-items:stretch;padding-bottom:6px}
+  .btn-nav{width:62px;border-radius:18px;font-size:24px;flex:none;background:var(--bg-raised);border:1px solid var(--line);color:var(--text)}
+  .btn-nav:disabled{opacity:.3;transform:none}
+  .btn-mic{
+    flex:1;height:72px;border-radius:20px;font-size:18px;font-weight:800;
+    background:var(--accent);color:var(--accent-ink);
+    display:flex;align-items:center;justify-content:center;gap:10px;
+  }
+  .btn-mic.listening{background:var(--bad);color:#fff;animation:micpulse 1.1s infinite}
+  @keyframes micpulse{50%{box-shadow:0 0 0 14px rgba(242,115,127,.12)}}
+  .btn-mic:disabled{opacity:.4;transform:none}
+  .pron-second{display:flex;gap:12px;margin-bottom:12px}
+  .btn-listen{
+    flex:1;height:48px;border-radius:14px;font-size:15px;font-weight:700;
+    background:var(--bg-raised);border:1px solid var(--line);color:var(--text);
+  }
+  /* ---------- ajustes ---------- */
+  .sheet-bg{position:fixed;inset:0;background:rgba(5,8,14,.66);z-index:40;opacity:0;pointer-events:none;transition:opacity .22s}
   .sheet-bg.open{opacity:1;pointer-events:auto}
   .sheet{
     position:fixed;left:0;right:0;bottom:0;z-index:41;
@@ -161,43 +180,37 @@
   .field-label{display:flex;justify-content:space-between;font-size:14.5px;font-weight:600;margin-bottom:10px}
   .field-label output{color:var(--accent);font-weight:700;font-variant-numeric:tabular-nums}
   input[type=range]{width:100%;accent-color:var(--accent);height:30px}
-  .switch-row{display:flex;align-items:center;justify-content:space-between;padding:4px 0}
+  .switch-row{display:flex;align-items:center;justify-content:space-between;padding:4px 0;gap:12px}
   .switch-row .sw-txt b{display:block;font-size:14.5px;font-weight:600}
   .switch-row .sw-txt span{font-size:12.5px;color:var(--text-dim)}
   .switch{position:relative;width:52px;height:31px;flex:none}
   .switch input{opacity:0;width:0;height:0}
-  .switch i{
-    position:absolute;inset:0;background:#39455F;border-radius:99px;transition:.2s;
-  }
-  .switch i::after{
-    content:"";position:absolute;width:27px;height:27px;border-radius:50%;
-    background:#fff;top:2px;left:2px;transition:.2s;
-  }
+  .switch i{position:absolute;inset:0;background:#39455F;border-radius:99px;transition:.2s}
+  .switch i::after{content:"";position:absolute;width:27px;height:27px;border-radius:50%;background:#fff;top:2px;left:2px;transition:.2s}
   .switch input:checked+i{background:var(--ok)}
   .switch input:checked+i::after{transform:translateX(21px)}
-  .btn-sheet{
-    width:100%;height:54px;border-radius:16px;font-size:16.5px;font-weight:700;
-    background:var(--accent);color:var(--accent-ink);margin-top:6px;
-  }
+  .btn-sheet{width:100%;height:54px;border-radius:16px;font-size:16.5px;font-weight:700;background:var(--accent);color:var(--accent-ink);margin-top:6px}
   /* ---------- estadísticas ---------- */
   .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:22px}
   .stat-card{background:var(--bg-card);border:1px solid var(--line);border-radius:16px;padding:16px 14px}
   .stat-card b{display:block;font-size:26px;font-weight:800;letter-spacing:-.02em}
   .stat-card span{font-size:12.5px;color:var(--text-dim)}
-  .sec-title{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);margin:6px 0 12px}
+  .sec-title{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim);margin:14px 0 12px}
   .ch-stat{display:flex;align-items:center;gap:12px;padding:9px 0}
   .ch-stat .cs-name{flex:1;font-size:14px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .ch-stat .cs-bar{flex:1.1;height:7px;background:var(--bg-raised);border-radius:99px;overflow:hidden}
   .ch-stat .cs-bar i{display:block;height:100%;background:var(--progress);border-radius:99px}
   .ch-stat .cs-n{width:30px;text-align:right;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--text-dim)}
-  .empty{color:var(--text-dim);font-size:14px;text-align:center;padding:30px 10px;line-height:1.5}
-  /* ---------- toast ---------- */
+  .hard-word{display:flex;justify-content:space-between;align-items:center;padding:9px 0;font-size:14.5px;border-bottom:1px solid #1E2840}
+  .hard-word b{color:var(--en);font-weight:700}
+  .hard-word span{color:var(--bad);font-size:12.5px;font-weight:700}
+  .empty{color:var(--text-dim);font-size:14px;text-align:center;padding:24px 10px;line-height:1.5}
   #toast{
     position:fixed;left:50%;bottom:calc(34px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);
     background:#222C42;border:1px solid var(--line);color:var(--text);
     padding:12px 20px;border-radius:14px;font-size:14px;font-weight:600;
-    opacity:0;pointer-events:none;transition:.25s;z-index:60;white-space:nowrap;
-    box-shadow:0 8px 30px rgba(0,0,0,.45);
+    opacity:0;pointer-events:none;transition:.25s;z-index:60;
+    box-shadow:0 8px 30px rgba(0,0,0,.45);max-width:88vw;text-align:center;
   }
   #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
   @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
@@ -213,21 +226,22 @@
     <p>Elige un módulo para empezar la sesión de hoy.</p>
   </div>
 
-  <button class="module" onclick="App.openChapters()">
+  <button class="module" onclick="App.openChapters('vocab')">
     <div class="mod-emoji">🎧</div>
     <div class="mod-body">
       <div class="mod-title">Vocabulario</div>
-      <div class="mod-sub" id="home-vocab-sub">10 capítulos · 200 palabras</div>
+      <div class="mod-sub">10 capítulos · 200 palabras · escucha en bucle</div>
     </div>
     <div class="mod-arrow">›</div>
   </button>
 
-  <button class="module locked">
+  <button class="module" onclick="App.openChapters('pron')">
     <div class="mod-emoji">🎤</div>
     <div class="mod-body">
       <div class="mod-title">Pronunciación</div>
-      <div class="mod-sub">Próximamente</div>
+      <div class="mod-sub">Repite cada palabra y recibe tu nota</div>
     </div>
+    <div class="mod-arrow">›</div>
   </button>
 
   <button class="module" onclick="App.openStats()">
@@ -244,19 +258,20 @@
     <div class="home-stat"><b id="hs-cycles">0</b><span>ciclos totales</span></div>
     <div class="home-stat"><b id="hs-done">0/10</b><span>capítulos</span></div>
   </div>
+  <div class="version">Versión 3</div>
 </div>
 
 <!-- ============ VISTA: CAPÍTULOS ============ -->
 <div class="view" id="view-chapters">
   <div class="topbar">
     <button class="btn-back" onclick="App.goHome()">‹</button>
-    <h1>Vocabulario</h1>
+    <h1 id="chapters-title">Vocabulario</h1>
     <button class="btn-icon" onclick="App.openSettings()" aria-label="Ajustes">⚙︎</button>
   </div>
   <div id="chapter-list"></div>
 </div>
 
-<!-- ============ VISTA: REPRODUCTOR ============ -->
+<!-- ============ VISTA: REPRODUCTOR VOCABULARIO ============ -->
 <div class="view" id="view-player">
   <div class="pl-head">
     <button class="btn-back" onclick="Player.exit()">‹</button>
@@ -270,8 +285,9 @@
   <div class="word-stage">
     <div class="lang-tag">Español</div>
     <div id="w-es">—</div>
-    <div class="lang-tag" style="margin-top:26px">English</div>
+    <div class="lang-tag" style="margin-top:24px">English</div>
     <div id="w-en" class="waiting">—</div>
+    <div class="phon" id="w-phon"></div>
     <div class="speaking-dot" id="dot"></div>
   </div>
 
@@ -289,6 +305,39 @@
   <div class="pl-note" id="pl-note">Toca Empezar para iniciar la escucha.</div>
 </div>
 
+<!-- ============ VISTA: PRONUNCIACIÓN ============ -->
+<div class="view" id="view-pron">
+  <div class="pl-head">
+    <button class="btn-back" onclick="Pron.exit()">‹</button>
+    <div class="pl-ch">
+      <b id="pr-ch-title">Capítulo</b>
+      <span id="pr-ch-sub"></span>
+    </div>
+    <button class="btn-icon" onclick="App.openSettings()" aria-label="Ajustes">⚙︎</button>
+  </div>
+
+  <div class="pron-stage">
+    <div id="p-es">—</div>
+    <div id="p-en">—</div>
+    <div id="p-phon"></div>
+    <div class="verdict" id="verdict">
+      <div class="v-big" id="v-big"></div>
+      <div class="v-heard" id="v-heard"></div>
+    </div>
+    <div class="v-dots" id="v-dots"></div>
+  </div>
+
+  <div class="pron-second">
+    <button class="btn-listen" onclick="Pron.listen()">🔊&nbsp; Escuchar de nuevo</button>
+  </div>
+  <div class="pron-controls">
+    <button class="btn-nav" id="btn-prev" onclick="Pron.prev()">‹</button>
+    <button class="btn-mic" id="btn-mic" onclick="Pron.record()">🎤&nbsp; Pronunciar</button>
+    <button class="btn-nav" id="btn-next" onclick="Pron.next()">›</button>
+  </div>
+  <div class="pl-note" id="pr-note"></div>
+</div>
+
 <!-- ============ VISTA: ESTADÍSTICAS ============ -->
 <div class="view" id="view-stats">
   <div class="topbar">
@@ -303,7 +352,17 @@
     <div class="stat-card"><b id="st-words">0</b><span>palabras escuchadas</span></div>
     <div class="stat-card"><b id="st-chdone">0/10</b><span>capítulos completados</span></div>
   </div>
-  <div class="sec-title">Veces completado por capítulo</div>
+
+  <div class="sec-title">Pronunciación</div>
+  <div class="stat-grid">
+    <div class="stat-card"><b id="st-pr-att">0</b><span>intentos</span></div>
+    <div class="stat-card"><b id="st-pr-pct">—</b><span>% de «Bien»</span></div>
+  </div>
+  <div class="sec-title">Palabras que más te cuestan</div>
+  <div id="st-hard"></div>
+  <div class="empty" id="st-hard-empty">Practica en el módulo Pronunciación<br>para ver aquí tus palabras difíciles.</div>
+
+  <div class="sec-title">Vocabulario: veces completado</div>
   <div id="st-chapters"></div>
   <div class="empty" id="st-empty" style="display:none">Aún no hay datos.<br>Completa tu primer capítulo para verlos aquí.</div>
 </div>
@@ -331,6 +390,10 @@
     <label class="switch"><input type="checkbox" id="in-twice"><i></i></label>
   </div>
   <div class="switch-row">
+    <div class="sw-txt"><b>Mostrar pronunciación escrita</b><span>Fonética bajo la palabra inglesa</span></div>
+    <label class="switch"><input type="checkbox" id="in-phon" checked><i></i></label>
+  </div>
+  <div class="switch-row">
     <div class="sw-txt"><b>Saltar al siguiente capítulo</b><span>Al terminar todos los ciclos</span></div>
     <label class="switch"><input type="checkbox" id="in-autonext" checked><i></i></label>
   </div>
@@ -341,86 +404,87 @@
 
 <script>
 "use strict";
+const APP_VERSION = 3;
 
 /* ==================================================================
-   DATOS: 10 capítulos × 20 palabras
+   DATOS: 10 capítulos × 20 palabras  [español, inglés, pronunciación]
 ================================================================== */
 const CHAPTERS = [
 { id:"c01", emoji:"🙋", title:"Supervivencia básica", words:[
-  ["hola","hello"],["adiós","goodbye"],["sí","yes"],["no","no"],
-  ["por favor","please"],["gracias","thank you"],["de nada","you're welcome"],
-  ["perdón","sorry"],["ayuda","help"],["vale","okay"],
-  ["buenos días","good morning"],["buenas tardes","good afternoon"],
-  ["buenas noches","good night"],["quizás","maybe"],["claro","of course"],
-  ["aquí","here"],["allí","there"],["ahora","now"],["después","later"],["nada","nothing"]
+  ["hola","hello","je-LÓU"],["adiós","goodbye","gud-BÁI"],["sí","yes","iés"],["no","no","nóu"],
+  ["por favor","please","plíis"],["gracias","thank you","ZÁNK iu"],["de nada","you're welcome","iór UÉL-kam"],
+  ["perdón","sorry","SÓ-rri"],["ayuda","help","jelp"],["vale","okay","ou-KÉI"],
+  ["buenos días","good morning","gud MÓR-nin"],["buenas tardes","good afternoon","gud af-ter-NÚUN"],
+  ["buenas noches","good night","gud NÁIT"],["quizás","maybe","MÉI-bi"],["claro","of course","of KÓORS"],
+  ["aquí","here","jíar"],["allí","there","déar"],["ahora","now","náu"],["después","later","LÉI-ter"],["nada","nothing","NÁ-zin"]
 ]},
 { id:"c02", emoji:"🏃", title:"Verbos esenciales I", words:[
-  ["ser","to be"],["tener","to have"],["hacer","to do"],["ir","to go"],
-  ["querer","to want"],["venir","to come"],["ver","to see"],["decir","to say"],
-  ["poder","can"],["necesitar","to need"],["hablar","to speak"],["comer","to eat"],
-  ["beber","to drink"],["dormir","to sleep"],["trabajar","to work"],["vivir","to live"],
-  ["comprar","to buy"],["llamar","to call"],["mirar","to look"],["escuchar","to listen"]
+  ["ser","to be","tu BÍI"],["tener","to have","tu JAV"],["hacer","to do","tu DÚU"],["ir","to go","tu GÓU"],
+  ["querer","to want","tu UÓNT"],["venir","to come","tu KAM"],["ver","to see","tu SÍI"],["decir","to say","tu SÉI"],
+  ["poder","can","kan"],["necesitar","to need","tu NÍID"],["hablar","to speak","tu SPÍIK"],["comer","to eat","tu ÍIT"],
+  ["beber","to drink","tu DRINK"],["dormir","to sleep","tu SLÍIP"],["trabajar","to work","tu UÉRK"],["vivir","to live","tu LIV"],
+  ["comprar","to buy","tu BÁI"],["llamar","to call","tu KOL"],["mirar","to look","tu LUK"],["escuchar","to listen","tu LÍ-sen"]
 ]},
 { id:"c03", emoji:"🔧", title:"Verbos esenciales II", words:[
-  ["dar","to give"],["coger","to take"],["saber","to know"],["pensar","to think"],
-  ["encontrar","to find"],["ayudar","to help"],["abrir","to open"],["cerrar","to close"],
-  ["empezar","to start"],["terminar","to finish"],["esperar","to wait"],["buscar","to search"],
-  ["usar","to use"],["leer","to read"],["escribir","to write"],["entender","to understand"],
-  ["aprender","to learn"],["jugar","to play"],["pagar","to pay"],["salir","to leave"]
+  ["dar","to give","tu GUIV"],["coger","to take","tu TÉIK"],["saber","to know","tu NÓU"],["pensar","to think","tu ZINK"],
+  ["encontrar","to find","tu FÁIND"],["ayudar","to help","tu JELP"],["abrir","to open","tu ÓU-pen"],["cerrar","to close","tu KLÓUS"],
+  ["empezar","to start","tu START"],["terminar","to finish","tu FÍ-nish"],["esperar","to wait","tu UÉIT"],["buscar","to search","tu SERCH"],
+  ["usar","to use","tu IÚUS"],["leer","to read","tu RÍID"],["escribir","to write","tu RÁIT"],["entender","to understand","tu an-der-STÁND"],
+  ["aprender","to learn","tu LERN"],["jugar","to play","tu PLÉI"],["pagar","to pay","tu PÉI"],["salir","to leave","tu LÍIV"]
 ]},
 { id:"c04", emoji:"👨‍👩‍👧‍👦", title:"Personas y familia", words:[
-  ["hombre","man"],["mujer","woman"],["niño","child"],["amigo","friend"],
-  ["familia","family"],["padre","father"],["madre","mother"],["hijo","son"],
-  ["hija","daughter"],["hermano","brother"],["hermana","sister"],["marido","husband"],
-  ["esposa","wife"],["abuelo","grandfather"],["abuela","grandmother"],["gente","people"],
-  ["persona","person"],["nombre","name"],["bebé","baby"],["vecino","neighbor"]
+  ["hombre","man","man"],["mujer","woman","UÚ-man"],["niño","child","cháild"],["amigo","friend","frend"],
+  ["familia","family","FÁ-mi-li"],["padre","father","FÁ-der"],["madre","mother","MÁ-der"],["hijo","son","san"],
+  ["hija","daughter","DÓO-ter"],["hermano","brother","BRÁ-der"],["hermana","sister","SÍS-ter"],["marido","husband","JÁS-band"],
+  ["esposa","wife","uáif"],["abuelo","grandfather","GRÁND-fa-der"],["abuela","grandmother","GRÁND-ma-der"],["gente","people","PÍI-pol"],
+  ["persona","person","PÉR-son"],["nombre","name","néim"],["bebé","baby","BÉI-bi"],["vecino","neighbor","NÉI-bor"]
 ]},
 { id:"c05", emoji:"⏰", title:"El tiempo", words:[
-  ["día","day"],["semana","week"],["mes","month"],["año","year"],
-  ["hoy","today"],["mañana","tomorrow"],["ayer","yesterday"],["hora","hour"],
-  ["minuto","minute"],["tiempo","time"],["noche","night"],["tarde","afternoon"],
-  ["lunes","Monday"],["viernes","Friday"],["domingo","Sunday"],["fin de semana","weekend"],
-  ["temprano","early"],["siempre","always"],["nunca","never"],["a veces","sometimes"]
+  ["día","day","déi"],["semana","week","uíik"],["mes","month","manz"],["año","year","yíar"],
+  ["hoy","today","tu-DÉI"],["mañana","tomorrow","tu-MÓ-rrou"],["ayer","yesterday","IÉS-ter-dei"],["hora","hour","Á-uar"],
+  ["minuto","minute","MÍ-nit"],["tiempo","time","táim"],["noche","night","náit"],["tarde","afternoon","af-ter-NÚUN"],
+  ["lunes","Monday","MÁN-dei"],["viernes","Friday","FRÁI-dei"],["domingo","Sunday","SÁN-dei"],["fin de semana","weekend","UÍIK-end"],
+  ["temprano","early","ÉR-li"],["siempre","always","ÓOL-ueis"],["nunca","never","NÉ-ver"],["a veces","sometimes","SÁM-taims"]
 ]},
 { id:"c06", emoji:"🏠", title:"Casa y objetos", words:[
-  ["casa","house"],["puerta","door"],["ventana","window"],["mesa","table"],
-  ["silla","chair"],["cama","bed"],["cocina","kitchen"],["baño","bathroom"],
-  ["habitación","room"],["llave","key"],["teléfono","phone"],["ordenador","computer"],
-  ["televisión","television"],["luz","light"],["ropa","clothes"],["zapatos","shoes"],
-  ["bolso","bag"],["reloj","watch"],["dinero","money"],["espejo","mirror"]
+  ["casa","house","jáus"],["puerta","door","dóor"],["ventana","window","UÍN-dou"],["mesa","table","TÉI-bol"],
+  ["silla","chair","chéar"],["cama","bed","bed"],["cocina","kitchen","KÍT-chen"],["baño","bathroom","BAZ-rum"],
+  ["habitación","room","rúum"],["llave","key","kíi"],["teléfono","phone","fóun"],["ordenador","computer","kom-PIÚ-ter"],
+  ["televisión","television","TE-le-vi-shon"],["luz","light","láit"],["ropa","clothes","klóuds"],["zapatos","shoes","shúus"],
+  ["bolso","bag","bag"],["reloj","watch","uótch"],["dinero","money","MÁ-ni"],["espejo","mirror","MÍ-rror"]
 ]},
 { id:"c07", emoji:"🍞", title:"Comida y bebida", words:[
-  ["agua","water"],["pan","bread"],["leche","milk"],["café","coffee"],
-  ["té","tea"],["cerveza","beer"],["vino","wine"],["carne","meat"],
-  ["pollo","chicken"],["pescado","fish"],["fruta","fruit"],["manzana","apple"],
-  ["naranja","orange"],["huevo","egg"],["queso","cheese"],["arroz","rice"],
-  ["sal","salt"],["azúcar","sugar"],["desayuno","breakfast"],["cena","dinner"]
+  ["agua","water","UÓ-ter"],["pan","bread","bred"],["leche","milk","milk"],["café","coffee","KÓ-fi"],
+  ["té","tea","tíi"],["cerveza","beer","bíar"],["vino","wine","uáin"],["carne","meat","míit"],
+  ["pollo","chicken","CHÍ-ken"],["pescado","fish","fish"],["fruta","fruit","frúut"],["manzana","apple","Á-pol"],
+  ["naranja","orange","Ó-rinch"],["huevo","egg","eg"],["queso","cheese","chíis"],["arroz","rice","ráis"],
+  ["sal","salt","solt"],["azúcar","sugar","SHÚ-gar"],["desayuno","breakfast","BRÉK-fast"],["cena","dinner","DÍ-ner"]
 ]},
 { id:"c08", emoji:"🔢", title:"Números y cantidades", words:[
-  ["uno","one"],["dos","two"],["tres","three"],["cuatro","four"],
-  ["cinco","five"],["seis","six"],["siete","seven"],["ocho","eight"],
-  ["nueve","nine"],["diez","ten"],["veinte","twenty"],["cien","one hundred"],
-  ["mil","one thousand"],["primero","first"],["último","last"],["mucho","a lot"],
-  ["poco","a little"],["más","more"],["menos","less"],["todo","everything"]
+  ["uno","one","uán"],["dos","two","túu"],["tres","three","zríi"],["cuatro","four","fóor"],
+  ["cinco","five","fáiv"],["seis","six","siks"],["siete","seven","SÉ-ven"],["ocho","eight","éit"],
+  ["nueve","nine","náin"],["diez","ten","ten"],["veinte","twenty","TUÉN-ti"],["cien","one hundred","uán JÁN-dred"],
+  ["mil","one thousand","uán ZÁU-sand"],["primero","first","ferst"],["último","last","last"],["mucho","a lot","a LOT"],
+  ["poco","a little","a LÍ-tel"],["más","more","móor"],["menos","less","les"],["todo","everything","É-vri-zin"]
 ]},
 { id:"c09", emoji:"🎨", title:"Adjetivos básicos", words:[
-  ["grande","big"],["pequeño","small"],["bueno","good"],["malo","bad"],
-  ["nuevo","new"],["viejo","old"],["fácil","easy"],["difícil","difficult"],
-  ["rápido","fast"],["lento","slow"],["caliente","hot"],["frío","cold"],
-  ["alto","tall"],["bajo","short"],["bonito","beautiful"],["feo","ugly"],
-  ["caro","expensive"],["barato","cheap"],["abierto","open"],["cerrado","closed"]
+  ["grande","big","big"],["pequeño","small","smóol"],["bueno","good","gud"],["malo","bad","bad"],
+  ["nuevo","new","niúu"],["viejo","old","óuld"],["fácil","easy","ÍI-si"],["difícil","difficult","DÍ-fi-colt"],
+  ["rápido","fast","fast"],["lento","slow","slóu"],["caliente","hot","jot"],["frío","cold","kóuld"],
+  ["alto","tall","tóol"],["bajo","short","short"],["bonito","beautiful","BIÚ-ti-ful"],["feo","ugly","Á-gli"],
+  ["caro","expensive","iks-PÉN-siv"],["barato","cheap","chíip"],["abierto","open","ÓU-pen"],["cerrado","closed","klóusd"]
 ]},
 { id:"c10", emoji:"🏙️", title:"Trabajo y ciudad", words:[
-  ["trabajo","work"],["oficina","office"],["empresa","company"],["jefe","boss"],
-  ["reunión","meeting"],["calle","street"],["ciudad","city"],["tienda","shop"],
-  ["coche","car"],["autobús","bus"],["tren","train"],["avión","airplane"],
-  ["aeropuerto","airport"],["hospital","hospital"],["escuela","school"],["banco","bank"],
-  ["restaurante","restaurant"],["hotel","hotel"],["parque","park"],["mercado","market"]
+  ["trabajo","work","uérk"],["oficina","office","Ó-fis"],["empresa","company","KÁM-pa-ni"],["jefe","boss","bos"],
+  ["reunión","meeting","MÍI-tin"],["calle","street","stríit"],["ciudad","city","SÍ-ti"],["tienda","shop","shop"],
+  ["coche","car","kar"],["autobús","bus","bas"],["tren","train","tréin"],["avión","airplane","ÉAR-plein"],
+  ["aeropuerto","airport","ÉAR-port"],["hospital","hospital","JOS-pi-tal"],["escuela","school","skúul"],["banco","bank","bank"],
+  ["restaurante","restaurant","RÉS-to-rant"],["hotel","hotel","jou-TÉL"],["parque","park","park"],["mercado","market","MÁR-ket"]
 ]}
 ];
 
 /* ==================================================================
-   PERSISTENCIA  (window.storage del artifact, con respaldo en memoria)
+   PERSISTENCIA (storage de Claude si existe, si no localStorage)
 ================================================================== */
 const Store = {
   KEY: "aprende-ingles-v1",
@@ -428,9 +492,10 @@ const Store = {
   persistent: true,
   defaults(){
     return {
-      settings:{ cycles:10, rate:0.95, pauseMs:1000, twice:false, autoNext:true },
-      chapters:{},   // id -> {timesCompleted, started, lastDate}
-      stats:{ totalCycles:0, totalWords:0, totalSeconds:0, days:[] }
+      settings:{ cycles:10, rate:0.95, pauseMs:1000, twice:false, autoNext:true, showPhon:true },
+      chapters:{},
+      stats:{ totalCycles:0, totalWords:0, totalSeconds:0, days:[] },
+      pron:{ words:{}, attempts:0, good:0 }   // words: "en" -> {best, attempts, bad}
     };
   },
   hasClaudeStorage(){
@@ -438,25 +503,25 @@ const Store = {
   },
   applyData(raw){
     const d = JSON.parse(raw);
-    this.mem = Object.assign(this.defaults(), d);
+    const def = this.defaults();
+    this.mem = Object.assign(def, d);
     this.mem.settings = Object.assign(this.defaults().settings, d.settings||{});
     this.mem.stats = Object.assign(this.defaults().stats, d.stats||{});
+    this.mem.pron = Object.assign(this.defaults().pron, d.pron||{});
+    if(!this.mem.pron.words) this.mem.pron.words = {};
   },
   async load(){
-    // 1º: almacenamiento de Claude (cuando se ejecuta como artifact)
     if(this.hasClaudeStorage()){
       try{
         const r = await window.storage.get(this.KEY);
         if(r && r.value){ this.applyData(r.value); return; }
-      }catch(e){ /* clave inexistente */ }
+      }catch(e){}
     }
-    // 2º: localStorage (cuando se ejecuta en Safari / fuera de Claude)
     try{
       const raw = localStorage.getItem(this.KEY);
       if(raw){ this.applyData(raw); return; }
     }catch(e){}
     if(!this.mem) this.mem = this.defaults();
-    // Comprobar si algún almacenamiento funciona
     this.persistent = false;
     if(this.hasClaudeStorage()){
       try{ await window.storage.set(this.KEY, JSON.stringify(this.mem)); this.persistent = true; }catch(e){}
@@ -497,7 +562,6 @@ function calcStreak(days){
   const set = new Set(days);
   let streak = 0;
   const d = new Date();
-  // La racha cuenta si has usado la app hoy o ayer
   if(!set.has(todayStr())) d.setDate(d.getDate()-1);
   for(;;){
     const s = d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
@@ -516,11 +580,35 @@ function toast(msg){
   t.textContent = msg;
   t.classList.add("show");
   clearTimeout(toastT);
-  toastT = setTimeout(()=>t.classList.remove("show"), 2600);
+  toastT = setTimeout(()=>t.classList.remove("show"), 2800);
+}
+/* Distancia de Levenshtein para comparar pronunciación reconocida */
+function levenshtein(a, b){
+  const m = a.length, n = b.length;
+  if(!m) return n; if(!n) return m;
+  let prev = Array.from({length:n+1}, (_,i)=>i);
+  for(let i=1;i<=m;i++){
+    const cur = [i];
+    for(let j=1;j<=n;j++){
+      cur[j] = Math.min(prev[j]+1, cur[j-1]+1, prev[j-1] + (a[i-1]===b[j-1]?0:1));
+    }
+    prev = cur;
+  }
+  return prev[n];
+}
+const DIGIT_WORDS = {"1":"one","2":"two","3":"three","4":"four","5":"five","6":"six","7":"seven","8":"eight","9":"nine","10":"ten","20":"twenty","100":"one hundred","1000":"one thousand"};
+function normalize(s){
+  s = (s||"").toLowerCase()
+    .replace(/['’´`]/g,"")
+    .replace(/[^a-z0-9\s]/g," ")
+    .replace(/\s+/g," ").trim();
+  // convertir dígitos sueltos a palabras (el reconocedor devuelve "2" por "two")
+  s = s.split(" ").map(w => DIGIT_WORDS[w] || w).join(" ");
+  return s;
 }
 
 /* ==================================================================
-   VOCES (Web Speech API)
+   VOCES
 ================================================================== */
 const Voices = {
   es:null, en:null,
@@ -543,23 +631,39 @@ const Voices = {
     if(typeof speechSynthesis !== "undefined"){
       speechSynthesis.onvoiceschanged = pick;
     }
+  },
+  speak(text, lang, rate, onStart, onDone){
+    let finished = false;
+    let wd = null;
+    const done = () => {
+      if(finished) return;
+      finished = true;
+      clearTimeout(wd);
+      if(onDone) onDone();
+    };
+    try{
+      const u = new SpeechSynthesisUtterance(text);
+      const voice = lang==="es" ? this.es : this.en;
+      if(voice) u.voice = voice;
+      u.lang = lang==="es" ? "es-ES" : (voice ? voice.lang : "en-US");
+      u.rate = rate;
+      if(onStart) u.onstart = onStart;
+      u.onend = done;
+      u.onerror = done;
+      Voices._last = u; // evitar recolección prematura en iOS
+      speechSynthesis.speak(u);
+      const est = 1800 + text.length * 130 / rate;
+      wd = setTimeout(done, est + 3500);
+    }catch(e){ done(); }
   }
 };
 
 /* ==================================================================
-   REPRODUCTOR
+   MÓDULO VOCABULARIO (reproductor en bucle)
 ================================================================== */
 const Player = {
-  chapter:null,        // capítulo actual
-  order:[],            // orden aleatorio del ciclo actual
-  wordIdx:0,
-  cycle:1,
-  state:"idle",        // idle | playing | paused | finished
-  watchdog:null,
-  pauseTimer:null,
-  sessionStart:0,      // para contar tiempo de escucha
-  wakeLock:null,
-  utt:null,
+  chapter:null, order:[], wordIdx:0, cycle:1,
+  state:"idle", pauseTimer:null, sessionStart:0, wakeLock:null,
 
   open(chId){
     this.chapter = CHAPTERS.find(c => c.id === chId);
@@ -569,24 +673,22 @@ const Player = {
     App.show("view-player");
     this.renderIdle();
   },
-
   resetSession(){
-    this.cancelTimers();
+    clearTimeout(this.pauseTimer);
     try{ speechSynthesis.cancel(); }catch(e){}
     this.order = shuffle(this.chapter.words);
     this.wordIdx = 0;
     this.cycle = 1;
     this.state = "idle";
   },
-
   updateHeader(){
     const s = Store.mem.settings;
     $("pl-ch-sub").textContent = this.chapter.words.length+" palabras · "+s.cycles+" ciclos · orden aleatorio";
   },
-
   renderIdle(){
     $("w-es").textContent = "—";
     $("w-en").textContent = "—";
+    $("w-phon").textContent = "";
     $("w-en").classList.add("waiting");
     $("dot").classList.remove("on");
     $("btn-play").innerHTML = "▶&nbsp; Empezar";
@@ -594,7 +696,6 @@ const Player = {
     $("pl-note").classList.remove("ok");
     this.updateBars();
   },
-
   updateBars(){
     const total = this.order.length;
     const cycles = Store.mem.settings.cycles;
@@ -606,18 +707,13 @@ const Player = {
     const cycDone = this.state==="finished" ? cycles : (this.cycle-1) + this.wordIdx/total;
     $("bar-cycle").style.width = (Math.min(cycDone,cycles)/cycles*100)+"%";
   },
-
   toggle(){
-    if(this.state==="playing"){ this.pause(); }
-    else if(this.state==="paused"){ this.resume(); }
-    else { this.start(); }
+    if(this.state==="playing") this.pause();
+    else if(this.state==="paused") this.resume();
+    else this.start();
   },
-
   start(){
-    if(typeof speechSynthesis === "undefined"){
-      toast("Este navegador no soporta voz");
-      return;
-    }
+    if(typeof speechSynthesis === "undefined"){ toast("Este navegador no soporta voz"); return; }
     if(this.state==="finished") this.resetSession();
     this.state = "playing";
     this.sessionStart = Date.now();
@@ -626,7 +722,6 @@ const Player = {
     $("btn-play").innerHTML = "❚❚&nbsp; Pausa";
     $("pl-note").textContent = "Mantén la pantalla encendida durante la escucha.";
     $("pl-note").classList.remove("ok");
-    // "Desbloquear" el audio en iOS dentro del gesto del usuario
     try{
       speechSynthesis.cancel();
       const u = new SpeechSynthesisUtterance(" ");
@@ -635,10 +730,9 @@ const Player = {
     }catch(e){}
     this.speakCurrent();
   },
-
   pause(){
     this.state = "paused";
-    this.cancelTimers();
+    clearTimeout(this.pauseTimer);
     try{ speechSynthesis.cancel(); }catch(e){}
     this.flushTime();
     this.releaseWakeLock();
@@ -647,7 +741,6 @@ const Player = {
     $("dot").classList.remove("on");
     Store.save();
   },
-
   resume(){
     this.state = "playing";
     this.sessionStart = Date.now();
@@ -656,11 +749,10 @@ const Player = {
     $("pl-note").textContent = "";
     this.speakCurrent();
   },
-
   stop(){
     if(this.state==="idle") return;
     const wasFinished = this.state==="finished";
-    this.cancelTimers();
+    clearTimeout(this.pauseTimer);
     try{ speechSynthesis.cancel(); }catch(e){}
     if(!wasFinished) this.flushTime();
     this.releaseWakeLock();
@@ -668,65 +760,65 @@ const Player = {
     this.renderIdle();
     Store.save();
   },
-
   exit(){
-    this.cancelTimers();
+    clearTimeout(this.pauseTimer);
     try{ speechSynthesis.cancel(); }catch(e){}
     if(this.state==="playing") this.flushTime();
     this.releaseWakeLock();
     this.state = "idle";
     Store.save();
-    App.openChapters();
+    App.openChapters('vocab');
   },
-
-  /* ---- núcleo de reproducción: ES → pausa → EN → pausa → siguiente ---- */
   speakCurrent(){
     if(this.state!=="playing") return;
-    const [es,en] = this.order[this.wordIdx];
+    const [es,en,ph] = this.order[this.wordIdx];
     $("w-es").textContent = es;
     $("w-en").textContent = en;
+    $("w-phon").textContent = Store.mem.settings.showPhon ? "/ "+ph+" /" : "";
     $("w-en").classList.add("waiting");
     this.updateBars();
-    this.say(es, "es", () => {
-      this.wait(Math.min(Store.mem.settings.pauseMs, 1200), () => {
-        $("w-en").classList.remove("waiting");
-        this.say(en, "en", () => {
-          if(Store.mem.settings.twice){
-            this.wait(450, () => {
-              this.say(en, "en", () => this.afterWord());
+    const rate = Store.mem.settings.rate;
+    Voices.speak(es, "es", rate,
+      () => $("dot").classList.add("on"),
+      () => {
+        $("dot").classList.remove("on");
+        if(this.state!=="playing") return;
+        this.wait(Math.min(Store.mem.settings.pauseMs, 1200), () => {
+          $("w-en").classList.remove("waiting");
+          Voices.speak(en, "en", rate,
+            () => $("dot").classList.add("on"),
+            () => {
+              $("dot").classList.remove("on");
+              if(this.state!=="playing") return;
+              if(Store.mem.settings.twice){
+                this.wait(450, () => {
+                  Voices.speak(en, "en", rate,
+                    () => $("dot").classList.add("on"),
+                    () => { $("dot").classList.remove("on"); this.afterWord(); });
+                });
+              } else this.afterWord();
             });
-          } else {
-            this.afterWord();
-          }
         });
       });
-    });
   },
-
   afterWord(){
     if(this.state!=="playing") return;
     Store.mem.stats.totalWords++;
     this.wait(Store.mem.settings.pauseMs, () => this.nextWord());
   },
-
   nextWord(){
     if(this.state!=="playing") return;
     this.wordIdx++;
     if(this.wordIdx >= this.order.length){
-      // ciclo completado
       Store.mem.stats.totalCycles++;
       this.cycle++;
       this.wordIdx = 0;
       Store.save();
-      if(this.cycle > Store.mem.settings.cycles){
-        this.finishChapter();
-        return;
-      }
-      this.order = shuffle(this.chapter.words); // nuevo orden en cada ciclo
+      if(this.cycle > Store.mem.settings.cycles){ this.finishChapter(); return; }
+      this.order = shuffle(this.chapter.words);
     }
     this.speakCurrent();
   },
-
   finishChapter(){
     this.flushTime();
     const ch = this.chRecord(this.chapter.id);
@@ -736,7 +828,6 @@ const Player = {
     this.state = "finished";
     this.updateBars();
     $("dot").classList.remove("on");
-
     const idx = CHAPTERS.indexOf(this.chapter);
     const next = CHAPTERS[idx+1];
     if(Store.mem.settings.autoNext && next){
@@ -763,46 +854,10 @@ const Player = {
       toast("✓ "+this.chapter.title+" completado");
     }
   },
-
-  /* ---- síntesis con vigilancia anti-bloqueo ---- */
-  say(text, lang, onDone){
-    if(this.state!=="playing" && this.state!=="finished") return;
-    let finished = false;
-    const done = () => {
-      if(finished) return;
-      finished = true;
-      clearTimeout(this.watchdog);
-      $("dot").classList.remove("on");
-      onDone();
-    };
-    try{
-      const u = new SpeechSynthesisUtterance(text);
-      const voice = lang==="es" ? Voices.es : Voices.en;
-      if(voice) u.voice = voice;
-      u.lang = lang==="es" ? "es-ES" : (voice ? voice.lang : "en-US");
-      u.rate = Store.mem.settings.rate;
-      u.onstart = () => $("dot").classList.add("on");
-      u.onend = done;
-      u.onerror = done;
-      this.utt = u; // evitar que iOS lo recolecte antes de tiempo
-      speechSynthesis.speak(u);
-      // Vigilante: si onend no llega (fallo conocido de iOS), avanzar igualmente
-      const est = 1800 + text.length * 130 / Store.mem.settings.rate;
-      this.watchdog = setTimeout(done, est + 3500);
-    }catch(e){ done(); }
-  },
-
   wait(ms, fn){
     clearTimeout(this.pauseTimer);
     this.pauseTimer = setTimeout(fn, ms);
   },
-
-  cancelTimers(){
-    clearTimeout(this.watchdog);
-    clearTimeout(this.pauseTimer);
-  },
-
-  /* ---- registro de progreso ---- */
   chRecord(id){
     if(!Store.mem.chapters[id]) Store.mem.chapters[id] = { timesCompleted:0, started:false, lastDate:null };
     return Store.mem.chapters[id];
@@ -821,21 +876,18 @@ const Player = {
       this.sessionStart = 0;
     }
   },
-
-  /* ---- wake lock: mantener pantalla encendida ---- */
   async acquireWakeLock(){
     try{
       if("wakeLock" in navigator){
         this.wakeLock = await navigator.wakeLock.request("screen");
       }
-    }catch(e){ /* no disponible: avisamos en pantalla igualmente */ }
+    }catch(e){}
   },
   releaseWakeLock(){
     try{ if(this.wakeLock){ this.wakeLock.release(); this.wakeLock = null; } }catch(e){}
   }
 };
 
-/* Si la app pasa a segundo plano, iOS corta la voz: pausamos limpiamente */
 document.addEventListener("visibilitychange", () => {
   if(document.hidden && Player.state==="playing"){
     Player.pause();
@@ -846,16 +898,202 @@ document.addEventListener("visibilitychange", () => {
 });
 
 /* ==================================================================
+   MÓDULO PRONUNCIACIÓN
+================================================================== */
+const Pron = {
+  chapter:null, idx:0, rec:null, listening:false, recTimeout:null,
+
+  supported(){
+    return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+  },
+  open(chId){
+    this.chapter = CHAPTERS.find(c => c.id === chId);
+    this.idx = 0;
+    App.show("view-pron");
+    $("pr-ch-title").textContent = this.chapter.title;
+    this.renderWord(true);
+    const t = todayStr();
+    if(!Store.mem.stats.days.includes(t)){ Store.mem.stats.days.push(t); Store.save(); }
+    if(!this.supported()){
+      $("pr-note").textContent = "⚠️ Este navegador no soporta reconocimiento de voz. En iPhone, usa Safari y activa Siri y Dictado en Ajustes.";
+      $("btn-mic").disabled = true;
+    } else {
+      $("pr-note").textContent = "Escucha la palabra y tócala con el micrófono cuando estés listo.";
+      $("btn-mic").disabled = false;
+    }
+  },
+  word(){ return this.chapter.words[this.idx]; },
+  wordRec(en){
+    if(!Store.mem.pron.words[en]) Store.mem.pron.words[en] = { best:null, attempts:0, bad:0 };
+    return Store.mem.pron.words[en];
+  },
+  renderWord(autoListen){
+    const [es,en,ph] = this.word();
+    $("p-es").textContent = es;
+    $("p-en").textContent = en;
+    $("p-phon").textContent = Store.mem.settings.showPhon ? "/ "+ph+" /" : "";
+    $("pr-ch-sub").textContent = "Palabra "+(this.idx+1)+" de "+this.chapter.words.length;
+    this.clearVerdict();
+    this.renderDots();
+    $("btn-prev").disabled = this.idx===0;
+    $("btn-next").disabled = this.idx===this.chapter.words.length-1;
+    if(autoListen) this.listen();
+  },
+  renderDots(){
+    const box = $("v-dots");
+    box.innerHTML = "";
+    this.chapter.words.forEach((w,i) => {
+      const rec = Store.mem.pron.words[w[1]];
+      const dot = document.createElement("i");
+      if(rec && rec.best) dot.className = rec.best;
+      if(i===this.idx) dot.classList.add("cur");
+      box.appendChild(dot);
+    });
+  },
+  clearVerdict(){
+    const v = $("verdict");
+    v.className = "verdict";
+    $("v-big").textContent = "";
+    $("v-heard").textContent = "";
+  },
+  listen(){
+    if(this.listening) return;
+    const [,en] = this.word();
+    Voices.speak(en, "en", Store.mem.settings.rate, null, null);
+  },
+  prev(){ if(this.idx>0){ this.stopRec(); this.idx--; this.renderWord(true); } },
+  next(){ if(this.idx<this.chapter.words.length-1){ this.stopRec(); this.idx++; this.renderWord(true); } },
+  exit(){
+    this.stopRec();
+    try{ speechSynthesis.cancel(); }catch(e){}
+    Store.save();
+    App.openChapters('pron');
+  },
+  stopRec(){
+    clearTimeout(this.recTimeout);
+    if(this.rec){ try{ this.rec.abort(); }catch(e){} this.rec = null; }
+    this.listening = false;
+    $("btn-mic").classList.remove("listening");
+    $("btn-mic").innerHTML = "🎤&nbsp; Pronunciar";
+  },
+  record(){
+    if(this.listening){ this.stopRec(); return; }
+    if(!this.supported()) return;
+    try{ speechSynthesis.cancel(); }catch(e){}
+    this.clearVerdict();
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const rec = new SR();
+    this.rec = rec;
+    rec.lang = "en-US";
+    rec.interimResults = false;
+    rec.maxAlternatives = 5;
+    let gotResult = false;
+
+    rec.onstart = () => {
+      this.listening = true;
+      $("btn-mic").classList.add("listening");
+      $("btn-mic").innerHTML = "●&nbsp; Escuchando… (toca para parar)";
+      $("pr-note").textContent = "Di la palabra en inglés ahora.";
+      // límite de seguridad por si no se detecta fin de voz
+      this.recTimeout = setTimeout(() => { try{ rec.stop(); }catch(e){} }, 6000);
+    };
+    rec.onresult = (ev) => {
+      gotResult = true;
+      const alts = [];
+      const res = ev.results[ev.results.length-1];
+      for(let i=0;i<res.length;i++) alts.push(res[i].transcript);
+      this.evaluate(alts);
+    };
+    rec.onerror = (ev) => {
+      gotResult = true;
+      this.stopRec();
+      if(ev.error==="not-allowed" || ev.error==="service-not-allowed"){
+        $("pr-note").textContent = "⚠️ Sin permiso de micrófono. Actívalo en Safari: AA en la barra de dirección → Ajustes del sitio web → Micrófono: Permitir.";
+      } else if(ev.error==="no-speech"){
+        $("pr-note").textContent = "No te he oído. Toca el micrófono y habla más cerca.";
+      } else {
+        $("pr-note").textContent = "Error de reconocimiento ("+ev.error+"). Inténtalo de nuevo.";
+      }
+    };
+    rec.onend = () => {
+      this.stopRec();
+      if(!gotResult && $("pr-note").textContent.indexOf("⚠️")===-1){
+        $("pr-note").textContent = "No te he oído. Toca el micrófono e inténtalo de nuevo.";
+      }
+    };
+    try{ rec.start(); }
+    catch(e){ this.stopRec(); $("pr-note").textContent = "No se pudo iniciar el micrófono. Inténtalo de nuevo."; }
+  },
+  evaluate(alts){
+    const [,en] = this.word();
+    const target = normalize(en);
+    const targetNoTo = target.replace(/^to /,"");
+    let verdict = "mal";
+    let best = "";
+    let bestScore = 0;
+    for(const a of alts){
+      const h = normalize(a);
+      if(!h) continue;
+      if(!best) best = h;
+      // coincidencia exacta (con o sin "to") o el objetivo contenido como frase completa
+      if(h===target || h===targetNoTo || h===("to "+target) ||
+         (" "+h+" ").includes(" "+target+" ") || (" "+h+" ").includes(" "+targetNoTo+" ")){
+        verdict = "bien";
+        best = h;
+        break;
+      }
+      const ref = h.length && Math.abs(h.length-targetNoTo.length) < Math.abs(h.length-target.length) ? targetNoTo : target;
+      const score = 1 - levenshtein(h, ref)/Math.max(h.length, ref.length);
+      if(score > bestScore){ bestScore = score; best = h; }
+    }
+    if(verdict!=="bien" && bestScore >= 0.65) verdict = "regular";
+
+    // registro
+    const wr = this.wordRec(en);
+    wr.attempts++;
+    Store.mem.pron.attempts++;
+    if(verdict==="bien"){
+      Store.mem.pron.good++;
+      wr.best = "bien";
+    } else {
+      if(verdict==="mal") wr.bad++;
+      if(wr.best!=="bien") wr.best = (wr.best==="regular"||verdict==="regular") ? "regular" : "mal";
+    }
+    Store.save();
+
+    // mostrar veredicto
+    const v = $("verdict");
+    v.className = "verdict show "+verdict;
+    const labels = { bien:"✓ ¡Bien!", regular:"≈ Regular", mal:"✗ Mal" };
+    $("v-big").textContent = labels[verdict];
+    $("v-heard").textContent = best ? "He entendido: «"+best+"»" : "No he entendido nada claro";
+    const tips = {
+      bien:"Perfecto. Pasa a la siguiente con › o repite para afianzar.",
+      regular:"Casi. Escúchala de nuevo y fíjate en la sílaba fuerte.",
+      mal:"Escúchala otra vez 🔊 y vuelve a intentarlo. Sin prisa."
+    };
+    $("pr-note").textContent = tips[verdict];
+    this.renderDots();
+  }
+};
+
+/* ==================================================================
    APP: vistas y render
 ================================================================== */
 const App = {
+  currentModule:"vocab",
   show(id){
     document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
     $(id).classList.add("active");
     window.scrollTo(0,0);
   },
   goHome(){ this.renderHome(); this.show("view-home"); },
-  openChapters(){ this.renderChapters(); this.show("view-chapters"); },
+  openChapters(mod){
+    this.currentModule = mod;
+    $("chapters-title").textContent = mod==="vocab" ? "Vocabulario" : "Pronunciación";
+    this.renderChapters();
+    this.show("view-chapters");
+  },
   openStats(){ this.renderStats(); this.show("view-stats"); },
 
   renderHome(){
@@ -869,19 +1107,36 @@ const App = {
   renderChapters(){
     const box = $("chapter-list");
     box.innerHTML = "";
+    const mod = this.currentModule;
     CHAPTERS.forEach(c => {
-      const rec = Store.mem.chapters[c.id] || {};
-      const n = rec.timesCompleted || 0;
-      let badge = '<span class="badge new">Nuevo</span>';
-      let meta = c.words.length+" palabras";
-      let cls = "chapter";
-      if(n > 0){
-        badge = '<span class="badge done">✓ ×'+n+'</span>';
-        meta = "Completado "+n+(n===1?" vez":" veces");
-        cls += " done";
-      } else if(rec.started){
-        badge = '<span class="badge prog">En progreso</span>';
-        meta = "Empezado, sin completar";
+      let badge, meta, cls = "chapter";
+      if(mod==="vocab"){
+        const rec = Store.mem.chapters[c.id] || {};
+        const n = rec.timesCompleted || 0;
+        badge = '<span class="badge new">Nuevo</span>';
+        meta = c.words.length+" palabras";
+        if(n > 0){
+          badge = '<span class="badge done">✓ ×'+n+'</span>';
+          meta = "Completado "+n+(n===1?" vez":" veces");
+          cls += " done";
+        } else if(rec.started){
+          badge = '<span class="badge prog">En progreso</span>';
+          meta = "Empezado, sin completar";
+        }
+      } else {
+        const good = c.words.filter(w => (Store.mem.pron.words[w[1]]||{}).best==="bien").length;
+        const tried = c.words.filter(w => (Store.mem.pron.words[w[1]]||{}).attempts>0).length;
+        if(good===c.words.length){
+          badge = '<span class="badge done">✓ 20/20</span>';
+          meta = "Todas pronunciadas bien";
+          cls += " done";
+        } else if(tried>0){
+          badge = '<span class="badge prog">'+good+'/20 bien</span>';
+          meta = tried+" palabras practicadas";
+        } else {
+          badge = '<span class="badge new">Nuevo</span>';
+          meta = c.words.length+" palabras";
+        }
       }
       const b = document.createElement("button");
       b.className = cls;
@@ -889,7 +1144,7 @@ const App = {
         '<div class="ch-num">'+c.emoji+'</div>'+
         '<div class="ch-body"><div class="ch-title">'+c.title+'</div>'+
         '<div class="ch-meta">'+meta+'</div></div>'+badge;
-      b.onclick = () => Player.open(c.id);
+      b.onclick = () => mod==="vocab" ? Player.open(c.id) : Pron.open(c.id);
       box.appendChild(b);
     });
   },
@@ -904,6 +1159,25 @@ const App = {
     $("st-words").textContent = st.totalWords;
     $("st-chdone").textContent = done+"/"+CHAPTERS.length;
 
+    // pronunciación
+    const pr = Store.mem.pron;
+    $("st-pr-att").textContent = pr.attempts;
+    $("st-pr-pct").textContent = pr.attempts ? Math.round(pr.good/pr.attempts*100)+"%" : "—";
+    const hard = Object.entries(pr.words)
+      .filter(([,w]) => w.bad > 0 && w.best !== "bien")
+      .sort((a,b) => b[1].bad - a[1].bad)
+      .slice(0,6);
+    const hb = $("st-hard");
+    hb.innerHTML = "";
+    hard.forEach(([en,w]) => {
+      const row = document.createElement("div");
+      row.className = "hard-word";
+      row.innerHTML = "<b>"+en+"</b><span>"+w.bad+" fallos</span>";
+      hb.appendChild(row);
+    });
+    $("st-hard-empty").style.display = hard.length ? "none" : "block";
+
+    // vocabulario por capítulo
     const box = $("st-chapters");
     box.innerHTML = "";
     const max = Math.max(1, ...CHAPTERS.map(c => (Store.mem.chapters[c.id]||{}).timesCompleted||0));
@@ -923,13 +1197,13 @@ const App = {
     box.style.display = any ? "block" : "none";
   },
 
-  /* ---- ajustes ---- */
   openSettings(){
     const s = Store.mem.settings;
     $("in-cycles").value = s.cycles;
     $("in-rate").value = s.rate;
     $("in-pause").value = s.pauseMs;
     $("in-twice").checked = s.twice;
+    $("in-phon").checked = s.showPhon;
     $("in-autonext").checked = s.autoNext;
     this.refreshOutputs();
     $("sheet-bg").classList.add("open");
@@ -943,6 +1217,9 @@ const App = {
       Player.updateHeader();
       Player.updateBars();
     }
+    if($("view-pron").classList.contains("active")){
+      Pron.renderWord(false);
+    }
   },
   refreshOutputs(){
     const s = Store.mem.settings;
@@ -952,11 +1229,11 @@ const App = {
   }
 };
 
-/* listeners de ajustes */
 $("in-cycles").addEventListener("input", e => { Store.mem.settings.cycles = +e.target.value; App.refreshOutputs(); });
 $("in-rate").addEventListener("input", e => { Store.mem.settings.rate = +e.target.value; App.refreshOutputs(); });
 $("in-pause").addEventListener("input", e => { Store.mem.settings.pauseMs = +e.target.value; App.refreshOutputs(); });
 $("in-twice").addEventListener("change", e => { Store.mem.settings.twice = e.target.checked; });
+$("in-phon").addEventListener("change", e => { Store.mem.settings.showPhon = e.target.checked; });
 $("in-autonext").addEventListener("change", e => { Store.mem.settings.autoNext = e.target.checked; });
 
 /* ==================================================================
