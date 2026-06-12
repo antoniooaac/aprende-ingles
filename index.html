@@ -45,7 +45,6 @@
   .btn-icon{font-size:18px}
   button{font-family:inherit;border:none;cursor:pointer}
   button:active{transform:scale(.97)}
-  /* ---------- inicio ---------- */
   .hero{padding:26px 4px 24px}
   .hero .eyebrow{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
   .hero h1{font-size:34px;font-weight:800;letter-spacing:-.03em;line-height:1.08}
@@ -71,10 +70,11 @@
   .version{text-align:center;color:#4A5670;font-size:12px;padding-top:22px;font-weight:600}
   /* ---------- lista de capítulos ---------- */
   .chapter{
-    display:flex;align-items:center;gap:14px;width:100%;text-align:left;
+    display:flex;align-items:center;gap:12px;width:100%;text-align:left;
     background:var(--bg-card);border:1px solid var(--line);border-radius:var(--radius);
-    padding:16px;margin-bottom:11px;color:var(--text);
+    padding:14px;margin-bottom:11px;color:var(--text);cursor:pointer;
   }
+  .chapter:active{transform:scale(.985)}
   .chapter .ch-num{
     width:44px;height:44px;border-radius:12px;flex:none;font-size:21px;
     display:flex;align-items:center;justify-content:center;
@@ -82,12 +82,18 @@
   }
   .chapter.done .ch-num{background:linear-gradient(145deg,#1D4034,#163026)}
   .chapter .ch-body{flex:1;min-width:0}
-  .chapter .ch-title{font-size:16.5px;font-weight:700;letter-spacing:-.01em}
+  .chapter .ch-title{font-size:16px;font-weight:700;letter-spacing:-.01em}
   .chapter .ch-meta{font-size:12.5px;color:var(--text-dim);margin-top:3px}
+  .ch-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex:none}
   .badge{font-size:11px;font-weight:700;padding:4px 9px;border-radius:99px;flex:none;letter-spacing:.02em}
   .badge.new{background:#26314A;color:#9FB3D1}
   .badge.prog{background:#3A2E14;color:var(--en)}
   .badge.done{background:#15382B;color:var(--ok)}
+  .btn-series{
+    background:var(--bg-raised);border:1px solid var(--line);color:var(--text-dim);
+    height:30px;padding:0 11px;border-radius:9px;font-size:12px;font-weight:700;
+    display:flex;align-items:center;gap:5px;
+  }
   /* ---------- reproductor vocabulario ---------- */
   #view-player{justify-content:space-between}
   .pl-head{display:flex;align-items:center;gap:12px}
@@ -96,21 +102,31 @@
   .pl-head .pl-ch span{font-size:12.5px;color:var(--text-dim)}
   .word-stage{
     flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
-    text-align:center;padding:10px 6px;min-height:0;
+    text-align:center;padding:8px 6px;min-height:0;
   }
   .lang-tag{font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px}
-  #w-es{font-size:clamp(26px,7.5vw,34px);font-weight:600;color:var(--es);letter-spacing:-.01em;min-height:1.3em}
+  #w-es{font-size:clamp(24px,7vw,32px);font-weight:600;color:var(--es);letter-spacing:-.01em;min-height:1.3em}
   #w-en{
-    font-size:clamp(40px,12vw,58px);font-weight:800;color:var(--en);
-    letter-spacing:-.025em;line-height:1.05;margin-top:18px;min-height:1.1em;
+    font-size:clamp(36px,11vw,54px);font-weight:800;color:var(--en);
+    letter-spacing:-.025em;line-height:1.05;margin-top:14px;min-height:1.1em;
     transition:opacity .18s;
   }
   #w-en.waiting{opacity:.16}
-  .phon{font-size:clamp(16px,4.5vw,20px);color:var(--text-dim);margin-top:12px;min-height:1.3em;font-style:italic;letter-spacing:.01em}
-  .phon b{color:var(--text);font-weight:700;font-style:italic}
-  .speaking-dot{width:9px;height:9px;border-radius:50%;background:var(--ok);margin-top:20px;opacity:0;transition:opacity .2s}
+  .phon{font-size:clamp(15px,4.3vw,19px);color:var(--text-dim);margin-top:10px;min-height:1.3em;font-style:italic;letter-spacing:.01em}
+  .sent-box{margin-top:18px;min-height:3.4em;padding:0 8px;opacity:0;transition:opacity .25s}
+  .sent-box.show{opacity:1}
+  .sent-en{font-size:clamp(17px,5vw,21px);font-weight:600;color:var(--text);line-height:1.35}
+  .sent-ph{font-size:clamp(13px,3.8vw,16px);color:var(--text-dim);font-style:italic;margin-top:4px;line-height:1.35}
+  .sent-es{font-size:clamp(13px,3.8vw,15px);color:var(--text-dim);margin-top:5px;line-height:1.35}
+  .speaking-dot{width:9px;height:9px;border-radius:50%;background:var(--ok);margin-top:16px;opacity:0;transition:opacity .2s}
   .speaking-dot.on{opacity:1;animation:pulse 1s infinite}
   @keyframes pulse{50%{transform:scale(1.55);opacity:.45}}
+  .chip-row{display:flex;justify-content:center;padding-bottom:12px}
+  .chip{
+    background:var(--bg-raised);border:1px solid var(--line);color:var(--text-dim);
+    height:38px;padding:0 16px;border-radius:99px;font-size:14px;font-weight:700;
+  }
+  .chip.on{background:#33270E;border-color:#5A4318;color:var(--en)}
   .cycle-wrap{padding:4px 2px 14px}
   .cycle-row{display:flex;justify-content:space-between;font-size:13px;color:var(--text-dim);margin-bottom:8px;font-variant-numeric:tabular-nums}
   .bar{height:7px;background:var(--bg-raised);border-radius:99px;overflow:hidden}
@@ -125,18 +141,18 @@
   .pl-note.ok{color:var(--ok)}
   /* ---------- módulo pronunciación ---------- */
   #view-pron{justify-content:space-between}
+  .mode-row{display:flex;gap:10px;justify-content:center;padding:2px 0 6px}
   .pron-stage{
     flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
     text-align:center;padding:6px;min-height:0;
   }
-  #p-es{font-size:clamp(20px,5.5vw,26px);font-weight:600;color:var(--es)}
-  #p-en{font-size:clamp(38px,11vw,54px);font-weight:800;color:var(--en);letter-spacing:-.025em;line-height:1.05;margin-top:12px}
-  #p-phon{font-size:clamp(16px,4.5vw,20px);color:var(--text-dim);margin-top:10px;font-style:italic}
-  .verdict{
-    margin-top:22px;min-height:84px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
-  }
+  #p-es{font-size:clamp(17px,5vw,24px);font-weight:600;color:var(--es);line-height:1.3;padding:0 6px}
+  #p-en{font-size:clamp(34px,10vw,50px);font-weight:800;color:var(--en);letter-spacing:-.025em;line-height:1.12;margin-top:12px;padding:0 4px}
+  #p-en.sentmode{font-size:clamp(21px,6vw,28px);letter-spacing:-.01em}
+  #p-phon{font-size:clamp(15px,4.3vw,19px);color:var(--text-dim);margin-top:10px;font-style:italic;min-height:1.2em}
+  .verdict{margin-top:18px;min-height:80px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
   .verdict .v-big{font-size:26px;font-weight:800;letter-spacing:-.01em;opacity:0;transition:opacity .2s}
-  .verdict .v-heard{font-size:14px;color:var(--text-dim);opacity:0;transition:opacity .2s;padding:0 16px}
+  .verdict .v-heard{font-size:14px;color:var(--text-dim);opacity:0;transition:opacity .2s;padding:0 16px;line-height:1.35}
   .verdict.show .v-big,.verdict.show .v-heard{opacity:1}
   .verdict.bien .v-big{color:var(--ok)}
   .verdict.regular .v-big{color:var(--warn)}
@@ -201,9 +217,9 @@
   .ch-stat .cs-bar{flex:1.1;height:7px;background:var(--bg-raised);border-radius:99px;overflow:hidden}
   .ch-stat .cs-bar i{display:block;height:100%;background:var(--progress);border-radius:99px}
   .ch-stat .cs-n{width:30px;text-align:right;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--text-dim)}
-  .hard-word{display:flex;justify-content:space-between;align-items:center;padding:9px 0;font-size:14.5px;border-bottom:1px solid #1E2840}
-  .hard-word b{color:var(--en);font-weight:700}
-  .hard-word span{color:var(--bad);font-size:12.5px;font-weight:700}
+  .hard-word{display:flex;justify-content:space-between;align-items:center;padding:9px 0;font-size:14.5px;border-bottom:1px solid #1E2840;gap:12px}
+  .hard-word b{color:var(--en);font-weight:700;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .hard-word span{color:var(--bad);font-size:12.5px;font-weight:700;flex:none}
   .empty{color:var(--text-dim);font-size:14px;text-align:center;padding:24px 10px;line-height:1.5}
   #toast{
     position:fixed;left:50%;bottom:calc(34px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);
@@ -230,7 +246,7 @@
     <div class="mod-emoji">🎧</div>
     <div class="mod-body">
       <div class="mod-title">Vocabulario</div>
-      <div class="mod-sub">10 capítulos · 200 palabras · escucha en bucle</div>
+      <div class="mod-sub">10 capítulos · 2 series · escucha en bucle</div>
     </div>
     <div class="mod-arrow">›</div>
   </button>
@@ -239,7 +255,7 @@
     <div class="mod-emoji">🎤</div>
     <div class="mod-body">
       <div class="mod-title">Pronunciación</div>
-      <div class="mod-sub">Repite cada palabra y recibe tu nota</div>
+      <div class="mod-sub">Palabras y frases con nota al instante</div>
     </div>
     <div class="mod-arrow">›</div>
   </button>
@@ -258,7 +274,7 @@
     <div class="home-stat"><b id="hs-cycles">0</b><span>ciclos totales</span></div>
     <div class="home-stat"><b id="hs-done">0/10</b><span>capítulos</span></div>
   </div>
-  <div class="version">Versión 3</div>
+  <div class="version">Versión 4</div>
 </div>
 
 <!-- ============ VISTA: CAPÍTULOS ============ -->
@@ -285,10 +301,19 @@
   <div class="word-stage">
     <div class="lang-tag">Español</div>
     <div id="w-es">—</div>
-    <div class="lang-tag" style="margin-top:24px">English</div>
+    <div class="lang-tag" style="margin-top:20px">English</div>
     <div id="w-en" class="waiting">—</div>
     <div class="phon" id="w-phon"></div>
+    <div class="sent-box" id="sent-box">
+      <div class="sent-en" id="w-sen"></div>
+      <div class="sent-ph" id="w-sen-ph"></div>
+      <div class="sent-es" id="w-sen-es"></div>
+    </div>
     <div class="speaking-dot" id="dot"></div>
+  </div>
+
+  <div class="chip-row">
+    <button class="chip" id="chip-sen" onclick="Player.toggleSentences()">💬 Frases: No</button>
   </div>
 
   <div class="cycle-wrap">
@@ -314,6 +339,11 @@
       <span id="pr-ch-sub"></span>
     </div>
     <button class="btn-icon" onclick="App.openSettings()" aria-label="Ajustes">⚙︎</button>
+  </div>
+
+  <div class="mode-row">
+    <button class="chip on" id="pm-word" onclick="Pron.setMode('word')">Palabras</button>
+    <button class="chip" id="pm-sen" onclick="Pron.setMode('sen')">Frases</button>
   </div>
 
   <div class="pron-stage">
@@ -358,7 +388,7 @@
     <div class="stat-card"><b id="st-pr-att">0</b><span>intentos</span></div>
     <div class="stat-card"><b id="st-pr-pct">—</b><span>% de «Bien»</span></div>
   </div>
-  <div class="sec-title">Palabras que más te cuestan</div>
+  <div class="sec-title">Lo que más te cuesta pronunciar</div>
   <div id="st-hard"></div>
   <div class="empty" id="st-hard-empty">Practica en el módulo Pronunciación<br>para ver aquí tus palabras difíciles.</div>
 
@@ -386,8 +416,12 @@
     <input type="range" id="in-pause" min="300" max="3000" step="100" value="1000">
   </div>
   <div class="switch-row">
-    <div class="sw-txt"><b>Repetir la palabra en inglés dos veces</b><span>La oirás dos veces seguidas</span></div>
+    <div class="sw-txt"><b>Repetir el inglés dos veces</b><span>Palabra y frase se oirán dos veces</span></div>
     <label class="switch"><input type="checkbox" id="in-twice"><i></i></label>
+  </div>
+  <div class="switch-row">
+    <div class="sw-txt"><b>Modo frases</b><span>Tras la palabra, oirás una frase de ejemplo</span></div>
+    <label class="switch"><input type="checkbox" id="in-sen"><i></i></label>
   </div>
   <div class="switch-row">
     <div class="sw-txt"><b>Mostrar pronunciación escrita</b><span>Fonética bajo la palabra inglesa</span></div>
@@ -404,87 +438,477 @@
 
 <script>
 "use strict";
-const APP_VERSION = 3;
+const APP_VERSION = 4;
 
 /* ==================================================================
-   DATOS: 10 capítulos × 20 palabras  [español, inglés, pronunciación]
+   DATOS — cada palabra: [español, inglés, fonética, frase EN, frase ES, fonética frase]
+   Cada capítulo tiene 2 series de 20 palabras.
 ================================================================== */
 const CHAPTERS = [
-{ id:"c01", emoji:"🙋", title:"Supervivencia básica", words:[
-  ["hola","hello","je-LÓU"],["adiós","goodbye","gud-BÁI"],["sí","yes","iés"],["no","no","nóu"],
-  ["por favor","please","plíis"],["gracias","thank you","ZÁNK iu"],["de nada","you're welcome","iór UÉL-kam"],
-  ["perdón","sorry","SÓ-rri"],["ayuda","help","jelp"],["vale","okay","ou-KÉI"],
-  ["buenos días","good morning","gud MÓR-nin"],["buenas tardes","good afternoon","gud af-ter-NÚUN"],
-  ["buenas noches","good night","gud NÁIT"],["quizás","maybe","MÉI-bi"],["claro","of course","of KÓORS"],
-  ["aquí","here","jíar"],["allí","there","déar"],["ahora","now","náu"],["después","later","LÉI-ter"],["nada","nothing","NÁ-zin"]
+{ id:"c01", emoji:"🙋", title:"Supervivencia básica", series:[
+[
+["hola", "hello", "je-LÓU", "Hello, how are you?", "Hola, ¿cómo estás?", "je-LÓU, jáu ar iú"],
+["adiós", "goodbye", "gud-BÁI", "Goodbye, see you tomorrow.", "Adiós, hasta mañana.", "gud-BÁI, síi iú tu-MÓ-rrou"],
+["sí", "yes", "iés", "Yes, I understand.", "Sí, lo entiendo.", "iés, ái an-der-STÁND"],
+["no", "no", "nóu", "No, thank you.", "No, gracias.", "nóu, zánk iú"],
+["por favor", "please", "plíis", "Two coffees, please.", "Dos cafés, por favor.", "túu KÓ-fis, plíis"],
+["gracias", "thank you", "ZÁNK iu", "Thank you for your help.", "Gracias por tu ayuda.", "zánk iú for iór jelp"],
+["de nada", "you're welcome", "iór UÉL-kam", "You're welcome, my friend.", "De nada, amigo.", "iór UÉL-kam, mái frend"],
+["perdón", "sorry", "SÓ-rri", "Sorry, I am late.", "Perdón, llego tarde.", "SÓ-rri, ái am léit"],
+["ayuda", "help", "jelp", "I need help, please.", "Necesito ayuda, por favor.", "ái níid jelp, plíis"],
+["vale", "okay", "ou-KÉI", "Okay, no problem.", "Vale, sin problema.", "ou-KÉI, nóu PRÓ-blem"],
+["buenos días", "good morning", "gud MÓR-nin", "Good morning, everyone.", "Buenos días a todos.", "gud MÓR-nin, É-vri-uan"],
+["buenas tardes", "good afternoon", "gud af-ter-NÚUN", "Good afternoon, sir.", "Buenas tardes, señor.", "gud af-ter-NÚUN, ser"],
+["buenas noches", "good night", "gud NÁIT", "Good night, sleep well.", "Buenas noches, que duermas bien.", "gud náit, slíip uél"],
+["quizás", "maybe", "MÉI-bi", "Maybe tomorrow.", "Quizás mañana.", "MÉI-bi tu-MÓ-rrou"],
+["claro", "of course", "of KÓORS", "Of course you can.", "Claro que puedes.", "of kóors iú kan"],
+["aquí", "here", "jíar", "Come here, please.", "Ven aquí, por favor.", "kam jíar, plíis"],
+["allí", "there", "déar", "The bank is there.", "El banco está allí.", "de bank is déar"],
+["ahora", "now", "náu", "I have to go now.", "Tengo que irme ahora.", "ái jav tu góu náu"],
+["después", "later", "LÉI-ter", "See you later.", "Hasta luego.", "síi iú LÉI-ter"],
+["nada", "nothing", "NÁ-zin", "It's nothing, don't worry.", "No es nada, no te preocupes.", "its NÁ-zin, dóunt UÓ-rri"]
+],
+[
+["bienvenido", "welcome", "UÉL-kam", "Welcome to Spain!", "¡Bienvenido a España!", "UÉL-kam tu spéin"],
+["buena suerte", "good luck", "gud LAK", "Good luck with the exam!", "¡Buena suerte con el examen!", "gud lak uíz di ig-SÁM"],
+["salud (brindis)", "cheers", "chíars", "Cheers, everyone!", "¡Salud a todos!", "chíars, É-vri-uan"],
+["disculpe", "excuse me", "iks-KIÚS mi", "Excuse me, where is the station?", "Disculpe, ¿dónde está la estación?", "iks-KIÚS mi, uéar is de STÉI-shon"],
+["no entiendo", "I don't understand", "ai dóunt an-der-STÁND", "Sorry, I don't understand.", "Perdona, no entiendo.", "SÓ-rri, ái dóunt an-der-STÁND"],
+["más despacio", "more slowly", "móor SLÓU-li", "Speak more slowly, please.", "Habla más despacio, por favor.", "spíik móor SLÓU-li, plíis"],
+["¿cómo estás?", "how are you?", "jáu ar IÚ", "Hi! How are you?", "¡Hola! ¿Cómo estás?", "jái! jáu ar iú"],
+["estoy bien", "I'm fine", "aim FÁIN", "I'm fine, thank you.", "Estoy bien, gracias.", "aim fáin, zánk iú"],
+["¿cuánto cuesta?", "how much is it?", "jáu MACH is it", "How much is it?", "¿Cuánto cuesta?", "jáu mach is it"],
+["¿dónde está?", "where is it?", "uéar IS it", "Where is the exit?", "¿Dónde está la salida?", "uéar is di ÉK-sit"],
+["no lo sé", "I don't know", "ai dóunt NÓU", "Sorry, I don't know.", "Lo siento, no lo sé.", "SÓ-rri, ái dóunt nóu"],
+["por supuesto", "sure", "shúar", "Sure, no problem!", "¡Por supuesto, sin problema!", "shúar, nóu PRÓ-blem"],
+["un momento", "one moment", "uán MÓU-ment", "One moment, please.", "Un momento, por favor.", "uán MÓU-ment, plíis"],
+["¡cuidado!", "watch out!", "uótch ÁUT", "Watch out for the car!", "¡Cuidado con el coche!", "uótch áut for de kar"],
+["de acuerdo", "all right", "ool RÁIT", "All right, let's go.", "De acuerdo, vamos.", "ool ráit, lets góu"],
+["¿verdad?", "right?", "ráit", "You are Spanish, right?", "Eres español, ¿verdad?", "iú ar SPÁ-nish, ráit"],
+["yo también", "me too", "mi TÚU", "I'm hungry. Me too!", "Tengo hambre. ¡Yo también!", "aim JÁN-gri. mi túu"],
+["todavía no", "not yet", "not IÉT", "Is it ready? Not yet.", "¿Está listo? Todavía no.", "is it RÉ-di? not iét"],
+["está bien", "it's okay", "its ou-KÉI", "Don't worry, it's okay.", "No te preocupes, está bien.", "dóunt UÓ-rri, its ou-KÉI"],
+["lo siento mucho", "I'm so sorry", "aim sóu SÓ-rri", "I'm so sorry for the mistake.", "Siento mucho el error.", "aim sóu SÓ-rri for de mis-TÉIK"]
+]
 ]},
-{ id:"c02", emoji:"🏃", title:"Verbos esenciales I", words:[
-  ["ser","to be","tu BÍI"],["tener","to have","tu JAV"],["hacer","to do","tu DÚU"],["ir","to go","tu GÓU"],
-  ["querer","to want","tu UÓNT"],["venir","to come","tu KAM"],["ver","to see","tu SÍI"],["decir","to say","tu SÉI"],
-  ["poder","can","kan"],["necesitar","to need","tu NÍID"],["hablar","to speak","tu SPÍIK"],["comer","to eat","tu ÍIT"],
-  ["beber","to drink","tu DRINK"],["dormir","to sleep","tu SLÍIP"],["trabajar","to work","tu UÉRK"],["vivir","to live","tu LIV"],
-  ["comprar","to buy","tu BÁI"],["llamar","to call","tu KOL"],["mirar","to look","tu LUK"],["escuchar","to listen","tu LÍ-sen"]
+{ id:"c02", emoji:"🏃", title:"Verbos esenciales I", series:[
+[
+["ser", "to be", "tu BÍI", "I want to be happy.", "Quiero ser feliz.", "ái uónt tu bíi JÁ-pi"],
+["tener", "to have", "tu JAV", "I have two children.", "Tengo dos hijos.", "ái jav túu CHÍL-dren"],
+["hacer", "to do", "tu DÚU", "What do you do?", "¿A qué te dedicas?", "uót du iú dúu"],
+["ir", "to go", "tu GÓU", "I go to work by car.", "Voy al trabajo en coche.", "ái góu tu uérk bái kar"],
+["querer", "to want", "tu UÓNT", "I want a coffee.", "Quiero un café.", "ái uónt a KÓ-fi"],
+["venir", "to come", "tu KAM", "Come with me.", "Ven conmigo.", "kam uíz mi"],
+["ver", "to see", "tu SÍI", "I see the problem.", "Veo el problema.", "ái síi de PRÓ-blem"],
+["decir", "to say", "tu SÉI", "What did you say?", "¿Qué has dicho?", "uót did iú séi"],
+["poder", "can", "kan", "Can you help me?", "¿Puedes ayudarme?", "kan iú jelp mi"],
+["necesitar", "to need", "tu NÍID", "I need more time.", "Necesito más tiempo.", "ái níid móor táim"],
+["hablar", "to speak", "tu SPÍIK", "I speak a little English.", "Hablo un poco de inglés.", "ái spíik a LÍ-tel ÍN-glish"],
+["comer", "to eat", "tu ÍIT", "Let's eat something.", "Vamos a comer algo.", "lets íit SÁM-zin"],
+["beber", "to drink", "tu DRINK", "Do you want to drink water?", "¿Quieres beber agua?", "du iú uónt tu drink UÓ-ter"],
+["dormir", "to sleep", "tu SLÍIP", "I need to sleep.", "Necesito dormir.", "ái níid tu slíip"],
+["trabajar", "to work", "tu UÉRK", "I work in a factory.", "Trabajo en una fábrica.", "ái uérk in a FÁK-to-ri"],
+["vivir", "to live", "tu LIV", "I live in Spain.", "Vivo en España.", "ái liv in spéin"],
+["comprar", "to buy", "tu BÁI", "I want to buy bread.", "Quiero comprar pan.", "ái uónt tu bái bred"],
+["llamar", "to call", "tu KOL", "Call me later.", "Llámame luego.", "kol mi LÉI-ter"],
+["mirar", "to look", "tu LUK", "Look at this.", "Mira esto.", "luk at dis"],
+["escuchar", "to listen", "tu LÍ-sen", "Listen to me, please.", "Escúchame, por favor.", "LÍ-sen tu mi, plíis"]
+],
+[
+["poner", "to put", "tu PUT", "Put it on the table.", "Ponlo en la mesa.", "put it on de TÉI-bol"],
+["traer", "to bring", "tu BRING", "Bring me the documents.", "Tráeme los documentos.", "bring mi de DÓ-kiu-ments"],
+["intentar", "to try", "tu TRÁI", "Try again, please.", "Inténtalo otra vez, por favor.", "trái a-GUÉN, plíis"],
+["sentir", "to feel", "tu FÍIL", "I feel tired today.", "Hoy me siento cansado.", "ái fíil TÁI-erd tu-DÉI"],
+["conseguir", "to get", "tu GUET", "I need to get a new phone.", "Necesito conseguir un teléfono nuevo.", "ái níid tu guet a niúu fóun"],
+["preguntar", "to ask", "tu ASK", "Can I ask you something?", "¿Puedo preguntarte algo?", "kan ái ask iú SÁM-zin"],
+["responder", "to answer", "tu ÁN-ser", "Answer the phone, please.", "Contesta el teléfono, por favor.", "ÁN-ser de fóun, plíis"],
+["recordar", "to remember", "tu ri-MÉM-ber", "I don't remember his name.", "No recuerdo su nombre.", "ái dóunt ri-MÉM-ber jis néim"],
+["olvidar", "to forget", "tu for-GUÉT", "Don't forget the keys.", "No olvides las llaves.", "dóunt for-GUÉT de kíis"],
+["enviar", "to send", "tu SEND", "Send me an email.", "Envíame un correo.", "send mi an Í-meil"],
+["recibir", "to receive", "tu ri-SÍIV", "Did you receive my message?", "¿Recibiste mi mensaje?", "did iú ri-SÍIV mái MÉ-sich"],
+["conducir", "to drive", "tu DRÁIV", "I drive to work every day.", "Voy conduciendo al trabajo cada día.", "ái dráiv tu uérk É-vri déi"],
+["caminar", "to walk", "tu UÓK", "I like to walk after dinner.", "Me gusta caminar después de cenar.", "ái láik tu uók ÁF-ter DÍ-ner"],
+["correr", "to run", "tu RAN", "I run in the morning.", "Corro por la mañana.", "ái ran in de MÓR-nin"],
+["cocinar", "to cook", "tu KUK", "I cook on weekends.", "Cocino los fines de semana.", "ái kuk on UÍIK-ends"],
+["limpiar", "to clean", "tu KLÍIN", "I have to clean the house.", "Tengo que limpiar la casa.", "ái jav tu klíin de jáus"],
+["arreglar", "to fix", "tu FIKS", "I can fix the machine.", "Puedo arreglar la máquina.", "ái kan fiks de ma-SHÍIN"],
+["cambiar", "to change", "tu CHÉINCH", "I want to change my plan.", "Quiero cambiar mi plan.", "ái uónt tu chéinch mái plan"],
+["viajar", "to travel", "tu TRÁ-vel", "We travel every summer.", "Viajamos cada verano.", "uí TRÁ-vel É-vri SÁ-mer"],
+["descansar", "to rest", "tu REST", "You need to rest.", "Necesitas descansar.", "iú níid tu rest"]
+]
 ]},
-{ id:"c03", emoji:"🔧", title:"Verbos esenciales II", words:[
-  ["dar","to give","tu GUIV"],["coger","to take","tu TÉIK"],["saber","to know","tu NÓU"],["pensar","to think","tu ZINK"],
-  ["encontrar","to find","tu FÁIND"],["ayudar","to help","tu JELP"],["abrir","to open","tu ÓU-pen"],["cerrar","to close","tu KLÓUS"],
-  ["empezar","to start","tu START"],["terminar","to finish","tu FÍ-nish"],["esperar","to wait","tu UÉIT"],["buscar","to search","tu SERCH"],
-  ["usar","to use","tu IÚUS"],["leer","to read","tu RÍID"],["escribir","to write","tu RÁIT"],["entender","to understand","tu an-der-STÁND"],
-  ["aprender","to learn","tu LERN"],["jugar","to play","tu PLÉI"],["pagar","to pay","tu PÉI"],["salir","to leave","tu LÍIV"]
+{ id:"c03", emoji:"🔧", title:"Verbos esenciales II", series:[
+[
+["dar", "to give", "tu GUIV", "Give me the key.", "Dame la llave.", "guiv mi de kíi"],
+["coger", "to take", "tu TÉIK", "Take the first street.", "Coge la primera calle.", "téik de ferst stríit"],
+["saber", "to know", "tu NÓU", "I know the answer.", "Sé la respuesta.", "ái nóu di ÁN-ser"],
+["pensar", "to think", "tu ZINK", "I think you are right.", "Creo que tienes razón.", "ái zink iú ar ráit"],
+["encontrar", "to find", "tu FÁIND", "I can't find my phone.", "No encuentro mi teléfono.", "ái kant fáind mái fóun"],
+["ayudar", "to help", "tu JELP", "Can I help you?", "¿Puedo ayudarte?", "kan ái jelp iú"],
+["abrir", "to open", "tu ÓU-pen", "Open the door, please.", "Abre la puerta, por favor.", "ÓU-pen de dóor, plíis"],
+["cerrar", "to close", "tu KLÓUS", "Close the window.", "Cierra la ventana.", "klóus de UÍN-dou"],
+["empezar", "to start", "tu START", "Let's start now.", "Empecemos ahora.", "lets start náu"],
+["terminar", "to finish", "tu FÍ-nish", "I finish work at five.", "Termino de trabajar a las cinco.", "ái FÍ-nish uérk at fáiv"],
+["esperar", "to wait", "tu UÉIT", "Wait a moment, please.", "Espera un momento, por favor.", "uéit a MÓU-ment, plíis"],
+["buscar", "to search", "tu SERCH", "I will search on the internet.", "Buscaré en internet.", "ái uíl serch on di ÍN-ter-net"],
+["usar", "to use", "tu IÚUS", "Can I use your phone?", "¿Puedo usar tu teléfono?", "kan ái iúus iór fóun"],
+["leer", "to read", "tu RÍID", "I like to read at night.", "Me gusta leer por la noche.", "ái láik tu ríid at náit"],
+["escribir", "to write", "tu RÁIT", "Write your name here.", "Escribe tu nombre aquí.", "ráit iór néim jíar"],
+["entender", "to understand", "tu an-der-STÁND", "I don't understand.", "No lo entiendo.", "ái dóunt an-der-STÁND"],
+["aprender", "to learn", "tu LERN", "I want to learn English.", "Quiero aprender inglés.", "ái uónt tu lern ÍN-glish"],
+["jugar", "to play", "tu PLÉI", "The children play in the park.", "Los niños juegan en el parque.", "de CHÍL-dren pléi in de park"],
+["pagar", "to pay", "tu PÉI", "Can I pay by card?", "¿Puedo pagar con tarjeta?", "kan ái péi bái kard"],
+["salir", "to leave", "tu LÍIV", "I leave home at eight.", "Salgo de casa a las ocho.", "ái líiv jóum at éit"]
+],
+[
+["vender", "to sell", "tu SEL", "They sell good coffee here.", "Aquí venden buen café.", "déi sel gud KÓ-fi jíar"],
+["ganar", "to win", "tu UÍN", "I hope we win the match.", "Espero que ganemos el partido.", "ái jóup uí uín de match"],
+["perder", "to lose", "tu LÚUS", "Don't lose the ticket.", "No pierdas el billete.", "dóunt lúus de TÍ-ket"],
+["romper", "to break", "tu BRÉIK", "Be careful, don't break it.", "Cuidado, no lo rompas.", "bíi KÉAR-ful, dóunt bréik it"],
+["construir", "to build", "tu BILD", "They build houses.", "Construyen casas.", "déi bild JÁU-ses"],
+["mover", "to move", "tu MÚUV", "Help me move the table.", "Ayúdame a mover la mesa.", "jelp mi múuv de TÉI-bol"],
+["parar", "to stop", "tu STOP", "Stop the machine now.", "Para la máquina ahora.", "stop de ma-SHÍIN náu"],
+["continuar", "to continue", "tu kon-TÍ-niu", "Continue straight ahead.", "Continúa todo recto.", "kon-TÍ-niu stréit a-JÉD"],
+["elegir", "to choose", "tu CHÚUS", "Choose a color.", "Elige un color.", "chúus a KÁ-lor"],
+["decidir", "to decide", "tu di-SÁID", "We need to decide today.", "Tenemos que decidir hoy.", "uí níid tu di-SÁID tu-DÉI"],
+["explicar", "to explain", "tu iks-PLÉIN", "Can you explain it again?", "¿Puedes explicarlo otra vez?", "kan iú iks-PLÉIN it a-GUÉN"],
+["mostrar", "to show", "tu SHÓU", "Show me your photos.", "Enséñame tus fotos.", "shóu mi iór FÓU-tos"],
+["seguir", "to follow", "tu FÓ-lou", "Follow me, please.", "Sígueme, por favor.", "FÓ-lou mi, plíis"],
+["llegar", "to arrive", "tu a-RRÁIV", "The train arrives at six.", "El tren llega a las seis.", "de tréin a-RRÁIVS at siks"],
+["volver", "to return", "tu ri-TÉRN", "I return home at seven.", "Vuelvo a casa a las siete.", "ái ri-TÉRN jóum at SÉ-ven"],
+["quedarse", "to stay", "tu STÉI", "We stay at a hotel.", "Nos quedamos en un hotel.", "uí stéi at a jou-TÉL"],
+["despertarse", "to wake up", "tu uéik AP", "I wake up at six.", "Me despierto a las seis.", "ái uéik ap at siks"],
+["lavar", "to wash", "tu UÓSH", "Wash your hands.", "Lávate las manos.", "uósh iór jands"],
+["cantar", "to sing", "tu SING", "She sings very well.", "Ella canta muy bien.", "shi sings VÉ-ri uél"],
+["bailar", "to dance", "tu DANS", "Do you want to dance?", "¿Quieres bailar?", "du iú uónt tu dans"]
+]
 ]},
-{ id:"c04", emoji:"👨‍👩‍👧‍👦", title:"Personas y familia", words:[
-  ["hombre","man","man"],["mujer","woman","UÚ-man"],["niño","child","cháild"],["amigo","friend","frend"],
-  ["familia","family","FÁ-mi-li"],["padre","father","FÁ-der"],["madre","mother","MÁ-der"],["hijo","son","san"],
-  ["hija","daughter","DÓO-ter"],["hermano","brother","BRÁ-der"],["hermana","sister","SÍS-ter"],["marido","husband","JÁS-band"],
-  ["esposa","wife","uáif"],["abuelo","grandfather","GRÁND-fa-der"],["abuela","grandmother","GRÁND-ma-der"],["gente","people","PÍI-pol"],
-  ["persona","person","PÉR-son"],["nombre","name","néim"],["bebé","baby","BÉI-bi"],["vecino","neighbor","NÉI-bor"]
+{ id:"c04", emoji:"👨‍👩‍👧‍👦", title:"Personas y familia", series:[
+[
+["hombre", "man", "man", "That man is my boss.", "Ese hombre es mi jefe.", "dat man is mái bos"],
+["mujer", "woman", "UÚ-man", "That woman is a doctor.", "Esa mujer es médica.", "dat UÚ-man is a DÓK-tor"],
+["niño", "child", "cháild", "The child is sleeping.", "El niño está durmiendo.", "de cháild is SLÍI-pin"],
+["amigo", "friend", "frend", "He is my best friend.", "Es mi mejor amigo.", "ji is mái best frend"],
+["familia", "family", "FÁ-mi-li", "My family is very big.", "Mi familia es muy grande.", "mái FÁ-mi-li is VÉ-ri big"],
+["padre", "father", "FÁ-der", "My father works a lot.", "Mi padre trabaja mucho.", "mái FÁ-der uérks a lot"],
+["madre", "mother", "MÁ-der", "My mother cooks very well.", "Mi madre cocina muy bien.", "mái MÁ-der kuks VÉ-ri uél"],
+["hijo", "son", "san", "My son is five years old.", "Mi hijo tiene cinco años.", "mái san is fáiv yíars óuld"],
+["hija", "daughter", "DÓO-ter", "My daughter loves music.", "A mi hija le encanta la música.", "mái DÓO-ter lavs MIÚ-sik"],
+["hermano", "brother", "BRÁ-der", "My brother lives in Madrid.", "Mi hermano vive en Madrid.", "mái BRÁ-der livs in ma-DRÍD"],
+["hermana", "sister", "SÍS-ter", "My sister has a dog.", "Mi hermana tiene un perro.", "mái SÍS-ter jas a dog"],
+["marido", "husband", "JÁS-band", "Her husband is very tall.", "Su marido es muy alto.", "jer JÁS-band is VÉ-ri tóol"],
+["esposa", "wife", "uáif", "My wife is an engineer.", "Mi mujer es ingeniera.", "mái uáif is an en-chi-NÍAR"],
+["abuelo", "grandfather", "GRÁND-fa-der", "My grandfather is eighty.", "Mi abuelo tiene ochenta años.", "mái GRÁND-fa-der is ÉI-ti"],
+["abuela", "grandmother", "GRÁND-ma-der", "My grandmother makes great food.", "Mi abuela cocina genial.", "mái GRÁND-ma-der méiks gréit fúud"],
+["gente", "people", "PÍI-pol", "There are many people here.", "Hay mucha gente aquí.", "déar ar MÉ-ni PÍI-pol jíar"],
+["persona", "person", "PÉR-son", "She is a good person.", "Es una buena persona.", "shi is a gud PÉR-son"],
+["nombre", "name", "néim", "My name is Antonio.", "Me llamo Antonio.", "mái néim is an-TÓ-nio"],
+["bebé", "baby", "BÉI-bi", "The baby is crying.", "El bebé está llorando.", "de BÉI-bi is KRÁ-yin"],
+["vecino", "neighbor", "NÉI-bor", "My neighbor is very friendly.", "Mi vecino es muy amable.", "mái NÉI-bor is VÉ-ri FRÉND-li"]
+],
+[
+["tío", "uncle", "ÁN-kel", "My uncle lives in France.", "Mi tío vive en Francia.", "mái ÁN-kel livs in frans"],
+["tía", "aunt", "ant", "My aunt is a teacher.", "Mi tía es profesora.", "mái ant is a TÍI-cher"],
+["primo", "cousin", "KÁ-sin", "My cousin is my age.", "Mi primo tiene mi edad.", "mái KÁ-sin is mái éich"],
+["sobrino", "nephew", "NÉ-fiu", "My nephew is two years old.", "Mi sobrino tiene dos años.", "mái NÉ-fiu is túu yíars óuld"],
+["sobrina", "niece", "níis", "My niece loves drawing.", "A mi sobrina le encanta dibujar.", "mái níis lavs DRÓ-uin"],
+["pareja", "partner", "PÁRT-ner", "My partner works in Murcia.", "Mi pareja trabaja en Murcia.", "mái PÁRT-ner uérks in MÚR-zia"],
+["compañero", "colleague", "KÓ-liig", "He is a colleague from work.", "Es un compañero del trabajo.", "ji is a KÓ-liig from uérk"],
+["niños", "kids", "kids", "The kids are at school.", "Los niños están en el colegio.", "de kids ar at skúul"],
+["chico", "boy", "boi", "The boy plays football.", "El chico juega al fútbol.", "de boi pléis FÚT-bol"],
+["chica", "girl", "guerl", "The girl reads a lot.", "La chica lee mucho.", "de guerl ríids a lot"],
+["señor", "sir", "ser", "Good morning, sir.", "Buenos días, señor.", "gud MÓR-nin, ser"],
+["señora", "madam", "MÁ-dam", "Thank you, madam.", "Gracias, señora.", "zánk iú, MÁ-dam"],
+["joven", "young", "iáng", "He is very young.", "Es muy joven.", "ji is VÉ-ri iáng"],
+["adulto", "adult", "Á-dolt", "Two adults and two kids, please.", "Dos adultos y dos niños, por favor.", "túu Á-dolts and túu kids, plíis"],
+["equipo", "team", "tíim", "We are a good team.", "Somos un buen equipo.", "uí ar a gud tíim"],
+["médico", "doctor", "DÓK-tor", "I need a doctor.", "Necesito un médico.", "ái níid a DÓK-tor"],
+["profesor", "teacher", "TÍI-cher", "The teacher speaks slowly.", "El profesor habla despacio.", "de TÍI-cher spíiks SLÓU-li"],
+["ingeniero", "engineer", "en-chi-NÍAR", "I am an engineer.", "Soy ingeniero.", "ái am an en-chi-NÍAR"],
+["cliente", "customer", "KÁS-to-mer", "The customer is waiting.", "El cliente está esperando.", "de KÁS-to-mer is UÉI-tin"],
+["todos", "everybody", "É-vri-bo-di", "Everybody is here.", "Todos están aquí.", "É-vri-bo-di is jíar"]
+]
 ]},
-{ id:"c05", emoji:"⏰", title:"El tiempo", words:[
-  ["día","day","déi"],["semana","week","uíik"],["mes","month","manz"],["año","year","yíar"],
-  ["hoy","today","tu-DÉI"],["mañana","tomorrow","tu-MÓ-rrou"],["ayer","yesterday","IÉS-ter-dei"],["hora","hour","Á-uar"],
-  ["minuto","minute","MÍ-nit"],["tiempo","time","táim"],["noche","night","náit"],["tarde","afternoon","af-ter-NÚUN"],
-  ["lunes","Monday","MÁN-dei"],["viernes","Friday","FRÁI-dei"],["domingo","Sunday","SÁN-dei"],["fin de semana","weekend","UÍIK-end"],
-  ["temprano","early","ÉR-li"],["siempre","always","ÓOL-ueis"],["nunca","never","NÉ-ver"],["a veces","sometimes","SÁM-taims"]
+{ id:"c05", emoji:"⏰", title:"El tiempo", series:[
+[
+["día", "day", "déi", "Today is a beautiful day.", "Hoy es un día precioso.", "tu-DÉI is a BIÚ-ti-ful déi"],
+["semana", "week", "uíik", "See you next week.", "Nos vemos la semana que viene.", "síi iú nekst uíik"],
+["mes", "month", "manz", "I start next month.", "Empiezo el mes que viene.", "ái start nekst manz"],
+["año", "year", "yíar", "Happy new year!", "¡Feliz año nuevo!", "JÁ-pi niúu yíar"],
+["hoy", "today", "tu-DÉI", "Today I work from home.", "Hoy trabajo desde casa.", "tu-DÉI ái uérk from jóum"],
+["mañana", "tomorrow", "tu-MÓ-rrou", "Tomorrow is Friday.", "Mañana es viernes.", "tu-MÓ-rrou is FRÁI-dei"],
+["ayer", "yesterday", "IÉS-ter-dei", "Yesterday I was very tired.", "Ayer estaba muy cansado.", "IÉS-ter-dei ái uós VÉ-ri TÁI-erd"],
+["hora", "hour", "Á-uar", "The meeting is in one hour.", "La reunión es en una hora.", "de MÍI-tin is in uán Á-uar"],
+["minuto", "minute", "MÍ-nit", "Wait five minutes.", "Espera cinco minutos.", "uéit fáiv MÍ-nits"],
+["tiempo", "time", "táim", "What time is it?", "¿Qué hora es?", "uót táim is it"],
+["noche", "night", "náit", "The night is very cold.", "La noche es muy fría.", "de náit is VÉ-ri kóuld"],
+["tarde", "afternoon", "af-ter-NÚUN", "I train in the afternoon.", "Entreno por la tarde.", "ái tréin in di af-ter-NÚUN"],
+["lunes", "Monday", "MÁN-dei", "I go to the gym on Monday.", "Voy al gimnasio el lunes.", "ái góu tu de chim on MÁN-dei"],
+["viernes", "Friday", "FRÁI-dei", "Friday is my favorite day.", "El viernes es mi día favorito.", "FRÁI-dei is mái FÉI-vo-rit déi"],
+["domingo", "Sunday", "SÁN-dei", "On Sunday we rest.", "El domingo descansamos.", "on SÁN-dei uí rest"],
+["fin de semana", "weekend", "UÍIK-end", "Have a nice weekend!", "¡Buen fin de semana!", "jav a náis UÍIK-end"],
+["temprano", "early", "ÉR-li", "I wake up very early.", "Me despierto muy temprano.", "ái uéik ap VÉ-ri ÉR-li"],
+["siempre", "always", "ÓOL-ueis", "I always drink coffee.", "Siempre tomo café.", "ái ÓOL-ueis drink KÓ-fi"],
+["nunca", "never", "NÉ-ver", "I never smoke.", "Nunca fumo.", "ái NÉ-ver smóuk"],
+["a veces", "sometimes", "SÁM-taims", "Sometimes I cook dinner.", "A veces preparo la cena.", "SÁM-taims ái kuk DÍ-ner"]
+],
+[
+["martes", "Tuesday", "TIÚS-dei", "The meeting is on Tuesday.", "La reunión es el martes.", "de MÍI-tin is on TIÚS-dei"],
+["miércoles", "Wednesday", "UÉNS-dei", "I train on Wednesday.", "Entreno el miércoles.", "ái tréin on UÉNS-dei"],
+["jueves", "Thursday", "ZÉRS-dei", "Thursday is almost Friday.", "El jueves es casi viernes.", "ZÉRS-dei is ÓL-moust FRÁI-dei"],
+["sábado", "Saturday", "SÁ-tur-dei", "On Saturday we go shopping.", "El sábado vamos de compras.", "on SÁ-tur-dei uí góu SHÓ-pin"],
+["primavera", "spring", "spring", "Spring is my favorite season.", "La primavera es mi estación favorita.", "spring is mái FÉI-vo-rit SÍI-son"],
+["verano", "summer", "SÁ-mer", "In summer we go to the beach.", "En verano vamos a la playa.", "in SÁ-mer uí góu tu de bíich"],
+["otoño", "autumn", "Ó-tum", "Autumn starts in September.", "El otoño empieza en septiembre.", "Ó-tum starts in sep-TÉM-ber"],
+["invierno", "winter", "UÍN-ter", "Winter is cold here.", "El invierno es frío aquí.", "UÍN-ter is kóuld jíar"],
+["tiempo (clima)", "weather", "UÉ-der", "The weather is great today.", "Hoy hace un tiempo estupendo.", "de UÉ-der is gréit tu-DÉI"],
+["lluvia", "rain", "réin", "The rain is coming.", "Viene lluvia.", "de réin is KÁ-min"],
+["sol", "sun", "san", "The sun is strong today.", "Hoy el sol pega fuerte.", "de san is strong tu-DÉI"],
+["viento", "wind", "uínd", "There is a lot of wind.", "Hace mucho viento.", "déar is a lot of uínd"],
+["nieve", "snow", "snóu", "There is snow in the mountains.", "Hay nieve en las montañas.", "déar is snóu in de MÁUN-tens"],
+["nube", "cloud", "kláud", "There are no clouds today.", "Hoy no hay nubes.", "déar ar nóu kláuds tu-DÉI"],
+["fecha", "date", "déit", "What is the date today?", "¿Qué fecha es hoy?", "uót is de déit tu-DÉI"],
+["cumpleaños", "birthday", "BERZ-dei", "Happy birthday!", "¡Feliz cumpleaños!", "JÁ-pi BERZ-dei"],
+["vacaciones", "holidays", "JÓ-li-deis", "We are on holidays.", "Estamos de vacaciones.", "uí ar on JÓ-li-deis"],
+["pronto", "soon", "súun", "See you soon!", "¡Hasta pronto!", "síi iú súun"],
+["tarde (llegar)", "late", "léit", "Sorry, I'm late.", "Perdón, llego tarde.", "SÓ-rri, aim léit"],
+["medianoche", "midnight", "MÍD-nait", "The party ends at midnight.", "La fiesta termina a medianoche.", "de PÁR-ti ends at MÍD-nait"]
+]
 ]},
-{ id:"c06", emoji:"🏠", title:"Casa y objetos", words:[
-  ["casa","house","jáus"],["puerta","door","dóor"],["ventana","window","UÍN-dou"],["mesa","table","TÉI-bol"],
-  ["silla","chair","chéar"],["cama","bed","bed"],["cocina","kitchen","KÍT-chen"],["baño","bathroom","BAZ-rum"],
-  ["habitación","room","rúum"],["llave","key","kíi"],["teléfono","phone","fóun"],["ordenador","computer","kom-PIÚ-ter"],
-  ["televisión","television","TE-le-vi-shon"],["luz","light","láit"],["ropa","clothes","klóuds"],["zapatos","shoes","shúus"],
-  ["bolso","bag","bag"],["reloj","watch","uótch"],["dinero","money","MÁ-ni"],["espejo","mirror","MÍ-rror"]
+{ id:"c06", emoji:"🏠", title:"Casa y objetos", series:[
+[
+["casa", "house", "jáus", "My house has a garden.", "Mi casa tiene jardín.", "mái jáus jas a GAR-den"],
+["puerta", "door", "dóor", "The door is open.", "La puerta está abierta.", "de dóor is ÓU-pen"],
+["ventana", "window", "UÍN-dou", "Open the window, please.", "Abre la ventana, por favor.", "ÓU-pen de UÍN-dou, plíis"],
+["mesa", "table", "TÉI-bol", "The keys are on the table.", "Las llaves están en la mesa.", "de kíis ar on de TÉI-bol"],
+["silla", "chair", "chéar", "This chair is comfortable.", "Esta silla es cómoda.", "dis chéar is KÁM-for-ta-bol"],
+["cama", "bed", "bed", "I go to bed at eleven.", "Me acuesto a las once.", "ái góu tu bed at i-LÉ-ven"],
+["cocina", "kitchen", "KÍT-chen", "The kitchen is very clean.", "La cocina está muy limpia.", "de KÍT-chen is VÉ-ri klíin"],
+["baño", "bathroom", "BAZ-rum", "Where is the bathroom?", "¿Dónde está el baño?", "uéar is de BAZ-rum"],
+["habitación", "room", "rúum", "This room is big.", "Esta habitación es grande.", "dis rúum is big"],
+["llave", "key", "kíi", "I lost my keys.", "He perdido mis llaves.", "ái lost mái kíis"],
+["teléfono", "phone", "fóun", "My phone has no battery.", "Mi teléfono no tiene batería.", "mái fóun jas nóu BÁ-te-ri"],
+["ordenador", "computer", "kom-PIÚ-ter", "I work with a computer.", "Trabajo con un ordenador.", "ái uérk uíz a kom-PIÚ-ter"],
+["televisión", "television", "TE-le-vi-shon", "Turn off the television.", "Apaga la televisión.", "tern of de TE-le-vi-shon"],
+["luz", "light", "láit", "Turn on the light, please.", "Enciende la luz, por favor.", "tern on de láit, plíis"],
+["ropa", "clothes", "klóuds", "These clothes are new.", "Esta ropa es nueva.", "díis klóuds ar niúu"],
+["zapatos", "shoes", "shúus", "I need new shoes.", "Necesito zapatos nuevos.", "ái níid niúu shúus"],
+["bolso", "bag", "bag", "The bag is heavy.", "El bolso pesa mucho.", "de bag is JÉ-vi"],
+["reloj", "watch", "uótch", "I like your watch.", "Me gusta tu reloj.", "ái láik iór uótch"],
+["dinero", "money", "MÁ-ni", "I need to save money.", "Necesito ahorrar dinero.", "ái níid tu séiv MÁ-ni"],
+["espejo", "mirror", "MÍ-rror", "Look in the mirror.", "Mírate en el espejo.", "luk in de MÍ-rror"]
+],
+[
+["salón", "living room", "LÍ-vin rum", "We watch TV in the living room.", "Vemos la tele en el salón.", "uí uótch ti-VÍ in de LÍ-vin rum"],
+["jardín", "garden", "GAR-den", "The garden is small but nice.", "El jardín es pequeño pero bonito.", "de GAR-den is smóol bat náis"],
+["garaje", "garage", "ga-RÁCH", "The car is in the garage.", "El coche está en el garaje.", "de kar is in de ga-RÁCH"],
+["escaleras", "stairs", "stéars", "Take the stairs.", "Sube por las escaleras.", "téik de stéars"],
+["ascensor", "lift", "lift", "The lift is broken.", "El ascensor está roto.", "de lift is BRÓU-ken"],
+["suelo", "floor", "flóor", "The floor is wet.", "El suelo está mojado.", "de flóor is uét"],
+["pared", "wall", "uól", "Paint the wall white.", "Pinta la pared de blanco.", "péint de uól uáit"],
+["techo", "ceiling", "SÍ-lin", "The ceiling is high.", "El techo es alto.", "de SÍ-lin is jái"],
+["sofá", "sofa", "SÓU-fa", "The sofa is very comfortable.", "El sofá es muy cómodo.", "de SÓU-fa is VÉ-ri KÁM-for-ta-bol"],
+["nevera", "fridge", "frich", "The milk is in the fridge.", "La leche está en la nevera.", "de milk is in de frich"],
+["horno", "oven", "Ó-ven", "The pizza is in the oven.", "La pizza está en el horno.", "de PÍT-sa is in di Ó-ven"],
+["lavadora", "washing machine", "UÓ-shin ma-SHÍIN", "The washing machine is new.", "La lavadora es nueva.", "de UÓ-shin ma-SHÍIN is niúu"],
+["ducha", "shower", "SHÁ-uer", "I take a shower every morning.", "Me ducho cada mañana.", "ái téik a SHÁ-uer É-vri MÓR-nin"],
+["toalla", "towel", "TÁ-uel", "I need a clean towel.", "Necesito una toalla limpia.", "ái níid a klíin TÁ-uel"],
+["almohada", "pillow", "PÍ-lou", "This pillow is very soft.", "Esta almohada es muy blanda.", "dis PÍ-lou is VÉ-ri soft"],
+["manta", "blanket", "BLÁN-ket", "Take a blanket, it's cold.", "Coge una manta, hace frío.", "téik a BLÁN-ket, its kóuld"],
+["cuchillo", "knife", "náif", "Careful with the knife.", "Cuidado con el cuchillo.", "KÉAR-ful uíz de náif"],
+["tenedor", "fork", "fork", "I need a fork, please.", "Necesito un tenedor, por favor.", "ái níid a fork, plíis"],
+["cuchara", "spoon", "spúun", "A spoon for the soup.", "Una cuchara para la sopa.", "a spúun for de súup"],
+["plato", "plate", "pléit", "The plates are on the table.", "Los platos están en la mesa.", "de pléits ar on de TÉI-bol"]
+]
 ]},
-{ id:"c07", emoji:"🍞", title:"Comida y bebida", words:[
-  ["agua","water","UÓ-ter"],["pan","bread","bred"],["leche","milk","milk"],["café","coffee","KÓ-fi"],
-  ["té","tea","tíi"],["cerveza","beer","bíar"],["vino","wine","uáin"],["carne","meat","míit"],
-  ["pollo","chicken","CHÍ-ken"],["pescado","fish","fish"],["fruta","fruit","frúut"],["manzana","apple","Á-pol"],
-  ["naranja","orange","Ó-rinch"],["huevo","egg","eg"],["queso","cheese","chíis"],["arroz","rice","ráis"],
-  ["sal","salt","solt"],["azúcar","sugar","SHÚ-gar"],["desayuno","breakfast","BRÉK-fast"],["cena","dinner","DÍ-ner"]
+{ id:"c07", emoji:"🍞", title:"Comida y bebida", series:[
+[
+["agua", "water", "UÓ-ter", "A glass of water, please.", "Un vaso de agua, por favor.", "a glas of UÓ-ter, plíis"],
+["pan", "bread", "bred", "This bread is fresh.", "Este pan está recién hecho.", "dis bred is fresh"],
+["leche", "milk", "milk", "Coffee with milk, please.", "Café con leche, por favor.", "KÓ-fi uíz milk, plíis"],
+["café", "coffee", "KÓ-fi", "I drink coffee every morning.", "Tomo café cada mañana.", "ái drink KÓ-fi É-vri MÓR-nin"],
+["té", "tea", "tíi", "Do you want some tea?", "¿Quieres un té?", "du iú uónt sam tíi"],
+["cerveza", "beer", "bíar", "Two beers, please.", "Dos cervezas, por favor.", "túu bíars, plíis"],
+["vino", "wine", "uáin", "This wine is from Spain.", "Este vino es de España.", "dis uáin is from spéin"],
+["carne", "meat", "míit", "I don't eat much meat.", "No como mucha carne.", "ái dóunt íit mach míit"],
+["pollo", "chicken", "CHÍ-ken", "Chicken with rice, please.", "Pollo con arroz, por favor.", "CHÍ-ken uíz ráis, plíis"],
+["pescado", "fish", "fish", "The fish is very good here.", "El pescado está muy bueno aquí.", "de fish is VÉ-ri gud jíar"],
+["fruta", "fruit", "frúut", "I eat fruit every day.", "Como fruta todos los días.", "ái íit frúut É-vri déi"],
+["manzana", "apple", "Á-pol", "An apple a day.", "Una manzana al día.", "an Á-pol a déi"],
+["naranja", "orange", "Ó-rinch", "Orange juice, please.", "Zumo de naranja, por favor.", "Ó-rinch chúus, plíis"],
+["huevo", "egg", "eg", "I want two eggs.", "Quiero dos huevos.", "ái uónt túu egs"],
+["queso", "cheese", "chíis", "I love Spanish cheese.", "Me encanta el queso español.", "ái lav SPÁ-nish chíis"],
+["arroz", "rice", "ráis", "Rice with vegetables.", "Arroz con verduras.", "ráis uíz VECH-ta-bols"],
+["sal", "salt", "solt", "Pass me the salt, please.", "Pásame la sal, por favor.", "pas mi de solt, plíis"],
+["azúcar", "sugar", "SHÚ-gar", "No sugar, thank you.", "Sin azúcar, gracias.", "nóu SHÚ-gar, zánk iú"],
+["desayuno", "breakfast", "BRÉK-fast", "Breakfast is at eight.", "El desayuno es a las ocho.", "BRÉK-fast is at éit"],
+["cena", "dinner", "DÍ-ner", "Dinner is ready.", "La cena está lista.", "DÍ-ner is RÉ-di"]
+],
+[
+["verduras", "vegetables", "VECH-ta-bols", "Eat more vegetables.", "Come más verdura.", "íit móor VECH-ta-bols"],
+["ensalada", "salad", "SÁ-lad", "A salad for me, please.", "Una ensalada para mí, por favor.", "a SÁ-lad for mi, plíis"],
+["sopa", "soup", "súup", "The soup is hot.", "La sopa está caliente.", "de súup is jot"],
+["patata", "potato", "po-TÉI-to", "Potatoes with eggs.", "Patatas con huevos.", "po-TÉI-tos uíz egs"],
+["tomate", "tomato", "to-MÁ-to", "Bread with tomato.", "Pan con tomate.", "bred uíz to-MÁ-to"],
+["cebolla", "onion", "Ó-nion", "No onion, please.", "Sin cebolla, por favor.", "nóu Ó-nion, plíis"],
+["ajo", "garlic", "GAR-lik", "Garlic is good for you.", "El ajo es bueno para la salud.", "GAR-lik is gud for iú"],
+["limón", "lemon", "LÉ-mon", "Water with lemon, please.", "Agua con limón, por favor.", "UÓ-ter uíz LÉ-mon, plíis"],
+["plátano", "banana", "ba-NÁ-na", "A banana after the gym.", "Un plátano después del gimnasio.", "a ba-NÁ-na ÁF-ter de chim"],
+["fresa", "strawberry", "STRÓ-be-rri", "Strawberries with cream.", "Fresas con nata.", "STRÓ-be-rris uíz kríim"],
+["pastel", "cake", "kéik", "The birthday cake is ready.", "La tarta de cumpleaños está lista.", "de BERZ-dei kéik is RÉ-di"],
+["chocolate", "chocolate", "CHÓK-lit", "I love dark chocolate.", "Me encanta el chocolate negro.", "ái lav dark CHÓK-lit"],
+["helado", "ice cream", "áis kríim", "Two ice creams, please.", "Dos helados, por favor.", "túu áis kríims, plíis"],
+["zumo", "juice", "chúus", "An orange juice, please.", "Un zumo de naranja, por favor.", "an Ó-rinch chúus, plíis"],
+["aceite", "oil", "óil", "Olive oil from Spain.", "Aceite de oliva de España.", "Ó-liv óil from spéin"],
+["mantequilla", "butter", "BÁ-ter", "Bread with butter.", "Pan con mantequilla.", "bred uíz BÁ-ter"],
+["jamón", "ham", "jam", "Spanish ham is famous.", "El jamón español es famoso.", "SPÁ-nish jam is FÉI-mos"],
+["cuenta", "bill", "bil", "The bill, please.", "La cuenta, por favor.", "de bil, plíis"],
+["camarero", "waiter", "UÉI-ter", "The waiter is very nice.", "El camarero es muy amable.", "de UÉI-ter is VÉ-ri náis"],
+["menú", "menu", "MÉ-niu", "Can I see the menu?", "¿Puedo ver el menú?", "kan ái síi de MÉ-niu"]
+]
 ]},
-{ id:"c08", emoji:"🔢", title:"Números y cantidades", words:[
-  ["uno","one","uán"],["dos","two","túu"],["tres","three","zríi"],["cuatro","four","fóor"],
-  ["cinco","five","fáiv"],["seis","six","siks"],["siete","seven","SÉ-ven"],["ocho","eight","éit"],
-  ["nueve","nine","náin"],["diez","ten","ten"],["veinte","twenty","TUÉN-ti"],["cien","one hundred","uán JÁN-dred"],
-  ["mil","one thousand","uán ZÁU-sand"],["primero","first","ferst"],["último","last","last"],["mucho","a lot","a LOT"],
-  ["poco","a little","a LÍ-tel"],["más","more","móor"],["menos","less","les"],["todo","everything","É-vri-zin"]
+{ id:"c08", emoji:"🔢", title:"Números y cantidades", series:[
+[
+["uno", "one", "uán", "Just one moment.", "Solo un momento.", "chast uán MÓU-ment"],
+["dos", "two", "túu", "I have two children.", "Tengo dos hijos.", "ái jav túu CHÍL-dren"],
+["tres", "three", "zríi", "Three tickets, please.", "Tres entradas, por favor.", "zríi TÍ-kets, plíis"],
+["cuatro", "four", "fóor", "We are four people.", "Somos cuatro personas.", "uí ar fóor PÍI-pol"],
+["cinco", "five", "fáiv", "It costs five euros.", "Cuesta cinco euros.", "it kosts fáiv IÚ-ros"],
+["seis", "six", "siks", "I finish at six.", "Termino a las seis.", "ái FÍ-nish at siks"],
+["siete", "seven", "SÉ-ven", "The shop opens at seven.", "La tienda abre a las siete.", "de shop ÓU-pens at SÉ-ven"],
+["ocho", "eight", "éit", "The train leaves at eight.", "El tren sale a las ocho.", "de tréin líivs at éit"],
+["nueve", "nine", "náin", "The meeting is at nine.", "La reunión es a las nueve.", "de MÍI-tin is at náin"],
+["diez", "ten", "ten", "Count to ten.", "Cuenta hasta diez.", "káunt tu ten"],
+["veinte", "twenty", "TUÉN-ti", "It costs twenty euros.", "Cuesta veinte euros.", "it kosts TUÉN-ti IÚ-ros"],
+["cien", "one hundred", "uán JÁN-dred", "One hundred percent.", "Cien por cien.", "uán JÁN-dred per-SÉNT"],
+["mil", "one thousand", "uán ZÁU-sand", "More than one thousand people.", "Más de mil personas.", "móor dan uán ZÁU-sand PÍI-pol"],
+["primero", "first", "ferst", "It's my first time here.", "Es mi primera vez aquí.", "its mái ferst táim jíar"],
+["último", "last", "last", "The last train is at midnight.", "El último tren es a medianoche.", "de last tréin is at MÍD-nait"],
+["mucho", "a lot", "a LOT", "Thanks a lot!", "¡Muchas gracias!", "zánks a lot"],
+["poco", "a little", "a LÍ-tel", "Just a little, please.", "Solo un poco, por favor.", "chast a LÍ-tel, plíis"],
+["más", "more", "móor", "Can I have more water?", "¿Me pones más agua?", "kan ái jav móor UÓ-ter"],
+["menos", "less", "les", "I need less sugar.", "Necesito menos azúcar.", "ái níid les SHÚ-gar"],
+["todo", "everything", "É-vri-zin", "Everything is okay.", "Todo está bien.", "É-vri-zin is ou-KÉI"]
+],
+[
+["treinta", "thirty", "ZÉR-ti", "The bus comes in thirty minutes.", "El autobús viene en treinta minutos.", "de bas kams in ZÉR-ti MÍ-nits"],
+["cuarenta", "forty", "FÓR-ti", "It costs forty euros.", "Cuesta cuarenta euros.", "it kosts FÓR-ti IÚ-ros"],
+["cincuenta", "fifty", "FÍF-ti", "Fifty percent off.", "Cincuenta por ciento de descuento.", "FÍF-ti per-SÉNT of"],
+["sesenta", "sixty", "SÍKS-ti", "My father is sixty.", "Mi padre tiene sesenta años.", "mái FÁ-der is SÍKS-ti"],
+["setenta", "seventy", "SÉ-ven-ti", "The speed limit is seventy.", "El límite de velocidad es setenta.", "de spíid LÍ-mit is SÉ-ven-ti"],
+["ochenta", "eighty", "ÉI-ti", "My grandmother is eighty.", "Mi abuela tiene ochenta años.", "mái GRÁND-ma-der is ÉI-ti"],
+["noventa", "ninety", "NÁIN-ti", "The film lasts ninety minutes.", "La película dura noventa minutos.", "de film lasts NÁIN-ti MÍ-nits"],
+["mitad", "half", "jaf", "Half a kilo, please.", "Medio kilo, por favor.", "jaf a KÍ-lo, plíis"],
+["doble", "double", "DÁ-bol", "A double room, please.", "Una habitación doble, por favor.", "a DÁ-bol rúum, plíis"],
+["par", "pair", "péar", "A pair of shoes.", "Un par de zapatos.", "a péar of shúus"],
+["docena", "dozen", "DÁ-sen", "A dozen eggs.", "Una docena de huevos.", "a DÁ-sen egs"],
+["número", "number", "NÁM-ber", "What is your phone number?", "¿Cuál es tu número de teléfono?", "uót is iór fóun NÁM-ber"],
+["kilo", "kilo", "KÍ-lo", "Two kilos of oranges.", "Dos kilos de naranjas.", "túu KÍ-los of Ó-rin-ches"],
+["metro", "meter", "MÍ-ter", "It's one meter long.", "Mide un metro.", "its uán MÍ-ter long"],
+["litro", "liter", "LÍ-ter", "A liter of milk.", "Un litro de leche.", "a LÍ-ter of milk"],
+["gratis", "free", "fríi", "The drinks are free.", "Las bebidas son gratis.", "de drinks ar fríi"],
+["suficiente", "enough", "i-NÁF", "That's enough, thank you.", "Es suficiente, gracias.", "dats i-NÁF, zánk iú"],
+["demasiado", "too much", "túu mach", "It's too much for me.", "Es demasiado para mí.", "its túu mach for mi"],
+["casi", "almost", "ÓL-moust", "It's almost ready.", "Está casi listo.", "its ÓL-moust RÉ-di"],
+["cero", "zero", "SÍ-ro", "The result is zero.", "El resultado es cero.", "de ri-SÓLT is SÍ-ro"]
+]
 ]},
-{ id:"c09", emoji:"🎨", title:"Adjetivos básicos", words:[
-  ["grande","big","big"],["pequeño","small","smóol"],["bueno","good","gud"],["malo","bad","bad"],
-  ["nuevo","new","niúu"],["viejo","old","óuld"],["fácil","easy","ÍI-si"],["difícil","difficult","DÍ-fi-colt"],
-  ["rápido","fast","fast"],["lento","slow","slóu"],["caliente","hot","jot"],["frío","cold","kóuld"],
-  ["alto","tall","tóol"],["bajo","short","short"],["bonito","beautiful","BIÚ-ti-ful"],["feo","ugly","Á-gli"],
-  ["caro","expensive","iks-PÉN-siv"],["barato","cheap","chíip"],["abierto","open","ÓU-pen"],["cerrado","closed","klóusd"]
+{ id:"c09", emoji:"🎨", title:"Adjetivos básicos", series:[
+[
+["grande", "big", "big", "This is a big problem.", "Es un gran problema.", "dis is a big PRÓ-blem"],
+["pequeño", "small", "smóol", "The room is small.", "La habitación es pequeña.", "de rúum is smóol"],
+["bueno", "good", "gud", "This is a good idea.", "Es una buena idea.", "dis is a gud ai-DÍ-a"],
+["malo", "bad", "bad", "The weather is bad today.", "Hoy hace mal tiempo.", "de UÉ-der is bad tu-DÉI"],
+["nuevo", "new", "niúu", "I have a new job.", "Tengo un trabajo nuevo.", "ái jav a niúu chob"],
+["viejo", "old", "óuld", "This is an old machine.", "Es una máquina vieja.", "dis is an óuld ma-SHÍIN"],
+["fácil", "easy", "ÍI-si", "This exercise is easy.", "Este ejercicio es fácil.", "dis ÉK-ser-sais is ÍI-si"],
+["difícil", "difficult", "DÍ-fi-colt", "This word is difficult.", "Esta palabra es difícil.", "dis uérd is DÍ-fi-colt"],
+["rápido", "fast", "fast", "This car is very fast.", "Este coche es muy rápido.", "dis kar is VÉ-ri fast"],
+["lento", "slow", "slóu", "The internet is slow today.", "Internet va lento hoy.", "di ÍN-ter-net is slóu tu-DÉI"],
+["caliente", "hot", "jot", "The coffee is very hot.", "El café está muy caliente.", "de KÓ-fi is VÉ-ri jot"],
+["frío", "cold", "kóuld", "The water is cold.", "El agua está fría.", "de UÓ-ter is kóuld"],
+["alto", "tall", "tóol", "My brother is very tall.", "Mi hermano es muy alto.", "mái BRÁ-der is VÉ-ri tóol"],
+["bajo", "short", "short", "It's a short trip.", "Es un viaje corto.", "its a short trip"],
+["bonito", "beautiful", "BIÚ-ti-ful", "What a beautiful day!", "¡Qué día tan bonito!", "uót a BIÚ-ti-ful déi"],
+["feo", "ugly", "Á-gli", "That building is ugly.", "Ese edificio es feo.", "dat BÍL-din is Á-gli"],
+["caro", "expensive", "iks-PÉN-siv", "This hotel is expensive.", "Este hotel es caro.", "dis jou-TÉL is iks-PÉN-siv"],
+["barato", "cheap", "chíip", "The menu is cheap.", "El menú es barato.", "de MÉ-niu is chíip"],
+["abierto", "open", "ÓU-pen", "The shop is open.", "La tienda está abierta.", "de shop is ÓU-pen"],
+["cerrado", "closed", "klóusd", "The bank is closed.", "El banco está cerrado.", "de bank is klóusd"]
+],
+[
+["feliz", "happy", "JÁ-pi", "I'm very happy today.", "Hoy estoy muy feliz.", "aim VÉ-ri JÁ-pi tu-DÉI"],
+["triste", "sad", "sad", "Why are you sad?", "¿Por qué estás triste?", "uái ar iú sad"],
+["cansado", "tired", "TÁI-erd", "I'm tired after work.", "Estoy cansado después del trabajo.", "aim TÁI-erd ÁF-ter uérk"],
+["enfermo", "sick", "sik", "My son is sick today.", "Mi hijo está enfermo hoy.", "mái san is sik tu-DÉI"],
+["ocupado", "busy", "BÍ-si", "I'm busy this week.", "Estoy ocupado esta semana.", "aim BÍ-si dis uíik"],
+["listo", "ready", "RÉ-di", "Are you ready?", "¿Estás listo?", "ar iú RÉ-di"],
+["hambriento", "hungry", "JÁN-gri", "I'm hungry, let's eat.", "Tengo hambre, vamos a comer.", "aim JÁN-gri, lets íit"],
+["sediento", "thirsty", "ZÉRS-ti", "I'm thirsty.", "Tengo sed.", "aim ZÉRS-ti"],
+["enfadado", "angry", "ÁN-gri", "Don't be angry.", "No te enfades.", "dóunt bíi ÁN-gri"],
+["tranquilo", "calm", "kam", "Stay calm, please.", "Mantén la calma, por favor.", "stéi kam, plíis"],
+["seguro (cierto)", "sure", "shúar", "Are you sure?", "¿Estás seguro?", "ar iú shúar"],
+["importante", "important", "im-PÓR-tant", "This is very important.", "Esto es muy importante.", "dis is VÉ-ri im-PÓR-tant"],
+["peligroso", "dangerous", "DÉIN-che-rus", "That machine is dangerous.", "Esa máquina es peligrosa.", "dat ma-SHÍIN is DÉIN-che-rus"],
+["seguro (sin peligro)", "safe", "séif", "This place is safe.", "Este lugar es seguro.", "dis pléis is séif"],
+["limpio", "clean", "klíin", "The kitchen is clean.", "La cocina está limpia.", "de KÍT-chen is klíin"],
+["sucio", "dirty", "DÉR-ti", "My shoes are dirty.", "Mis zapatos están sucios.", "mái shúus ar DÉR-ti"],
+["lleno", "full", "ful", "The hotel is full.", "El hotel está lleno.", "de jou-TÉL is ful"],
+["vacío", "empty", "ÉMP-ti", "The fridge is empty.", "La nevera está vacía.", "de frich is ÉMP-ti"],
+["fuerte", "strong", "strong", "This coffee is very strong.", "Este café es muy fuerte.", "dis KÓ-fi is VÉ-ri strong"],
+["divertido", "fun", "fan", "The party was fun.", "La fiesta fue divertida.", "de PÁR-ti uós fan"]
+]
 ]},
-{ id:"c10", emoji:"🏙️", title:"Trabajo y ciudad", words:[
-  ["trabajo","work","uérk"],["oficina","office","Ó-fis"],["empresa","company","KÁM-pa-ni"],["jefe","boss","bos"],
-  ["reunión","meeting","MÍI-tin"],["calle","street","stríit"],["ciudad","city","SÍ-ti"],["tienda","shop","shop"],
-  ["coche","car","kar"],["autobús","bus","bas"],["tren","train","tréin"],["avión","airplane","ÉAR-plein"],
-  ["aeropuerto","airport","ÉAR-port"],["hospital","hospital","JOS-pi-tal"],["escuela","school","skúul"],["banco","bank","bank"],
-  ["restaurante","restaurant","RÉS-to-rant"],["hotel","hotel","jou-TÉL"],["parque","park","park"],["mercado","market","MÁR-ket"]
+{ id:"c10", emoji:"🏙️", title:"Trabajo y ciudad", series:[
+[
+["trabajo", "work", "uérk", "I have a lot of work.", "Tengo mucho trabajo.", "ái jav a lot of uérk"],
+["oficina", "office", "Ó-fis", "The office is on the first floor.", "La oficina está en la primera planta.", "di Ó-fis is on de ferst flóor"],
+["empresa", "company", "KÁM-pa-ni", "I work for a small company.", "Trabajo en una empresa pequeña.", "ái uérk for a smóol KÁM-pa-ni"],
+["jefe", "boss", "bos", "My boss is on holiday.", "Mi jefe está de vacaciones.", "mái bos is on JÓ-li-dei"],
+["reunión", "meeting", "MÍI-tin", "The meeting starts at ten.", "La reunión empieza a las diez.", "de MÍI-tin starts at ten"],
+["calle", "street", "stríit", "I live on this street.", "Vivo en esta calle.", "ái liv on dis stríit"],
+["ciudad", "city", "SÍ-ti", "Murcia is a beautiful city.", "Murcia es una ciudad preciosa.", "MÚR-zia is a BIÚ-ti-ful SÍ-ti"],
+["tienda", "shop", "shop", "The shop closes at nine.", "La tienda cierra a las nueve.", "de shop KLÓU-ses at náin"],
+["coche", "car", "kar", "My car is in the garage.", "Mi coche está en el taller.", "mái kar is in de ga-RÁCH"],
+["autobús", "bus", "bas", "I take the bus to work.", "Cojo el autobús al trabajo.", "ái téik de bas tu uérk"],
+["tren", "train", "tréin", "The train is on time.", "El tren llega puntual.", "de tréin is on táim"],
+["avión", "airplane", "ÉAR-plein", "The airplane lands at noon.", "El avión aterriza a mediodía.", "di ÉAR-plein lands at núun"],
+["aeropuerto", "airport", "ÉAR-port", "We are going to the airport.", "Vamos al aeropuerto.", "uí ar GÓU-in tu di ÉAR-port"],
+["hospital", "hospital", "JOS-pi-tal", "The hospital is near here.", "El hospital está cerca de aquí.", "de JOS-pi-tal is níar jíar"],
+["escuela", "school", "skúul", "The children are at school.", "Los niños están en el colegio.", "de CHÍL-dren ar at skúul"],
+["banco", "bank", "bank", "I'm going to the bank.", "Voy al banco.", "aim GÓU-in tu de bank"],
+["restaurante", "restaurant", "RÉS-to-rant", "This restaurant is excellent.", "Este restaurante es excelente.", "dis RÉS-to-rant is ÉK-se-lent"],
+["hotel", "hotel", "jou-TÉL", "The hotel has a pool.", "El hotel tiene piscina.", "de jou-TÉL jas a púul"],
+["parque", "park", "park", "We walk in the park.", "Paseamos por el parque.", "uí uók in de park"],
+["mercado", "market", "MÁR-ket", "The market is on Saturdays.", "El mercado es los sábados.", "de MÁR-ket is on SÁ-tur-deis"]
+],
+[
+["fábrica", "factory", "FÁK-to-ri", "I work in a factory.", "Trabajo en una fábrica.", "ái uérk in a FÁK-to-ri"],
+["máquina", "machine", "ma-SHÍIN", "The machine is working well.", "La máquina funciona bien.", "de ma-SHÍIN is UÉR-kin uél"],
+["herramienta", "tool", "túul", "I need my tools.", "Necesito mis herramientas.", "ái níid mái túuls"],
+["proyecto", "project", "PRÓ-chekt", "The project is almost finished.", "El proyecto está casi terminado.", "de PRÓ-chekt is ÓL-moust FÍ-nishd"],
+["correo electrónico", "email", "Í-meil", "Send me an email.", "Envíame un correo.", "send mi an Í-meil"],
+["informe", "report", "ri-PÓRT", "The report is ready.", "El informe está listo.", "de ri-PÓRT is RÉ-di"],
+["sueldo", "salary", "SÁ-la-ri", "The salary is good.", "El sueldo es bueno.", "de SÁ-la-ri is gud"],
+["horario", "schedule", "SKÉ-chul", "My schedule is flexible.", "Mi horario es flexible.", "mái SKÉ-chul is FLÉK-si-bol"],
+["descanso", "break", "bréik", "Let's take a break.", "Hagamos un descanso.", "lets téik a bréik"],
+["plaza", "square", "skuéar", "The square is in the center.", "La plaza está en el centro.", "de skuéar is in de SÉN-ter"],
+["puente", "bridge", "brich", "Cross the bridge.", "Cruza el puente.", "kros de brich"],
+["esquina", "corner", "KÓR-ner", "The bar is on the corner.", "El bar está en la esquina.", "de bar is on de KÓR-ner"],
+["semáforo", "traffic light", "TRÁ-fik láit", "Turn left at the traffic light.", "Gira a la izquierda en el semáforo.", "tern left at de TRÁ-fik láit"],
+["gasolinera", "petrol station", "PÉ-trol STÉI-shon", "Is there a petrol station near?", "¿Hay una gasolinera cerca?", "is déar a PÉ-trol STÉI-shon níar"],
+["farmacia", "pharmacy", "FÁR-ma-si", "The pharmacy is open.", "La farmacia está abierta.", "de FÁR-ma-si is ÓU-pen"],
+["supermercado", "supermarket", "SÚ-per-mar-ket", "I'm going to the supermarket.", "Voy al supermercado.", "aim GÓU-in tu de SÚ-per-mar-ket"],
+["iglesia", "church", "cherch", "The church is very old.", "La iglesia es muy antigua.", "de cherch is VÉ-ri óuld"],
+["playa", "beach", "bíich", "The beach is ten minutes away.", "La playa está a diez minutos.", "de bíich is ten MÍ-nits a-UÉI"],
+["montaña", "mountain", "MÁUN-ten", "We hike in the mountains.", "Hacemos senderismo por la montaña.", "uí jáik in de MÁUN-tens"],
+["gimnasio", "gym", "chim", "I go to the gym three times a week.", "Voy al gimnasio tres veces por semana.", "ái góu tu de chim zríi táims a uíik"]
+]
 ]}
 ];
 
 /* ==================================================================
-   PERSISTENCIA (storage de Claude si existe, si no localStorage)
+   PERSISTENCIA
 ================================================================== */
 const Store = {
   KEY: "aprende-ingles-v1",
@@ -492,10 +916,11 @@ const Store = {
   persistent: true,
   defaults(){
     return {
-      settings:{ cycles:10, rate:0.95, pauseMs:1000, twice:false, autoNext:true, showPhon:true },
-      chapters:{},
+      settings:{ cycles:10, rate:0.95, pauseMs:1000, twice:false, autoNext:true, showPhon:true, sentences:false },
+      series:{},     // chId -> índice de serie activa (0 = Serie 1)
+      chapters:{},   // "c01-s1" -> {timesCompleted, started, lastDate}
       stats:{ totalCycles:0, totalWords:0, totalSeconds:0, days:[] },
-      pron:{ words:{}, attempts:0, good:0 }   // words: "en" -> {best, attempts, bad}
+      pron:{ words:{}, attempts:0, good:0 }
     };
   },
   hasClaudeStorage(){
@@ -503,12 +928,20 @@ const Store = {
   },
   applyData(raw){
     const d = JSON.parse(raw);
-    const def = this.defaults();
-    this.mem = Object.assign(def, d);
+    this.mem = Object.assign(this.defaults(), d);
     this.mem.settings = Object.assign(this.defaults().settings, d.settings||{});
     this.mem.stats = Object.assign(this.defaults().stats, d.stats||{});
     this.mem.pron = Object.assign(this.defaults().pron, d.pron||{});
     if(!this.mem.pron.words) this.mem.pron.words = {};
+    if(!this.mem.series) this.mem.series = {};
+    if(!this.mem.chapters) this.mem.chapters = {};
+    // Migración v3 → v4: progreso "c01" pasa a "c01-s1"
+    CHAPTERS.forEach(c => {
+      if(this.mem.chapters[c.id] && !this.mem.chapters[c.id+"-s1"]){
+        this.mem.chapters[c.id+"-s1"] = this.mem.chapters[c.id];
+        delete this.mem.chapters[c.id];
+      }
+    });
   },
   async load(){
     if(this.hasClaudeStorage()){
@@ -545,6 +978,13 @@ const Store = {
    UTILIDADES
 ================================================================== */
 const $ = id => document.getElementById(id);
+function seriesIdx(chId){
+  const c = CHAPTERS.find(x => x.id===chId);
+  const i = Store.mem.series[chId] || 0;
+  return Math.min(i, c.series.length-1);
+}
+function chWords(ch){ return ch.series[seriesIdx(ch.id)]; }
+function chKey(chId){ return chId+"-s"+(seriesIdx(chId)+1); }
 function shuffle(arr){
   const a = arr.slice();
   for(let i=a.length-1;i>0;i--){
@@ -582,7 +1022,6 @@ function toast(msg){
   clearTimeout(toastT);
   toastT = setTimeout(()=>t.classList.remove("show"), 2800);
 }
-/* Distancia de Levenshtein para comparar pronunciación reconocida */
 function levenshtein(a, b){
   const m = a.length, n = b.length;
   if(!m) return n; if(!n) return m;
@@ -596,13 +1035,12 @@ function levenshtein(a, b){
   }
   return prev[n];
 }
-const DIGIT_WORDS = {"1":"one","2":"two","3":"three","4":"four","5":"five","6":"six","7":"seven","8":"eight","9":"nine","10":"ten","20":"twenty","100":"one hundred","1000":"one thousand"};
+const DIGIT_WORDS = {"1":"one","2":"two","3":"three","4":"four","5":"five","6":"six","7":"seven","8":"eight","9":"nine","10":"ten","20":"twenty","30":"thirty","40":"forty","50":"fifty","60":"sixty","70":"seventy","80":"eighty","90":"ninety","100":"one hundred","1000":"one thousand","0":"zero"};
 function normalize(s){
   s = (s||"").toLowerCase()
     .replace(/['’´`]/g,"")
     .replace(/[^a-z0-9\s]/g," ")
     .replace(/\s+/g," ").trim();
-  // convertir dígitos sueltos a palabras (el reconocedor devuelve "2" por "two")
   s = s.split(" ").map(w => DIGIT_WORDS[w] || w).join(" ");
   return s;
 }
@@ -650,7 +1088,7 @@ const Voices = {
       if(onStart) u.onstart = onStart;
       u.onend = done;
       u.onerror = done;
-      Voices._last = u; // evitar recolección prematura en iOS
+      Voices._last = u;
       speechSynthesis.speak(u);
       const est = 1800 + text.length * 130 / rate;
       wd = setTimeout(done, est + 3500);
@@ -659,7 +1097,7 @@ const Voices = {
 };
 
 /* ==================================================================
-   MÓDULO VOCABULARIO (reproductor en bucle)
+   MÓDULO VOCABULARIO
 ================================================================== */
 const Player = {
   chapter:null, order:[], wordIdx:0, cycle:1,
@@ -670,26 +1108,43 @@ const Player = {
     this.resetSession();
     $("pl-ch-title").textContent = this.chapter.title;
     this.updateHeader();
+    this.updateChip();
     App.show("view-player");
     this.renderIdle();
   },
   resetSession(){
     clearTimeout(this.pauseTimer);
     try{ speechSynthesis.cancel(); }catch(e){}
-    this.order = shuffle(this.chapter.words);
+    this.order = shuffle(chWords(this.chapter));
     this.wordIdx = 0;
     this.cycle = 1;
     this.state = "idle";
   },
   updateHeader(){
     const s = Store.mem.settings;
-    $("pl-ch-sub").textContent = this.chapter.words.length+" palabras · "+s.cycles+" ciclos · orden aleatorio";
+    const si = seriesIdx(this.chapter.id)+1;
+    $("pl-ch-sub").textContent = "Serie "+si+" · "+chWords(this.chapter).length+" palabras · "+s.cycles+" ciclos";
+  },
+  updateChip(){
+    const on = Store.mem.settings.sentences;
+    const chip = $("chip-sen");
+    chip.textContent = "💬 Frases: "+(on?"Sí":"No");
+    chip.classList.toggle("on", on);
+  },
+  toggleSentences(){
+    Store.mem.settings.sentences = !Store.mem.settings.sentences;
+    Store.save();
+    this.updateChip();
+    if(this.state==="playing"){
+      toast(Store.mem.settings.sentences ? "Modo frases activado desde la siguiente palabra" : "Modo frases desactivado");
+    }
   },
   renderIdle(){
     $("w-es").textContent = "—";
     $("w-en").textContent = "—";
     $("w-phon").textContent = "";
     $("w-en").classList.add("waiting");
+    $("sent-box").classList.remove("show");
     $("dot").classList.remove("on");
     $("btn-play").innerHTML = "▶&nbsp; Empezar";
     $("pl-note").textContent = "Toca Empezar para iniciar la escucha.";
@@ -771,13 +1226,20 @@ const Player = {
   },
   speakCurrent(){
     if(this.state!=="playing") return;
-    const [es,en,ph] = this.order[this.wordIdx];
+    const [es,en,ph,sen,ses,senPh] = this.order[this.wordIdx];
     $("w-es").textContent = es;
     $("w-en").textContent = en;
     $("w-phon").textContent = Store.mem.settings.showPhon ? "/ "+ph+" /" : "";
     $("w-en").classList.add("waiting");
+    $("sent-box").classList.remove("show");
     this.updateBars();
     const rate = Store.mem.settings.rate;
+    const next = () => {
+      if(this.state!=="playing") return;
+      if(Store.mem.settings.sentences){
+        this.wait(600, () => this.speakSentence(sen, ses, senPh));
+      } else this.afterWord();
+    };
     Voices.speak(es, "es", rate,
       () => $("dot").classList.add("on"),
       () => {
@@ -794,11 +1256,32 @@ const Player = {
                 this.wait(450, () => {
                   Voices.speak(en, "en", rate,
                     () => $("dot").classList.add("on"),
-                    () => { $("dot").classList.remove("on"); this.afterWord(); });
+                    () => { $("dot").classList.remove("on"); next(); });
                 });
-              } else this.afterWord();
+              } else next();
             });
         });
+      });
+  },
+  speakSentence(sen, ses, senPh){
+    if(this.state!=="playing") return;
+    $("w-sen").textContent = sen;
+    $("w-sen-ph").textContent = Store.mem.settings.showPhon ? "/ "+senPh+" /" : "";
+    $("w-sen-es").textContent = ses;
+    $("sent-box").classList.add("show");
+    const rate = Store.mem.settings.rate;
+    Voices.speak(sen, "en", rate,
+      () => $("dot").classList.add("on"),
+      () => {
+        $("dot").classList.remove("on");
+        if(this.state!=="playing") return;
+        if(Store.mem.settings.twice){
+          this.wait(500, () => {
+            Voices.speak(sen, "en", rate,
+              () => $("dot").classList.add("on"),
+              () => { $("dot").classList.remove("on"); this.afterWord(); });
+          });
+        } else this.afterWord();
       });
   },
   afterWord(){
@@ -815,13 +1298,13 @@ const Player = {
       this.wordIdx = 0;
       Store.save();
       if(this.cycle > Store.mem.settings.cycles){ this.finishChapter(); return; }
-      this.order = shuffle(this.chapter.words);
+      this.order = shuffle(chWords(this.chapter));
     }
     this.speakCurrent();
   },
   finishChapter(){
     this.flushTime();
-    const ch = this.chRecord(this.chapter.id);
+    const ch = this.chRecord();
     ch.timesCompleted++;
     ch.lastDate = todayStr();
     Store.save();
@@ -858,12 +1341,13 @@ const Player = {
     clearTimeout(this.pauseTimer);
     this.pauseTimer = setTimeout(fn, ms);
   },
-  chRecord(id){
-    if(!Store.mem.chapters[id]) Store.mem.chapters[id] = { timesCompleted:0, started:false, lastDate:null };
-    return Store.mem.chapters[id];
+  chRecord(){
+    const k = chKey(this.chapter.id);
+    if(!Store.mem.chapters[k]) Store.mem.chapters[k] = { timesCompleted:0, started:false, lastDate:null };
+    return Store.mem.chapters[k];
   },
   markStarted(){
-    const ch = this.chRecord(this.chapter.id);
+    const ch = this.chRecord();
     ch.started = true;
     ch.lastDate = todayStr();
     const t = todayStr();
@@ -898,10 +1382,10 @@ document.addEventListener("visibilitychange", () => {
 });
 
 /* ==================================================================
-   MÓDULO PRONUNCIACIÓN
+   MÓDULO PRONUNCIACIÓN (palabras y frases)
 ================================================================== */
 const Pron = {
-  chapter:null, idx:0, rec:null, listening:false, recTimeout:null,
+  chapter:null, idx:0, mode:"word", rec:null, listening:false, recTimeout:null,
 
   supported(){
     return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
@@ -909,41 +1393,64 @@ const Pron = {
   open(chId){
     this.chapter = CHAPTERS.find(c => c.id === chId);
     this.idx = 0;
+    this.mode = "word";
+    this.updateModeChips();
     App.show("view-pron");
     $("pr-ch-title").textContent = this.chapter.title;
-    this.renderWord(true);
+    this.renderItem(true);
     const t = todayStr();
     if(!Store.mem.stats.days.includes(t)){ Store.mem.stats.days.push(t); Store.save(); }
     if(!this.supported()){
       $("pr-note").textContent = "⚠️ Este navegador no soporta reconocimiento de voz. En iPhone, usa Safari y activa Siri y Dictado en Ajustes.";
       $("btn-mic").disabled = true;
     } else {
-      $("pr-note").textContent = "Escucha la palabra y tócala con el micrófono cuando estés listo.";
+      $("pr-note").textContent = "Escucha y toca el micrófono cuando estés listo.";
       $("btn-mic").disabled = false;
     }
   },
-  word(){ return this.chapter.words[this.idx]; },
-  wordRec(en){
-    if(!Store.mem.pron.words[en]) Store.mem.pron.words[en] = { best:null, attempts:0, bad:0 };
-    return Store.mem.pron.words[en];
+  setMode(m){
+    if(this.mode===m) return;
+    this.stopRec();
+    this.mode = m;
+    this.idx = 0;
+    this.updateModeChips();
+    this.renderItem(true);
   },
-  renderWord(autoListen){
-    const [es,en,ph] = this.word();
-    $("p-es").textContent = es;
-    $("p-en").textContent = en;
-    $("p-phon").textContent = Store.mem.settings.showPhon ? "/ "+ph+" /" : "";
-    $("pr-ch-sub").textContent = "Palabra "+(this.idx+1)+" de "+this.chapter.words.length;
+  updateModeChips(){
+    $("pm-word").classList.toggle("on", this.mode==="word");
+    $("pm-sen").classList.toggle("on", this.mode==="sen");
+  },
+  words(){ return chWords(this.chapter); },
+  item(){ return this.words()[this.idx]; },
+  target(){
+    const w = this.item();
+    return this.mode==="word" ? w[1] : w[3];
+  },
+  itemRec(){
+    const t = this.target();
+    if(!Store.mem.pron.words[t]) Store.mem.pron.words[t] = { best:null, attempts:0, bad:0 };
+    return Store.mem.pron.words[t];
+  },
+  renderItem(autoListen){
+    const [es,en,ph,sen,ses,senPh] = this.item();
+    const isW = this.mode==="word";
+    $("p-es").textContent = isW ? es : ses;
+    $("p-en").textContent = isW ? en : sen;
+    $("p-en").classList.toggle("sentmode", !isW);
+    $("p-phon").textContent = Store.mem.settings.showPhon ? "/ "+(isW ? ph : senPh)+" /" : "";
+    $("pr-ch-sub").textContent = (isW?"Palabra ":"Frase ")+(this.idx+1)+" de "+this.words().length+" · Serie "+(seriesIdx(this.chapter.id)+1);
     this.clearVerdict();
     this.renderDots();
     $("btn-prev").disabled = this.idx===0;
-    $("btn-next").disabled = this.idx===this.chapter.words.length-1;
+    $("btn-next").disabled = this.idx===this.words().length-1;
     if(autoListen) this.listen();
   },
   renderDots(){
     const box = $("v-dots");
     box.innerHTML = "";
-    this.chapter.words.forEach((w,i) => {
-      const rec = Store.mem.pron.words[w[1]];
+    this.words().forEach((w,i) => {
+      const key = this.mode==="word" ? w[1] : w[3];
+      const rec = Store.mem.pron.words[key];
       const dot = document.createElement("i");
       if(rec && rec.best) dot.className = rec.best;
       if(i===this.idx) dot.classList.add("cur");
@@ -958,11 +1465,10 @@ const Pron = {
   },
   listen(){
     if(this.listening) return;
-    const [,en] = this.word();
-    Voices.speak(en, "en", Store.mem.settings.rate, null, null);
+    Voices.speak(this.target(), "en", Store.mem.settings.rate, null, null);
   },
-  prev(){ if(this.idx>0){ this.stopRec(); this.idx--; this.renderWord(true); } },
-  next(){ if(this.idx<this.chapter.words.length-1){ this.stopRec(); this.idx++; this.renderWord(true); } },
+  prev(){ if(this.idx>0){ this.stopRec(); this.idx--; this.renderItem(true); } },
+  next(){ if(this.idx<this.words().length-1){ this.stopRec(); this.idx++; this.renderItem(true); } },
   exit(){
     this.stopRec();
     try{ speechSynthesis.cancel(); }catch(e){}
@@ -988,14 +1494,14 @@ const Pron = {
     rec.interimResults = false;
     rec.maxAlternatives = 5;
     let gotResult = false;
+    const limit = this.mode==="word" ? 6000 : 10000;
 
     rec.onstart = () => {
       this.listening = true;
       $("btn-mic").classList.add("listening");
       $("btn-mic").innerHTML = "●&nbsp; Escuchando… (toca para parar)";
-      $("pr-note").textContent = "Di la palabra en inglés ahora.";
-      // límite de seguridad por si no se detecta fin de voz
-      this.recTimeout = setTimeout(() => { try{ rec.stop(); }catch(e){} }, 6000);
+      $("pr-note").textContent = this.mode==="word" ? "Di la palabra en inglés ahora." : "Lee la frase en inglés ahora.";
+      this.recTimeout = setTimeout(() => { try{ rec.stop(); }catch(e){} }, limit);
     };
     rec.onresult = (ev) => {
       gotResult = true;
@@ -1025,8 +1531,8 @@ const Pron = {
     catch(e){ this.stopRec(); $("pr-note").textContent = "No se pudo iniciar el micrófono. Inténtalo de nuevo."; }
   },
   evaluate(alts){
-    const [,en] = this.word();
-    const target = normalize(en);
+    const isW = this.mode==="word";
+    const target = normalize(this.target());
     const targetNoTo = target.replace(/^to /,"");
     let verdict = "mal";
     let best = "";
@@ -1035,21 +1541,26 @@ const Pron = {
       const h = normalize(a);
       if(!h) continue;
       if(!best) best = h;
-      // coincidencia exacta (con o sin "to") o el objetivo contenido como frase completa
       if(h===target || h===targetNoTo || h===("to "+target) ||
-         (" "+h+" ").includes(" "+target+" ") || (" "+h+" ").includes(" "+targetNoTo+" ")){
+         (isW && ((" "+h+" ").includes(" "+target+" ") || (" "+h+" ").includes(" "+targetNoTo+" ")))){
         verdict = "bien";
         best = h;
         break;
       }
-      const ref = h.length && Math.abs(h.length-targetNoTo.length) < Math.abs(h.length-target.length) ? targetNoTo : target;
+      const ref = isW && h.length && Math.abs(h.length-targetNoTo.length) < Math.abs(h.length-target.length) ? targetNoTo : target;
       const score = 1 - levenshtein(h, ref)/Math.max(h.length, ref.length);
       if(score > bestScore){ bestScore = score; best = h; }
     }
-    if(verdict!=="bien" && bestScore >= 0.65) verdict = "regular";
+    if(verdict!=="bien"){
+      if(isW){
+        if(bestScore >= 0.65) verdict = "regular";
+      } else {
+        if(bestScore >= 0.85) verdict = "bien";
+        else if(bestScore >= 0.55) verdict = "regular";
+      }
+    }
 
-    // registro
-    const wr = this.wordRec(en);
+    const wr = this.itemRec();
     wr.attempts++;
     Store.mem.pron.attempts++;
     if(verdict==="bien"){
@@ -1061,7 +1572,6 @@ const Pron = {
     }
     Store.save();
 
-    // mostrar veredicto
     const v = $("verdict");
     v.className = "verdict show "+verdict;
     const labels = { bien:"✓ ¡Bien!", regular:"≈ Regular", mal:"✗ Mal" };
@@ -1078,7 +1588,7 @@ const Pron = {
 };
 
 /* ==================================================================
-   APP: vistas y render
+   APP
 ================================================================== */
 const App = {
   currentModule:"vocab",
@@ -1096,9 +1606,24 @@ const App = {
   },
   openStats(){ this.renderStats(); this.show("view-stats"); },
 
+  switchSeries(chId, ev){
+    ev.stopPropagation();
+    const c = CHAPTERS.find(x => x.id===chId);
+    const cur = seriesIdx(chId);
+    const next = (cur+1) % c.series.length;
+    const ok = confirm("«"+c.title+"»\n\nSerie actual: "+(cur+1)+" de "+c.series.length+".\n¿Cambiar a la Serie "+(next+1)+" (20 palabras "+(next>cur?"nuevas":"de repaso")+")?\n\nTu progreso de cada serie se conserva.");
+    if(!ok) return;
+    Store.mem.series[chId] = next;
+    Store.save();
+    this.renderChapters();
+    toast("«"+c.title+"» → Serie "+(next+1));
+  },
+
   renderHome(){
     const st = Store.mem.stats;
-    const done = CHAPTERS.filter(c => (Store.mem.chapters[c.id]||{}).timesCompleted > 0).length;
+    const done = CHAPTERS.filter(c => {
+      return c.series.some((_,i) => (Store.mem.chapters[c.id+"-s"+(i+1)]||{}).timesCompleted > 0);
+    }).length;
     $("hs-streak").textContent = calcStreak(st.days);
     $("hs-cycles").textContent = st.totalCycles;
     $("hs-done").textContent = done+"/"+CHAPTERS.length;
@@ -1109,49 +1634,56 @@ const App = {
     box.innerHTML = "";
     const mod = this.currentModule;
     CHAPTERS.forEach(c => {
+      const si = seriesIdx(c.id);
+      const words = c.series[si];
       let badge, meta, cls = "chapter";
       if(mod==="vocab"){
-        const rec = Store.mem.chapters[c.id] || {};
+        const rec = Store.mem.chapters[chKey(c.id)] || {};
         const n = rec.timesCompleted || 0;
         badge = '<span class="badge new">Nuevo</span>';
-        meta = c.words.length+" palabras";
+        meta = "Serie "+(si+1)+" · "+words.length+" palabras";
         if(n > 0){
           badge = '<span class="badge done">✓ ×'+n+'</span>';
-          meta = "Completado "+n+(n===1?" vez":" veces");
+          meta = "Serie "+(si+1)+" · completada "+n+(n===1?" vez":" veces");
           cls += " done";
         } else if(rec.started){
           badge = '<span class="badge prog">En progreso</span>';
-          meta = "Empezado, sin completar";
+          meta = "Serie "+(si+1)+" · empezada";
         }
       } else {
-        const good = c.words.filter(w => (Store.mem.pron.words[w[1]]||{}).best==="bien").length;
-        const tried = c.words.filter(w => (Store.mem.pron.words[w[1]]||{}).attempts>0).length;
-        if(good===c.words.length){
+        const good = words.filter(w => (Store.mem.pron.words[w[1]]||{}).best==="bien").length;
+        const tried = words.filter(w => (Store.mem.pron.words[w[1]]||{}).attempts>0).length;
+        if(good===words.length){
           badge = '<span class="badge done">✓ 20/20</span>';
-          meta = "Todas pronunciadas bien";
+          meta = "Serie "+(si+1)+" · todas bien";
           cls += " done";
         } else if(tried>0){
           badge = '<span class="badge prog">'+good+'/20 bien</span>';
-          meta = tried+" palabras practicadas";
+          meta = "Serie "+(si+1)+" · "+tried+" practicadas";
         } else {
           badge = '<span class="badge new">Nuevo</span>';
-          meta = c.words.length+" palabras";
+          meta = "Serie "+(si+1)+" · "+words.length+" palabras";
         }
       }
-      const b = document.createElement("button");
-      b.className = cls;
-      b.innerHTML =
+      const card = document.createElement("div");
+      card.className = cls;
+      card.innerHTML =
         '<div class="ch-num">'+c.emoji+'</div>'+
         '<div class="ch-body"><div class="ch-title">'+c.title+'</div>'+
-        '<div class="ch-meta">'+meta+'</div></div>'+badge;
-      b.onclick = () => mod==="vocab" ? Player.open(c.id) : Pron.open(c.id);
-      box.appendChild(b);
+        '<div class="ch-meta">'+meta+'</div></div>'+
+        '<div class="ch-right">'+badge+
+        '<button class="btn-series">↻ Serie '+(si+1)+'/'+c.series.length+'</button></div>';
+      card.onclick = () => mod==="vocab" ? Player.open(c.id) : Pron.open(c.id);
+      card.querySelector(".btn-series").onclick = (ev) => this.switchSeries(c.id, ev);
+      box.appendChild(card);
     });
   },
 
   renderStats(){
     const st = Store.mem.stats;
-    const done = CHAPTERS.filter(c => (Store.mem.chapters[c.id]||{}).timesCompleted > 0).length;
+    const done = CHAPTERS.filter(c => {
+      return c.series.some((_,i) => (Store.mem.chapters[c.id+"-s"+(i+1)]||{}).timesCompleted > 0);
+    }).length;
     $("st-streak").textContent = calcStreak(st.days);
     $("st-days").textContent = st.days.length;
     $("st-cycles").textContent = st.totalCycles;
@@ -1159,7 +1691,6 @@ const App = {
     $("st-words").textContent = st.totalWords;
     $("st-chdone").textContent = done+"/"+CHAPTERS.length;
 
-    // pronunciación
     const pr = Store.mem.pron;
     $("st-pr-att").textContent = pr.attempts;
     $("st-pr-pct").textContent = pr.attempts ? Math.round(pr.good/pr.attempts*100)+"%" : "—";
@@ -1169,21 +1700,21 @@ const App = {
       .slice(0,6);
     const hb = $("st-hard");
     hb.innerHTML = "";
-    hard.forEach(([en,w]) => {
+    hard.forEach(([t,w]) => {
       const row = document.createElement("div");
       row.className = "hard-word";
-      row.innerHTML = "<b>"+en+"</b><span>"+w.bad+" fallos</span>";
+      row.innerHTML = "<b>"+t+"</b><span>"+w.bad+" fallos</span>";
       hb.appendChild(row);
     });
     $("st-hard-empty").style.display = hard.length ? "none" : "block";
 
-    // vocabulario por capítulo
     const box = $("st-chapters");
     box.innerHTML = "";
-    const max = Math.max(1, ...CHAPTERS.map(c => (Store.mem.chapters[c.id]||{}).timesCompleted||0));
+    const totals = CHAPTERS.map(c => c.series.reduce((acc,_,i) => acc + ((Store.mem.chapters[c.id+"-s"+(i+1)]||{}).timesCompleted||0), 0));
+    const max = Math.max(1, ...totals);
     let any = false;
-    CHAPTERS.forEach(c => {
-      const n = (Store.mem.chapters[c.id]||{}).timesCompleted || 0;
+    CHAPTERS.forEach((c,ci) => {
+      const n = totals[ci];
       if(n > 0) any = true;
       const row = document.createElement("div");
       row.className = "ch-stat";
@@ -1203,6 +1734,7 @@ const App = {
     $("in-rate").value = s.rate;
     $("in-pause").value = s.pauseMs;
     $("in-twice").checked = s.twice;
+    $("in-sen").checked = s.sentences;
     $("in-phon").checked = s.showPhon;
     $("in-autonext").checked = s.autoNext;
     this.refreshOutputs();
@@ -1216,9 +1748,10 @@ const App = {
     if($("view-player").classList.contains("active")){
       Player.updateHeader();
       Player.updateBars();
+      Player.updateChip();
     }
     if($("view-pron").classList.contains("active")){
-      Pron.renderWord(false);
+      Pron.renderItem(false);
     }
   },
   refreshOutputs(){
@@ -1233,6 +1766,7 @@ $("in-cycles").addEventListener("input", e => { Store.mem.settings.cycles = +e.t
 $("in-rate").addEventListener("input", e => { Store.mem.settings.rate = +e.target.value; App.refreshOutputs(); });
 $("in-pause").addEventListener("input", e => { Store.mem.settings.pauseMs = +e.target.value; App.refreshOutputs(); });
 $("in-twice").addEventListener("change", e => { Store.mem.settings.twice = e.target.checked; });
+$("in-sen").addEventListener("change", e => { Store.mem.settings.sentences = e.target.checked; });
 $("in-phon").addEventListener("change", e => { Store.mem.settings.showPhon = e.target.checked; });
 $("in-autonext").addEventListener("change", e => { Store.mem.settings.autoNext = e.target.checked; });
 
