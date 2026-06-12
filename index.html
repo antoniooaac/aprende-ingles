@@ -1063,7 +1063,7 @@ const Voices = {
         return byLang.find(v => v.localService) || byLang[0] || null;
       };
       this.es = prefer("es-es", ["Mónica","Monica","Marisol","Paulina"]) || prefer("es", []);
-      this.en = prefer("en-us", ["Samantha","Ava","Allison"]) || prefer("en-gb", ["Daniel","Kate"]) || prefer("en", []);
+      this.en = prefer("en-gb", ["Daniel","Kate","Serena","Arthur","Martha","Google UK English"]) || prefer("en-us", ["Samantha","Ava","Allison"]) || prefer("en", []);
     };
     pick();
     if(typeof speechSynthesis !== "undefined"){
@@ -1083,7 +1083,7 @@ const Voices = {
       const u = new SpeechSynthesisUtterance(text);
       const voice = lang==="es" ? this.es : this.en;
       if(voice) u.voice = voice;
-      u.lang = lang==="es" ? "es-ES" : (voice ? voice.lang : "en-US");
+      u.lang = lang==="es" ? "es-ES" : (voice ? voice.lang : "en-GB");
       u.rate = rate;
       if(onStart) u.onstart = onStart;
       u.onend = done;
@@ -1490,7 +1490,7 @@ const Pron = {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     const rec = new SR();
     this.rec = rec;
-    rec.lang = "en-US";
+    rec.lang = "en-GB";
     rec.interimResults = false;
     rec.maxAlternatives = 5;
     let gotResult = false;
