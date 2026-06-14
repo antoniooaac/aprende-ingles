@@ -229,6 +229,20 @@
     box-shadow:0 8px 30px rgba(0,0,0,.45);max-width:88vw;text-align:center;
   }
   #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  /* ---------- módulo historias ---------- */
+  .story-scroll{flex:1;overflow-y:auto;min-height:0;padding:4px 2px 14px;-webkit-overflow-scrolling:touch}
+  .line{padding:11px 13px;border-radius:13px;margin-bottom:7px;border:1px solid transparent;opacity:.62;transition:opacity .25s,background .25s}
+  .line.cur{background:var(--bg-card);border-color:var(--line);opacity:1}
+  .line.past{opacity:.85}
+  .line .l-en{font-size:16.5px;font-weight:600;line-height:1.45;color:var(--text)}
+  .line .l-en .vw{color:var(--en);font-weight:700}
+  .line .l-ph{font-size:13px;color:var(--text-dim);font-style:italic;margin-top:3px;line-height:1.4}
+  .line .l-es{font-size:13px;color:var(--es);margin-top:3px;line-height:1.4;opacity:.85}
+  .line .l-sp{font-size:10.5px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;margin-bottom:3px}
+  .line.sp0{border-left:3px solid rgba(111,183,255,.45)}
+  .line.sp1{border-left:3px solid rgba(127,209,143,.45)}
+  .line.sp0 .l-sp{color:#6FB7FF}
+  .line.sp1 .l-sp{color:#7FD18F}
   @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
@@ -260,6 +274,15 @@
     <div class="mod-arrow">›</div>
   </button>
 
+  <button class="module" onclick="App.openStories()">
+    <div class="mod-emoji">📖</div>
+    <div class="mod-body">
+      <div class="mod-title">Historias</div>
+      <div class="mod-sub">3 relatos con tu vocabulario · 10-15 min</div>
+    </div>
+    <div class="mod-arrow">›</div>
+  </button>
+
   <button class="module" onclick="App.openStats()">
     <div class="mod-emoji">📊</div>
     <div class="mod-body">
@@ -274,7 +297,7 @@
     <div class="home-stat"><b id="hs-cycles">0</b><span>ciclos totales</span></div>
     <div class="home-stat"><b id="hs-done">0/10</b><span>capítulos</span></div>
   </div>
-  <div class="version">Versión 4</div>
+  <div class="version">Versión 7</div>
 </div>
 
 <!-- ============ VISTA: CAPÍTULOS ============ -->
@@ -397,6 +420,41 @@
   <div class="empty" id="st-empty" style="display:none">Aún no hay datos.<br>Completa tu primer capítulo para verlos aquí.</div>
 </div>
 
+<!-- ============ VISTA: LISTA DE HISTORIAS ============ -->
+<div class="view" id="view-stories">
+  <div class="topbar">
+    <button class="btn-back" onclick="App.goHome()">‹</button>
+    <h1>Historias</h1>
+    <button class="btn-icon" onclick="App.openSettings()" aria-label="Ajustes">⚙︎</button>
+  </div>
+  <div id="story-list"></div>
+</div>
+
+<!-- ============ VISTA: REPRODUCTOR DE HISTORIA ============ -->
+<div class="view" id="view-story">
+  <div class="pl-head">
+    <button class="btn-back" onclick="Story.exit()">‹</button>
+    <div class="pl-ch">
+      <b id="sp-title">Historia</b>
+      <span id="sp-sub"></span>
+    </div>
+    <button class="btn-icon" onclick="App.openSettings()" aria-label="Ajustes">⚙︎</button>
+  </div>
+
+  <div class="story-scroll" id="story-scroll"></div>
+
+  <div class="cycle-wrap">
+    <div class="cycle-row"><span>Frase</span><span id="sp-prog">0 / 0</span></div>
+    <div class="bar"><i id="sp-bar"></i></div>
+  </div>
+
+  <div class="pl-controls">
+    <button class="btn-side" onclick="Story.stop()" aria-label="Detener">■</button>
+    <button class="btn-main" id="sp-play" onclick="Story.toggle()">▶&nbsp; Empezar</button>
+  </div>
+  <div class="pl-note" id="sp-note"></div>
+</div>
+
 <!-- ============ AJUSTES ============ -->
 <div class="sheet-bg" id="sheet-bg" onclick="App.closeSettings()"></div>
 <div class="sheet" id="sheet">
@@ -438,7 +496,7 @@
 
 <script>
 "use strict";
-const APP_VERSION = 4;
+const APP_VERSION = 7;
 
 /* ==================================================================
    DATOS — cada palabra: [español, inglés, fonética, frase EN, frase ES, fonética frase]
@@ -920,7 +978,8 @@ const Store = {
       series:{},     // chId -> índice de serie activa (0 = Serie 1)
       chapters:{},   // "c01-s1" -> {timesCompleted, started, lastDate}
       stats:{ totalCycles:0, totalWords:0, totalSeconds:0, days:[] },
-      pron:{ words:{}, attempts:0, good:0 }
+      pron:{ words:{}, attempts:0, good:0 },
+      stories:{}
     };
   },
   hasClaudeStorage(){
@@ -935,6 +994,7 @@ const Store = {
     if(!this.mem.pron.words) this.mem.pron.words = {};
     if(!this.mem.series) this.mem.series = {};
     if(!this.mem.chapters) this.mem.chapters = {};
+    if(!this.mem.stories) this.mem.stories = {};
     // Migración v3 → v4: progreso "c01" pasa a "c01-s1"
     CHAPTERS.forEach(c => {
       if(this.mem.chapters[c.id] && !this.mem.chapters[c.id+"-s1"]){
@@ -1049,7 +1109,7 @@ function normalize(s){
    VOCES
 ================================================================== */
 const Voices = {
-  es:null, en:null,
+  es:null, en:null, enB:null,
   init(){
     const pick = () => {
       const vs = speechSynthesis.getVoices();
@@ -1063,14 +1123,27 @@ const Voices = {
         return byLang.find(v => v.localService) || byLang[0] || null;
       };
       this.es = prefer("es-es", ["Mónica","Monica","Marisol","Paulina"]) || prefer("es", []);
-      this.en = prefer("en-gb", ["Daniel","Kate","Serena","Arthur","Martha","Google UK English"]) || prefer("en-us", ["Samantha","Ava","Allison"]) || prefer("en", []);
+      /* Voz principal (Antonio): HOMBRE británico */
+      this.en = prefer("en-gb", ["Daniel","Arthur","Oliver","Aaron"])
+             || prefer("en-us", ["Aaron","Fred","Tom"])
+             || prefer("en-gb", []) || prefer("en", []);
+      /* Segunda voz (otro personaje): MUJER británica, Kate prioritaria.
+         Nunca cae en un hombre si hay alguna voz femenina disponible. */
+      const enAll = vs.filter(v => v.lang && v.lang.toLowerCase().startsWith("en"));
+      const femNames = ["Kate","Serena","Stephanie","Martha","Sonia","Hazel","Libby","Emily","Google UK English Female"];
+      const notSame = v => !this.en || v.name !== this.en.name;
+      let fem = null;
+      for(const n of femNames){ const f = enAll.find(v => v.lang.toLowerCase().startsWith("en-gb") && v.name.includes(n) && notSame(v)); if(f){ fem = f; break; } }
+      if(!fem){ for(const n of femNames){ const f = enAll.find(v => v.name.includes(n) && notSame(v)); if(f){ fem = f; break; } } }
+      this.enB = fem;                 /* null si no hay ninguna voz de mujer instalada */
+      this.enBisFemale = !!fem;
     };
     pick();
     if(typeof speechSynthesis !== "undefined"){
       speechSynthesis.onvoiceschanged = pick;
     }
   },
-  speak(text, lang, rate, onStart, onDone){
+  speak(text, lang, rate, onStart, onDone, opts){
     let finished = false;
     let wd = null;
     const done = () => {
@@ -1081,10 +1154,15 @@ const Voices = {
     };
     try{
       const u = new SpeechSynthesisUtterance(text);
-      const voice = lang==="es" ? this.es : this.en;
+      let voice;
+      if(opts && opts.voice) voice = opts.voice;
+      else if(opts && opts.defaultVoice && lang==="en") voice = this.defaultEn();
+      else voice = (lang==="es" ? this.es : this.en);
       if(voice) u.voice = voice;
-      u.lang = lang==="es" ? "es-ES" : (voice ? voice.lang : "en-GB");
+      if(lang==="es") u.lang = "es-ES";
+      else u.lang = voice ? voice.lang : ((opts && opts.defaultVoice) ? "en-US" : "en-GB");
       u.rate = rate;
+      if(opts && opts.pitch) u.pitch = opts.pitch;
       if(onStart) u.onstart = onStart;
       u.onend = done;
       u.onerror = done;
@@ -1093,6 +1171,33 @@ const Voices = {
       const est = 1800 + text.length * 130 / rate;
       wd = setTimeout(done, est + 3500);
     }catch(e){ done(); }
+  },
+  /* Voz inglesa por defecto del teléfono (para el módulo de vocabulario).
+     Si la voz por defecto del sistema es inglesa, la usa; si no, devuelve
+     null para que iOS use su propia voz inglesa por defecto. */
+  defaultEn(){
+    const vs = (typeof speechSynthesis !== "undefined") ? speechSynthesis.getVoices() : [];
+    const d = vs.find(v => v.default && v.lang && v.lang.toLowerCase().startsWith("en"));
+    return d || null;
+  },
+  /* Habla en inglés con la voz por defecto del teléfono (vocabulario y frases) */
+  speakV(text, rate, onStart, onDone){
+    this.speak(text, "en", rate, onStart, onDone, { defaultVoice:true });
+  },
+  /* Voz por personaje en los diálogos: voz B (mujer) si existe; si no, misma voz con tono más agudo */
+  speakStory(text, rate, who, onDone){
+    const hasB = !!this.enB;
+    const voice = (who === 1 && hasB) ? this.enB : this.en;
+    const pitch = hasB ? 1.0 : (who === 1 ? 1.4 : 0.85);
+    this.speak(text, "en", rate, null, onDone, { voice:voice, pitch:pitch });
+  },
+  /* Nombre corto de una voz, p. ej. "Kate" a partir de "Kate (Enhanced)" */
+  shortName(v){ return v ? v.name.replace(/\s*\(.*\)/,"").trim() : "—"; },
+  /* Texto para informar de las dos voces de los diálogos */
+  storyVoicesLabel(){
+    const a = this.shortName(this.en);
+    if(this.enB) return "Voces: "+a+" y "+this.shortName(this.enB)+".";
+    return "Voz: "+a+" (con tono agudo para el 2º personaje). Instala una voz de mujer británica (Kate) para diferenciarlas.";
   }
 };
 
@@ -1247,14 +1352,14 @@ const Player = {
         if(this.state!=="playing") return;
         this.wait(Math.min(Store.mem.settings.pauseMs, 1200), () => {
           $("w-en").classList.remove("waiting");
-          Voices.speak(en, "en", rate,
+          Voices.speakV(en, rate,
             () => $("dot").classList.add("on"),
             () => {
               $("dot").classList.remove("on");
               if(this.state!=="playing") return;
               if(Store.mem.settings.twice){
                 this.wait(450, () => {
-                  Voices.speak(en, "en", rate,
+                  Voices.speakV(en, rate,
                     () => $("dot").classList.add("on"),
                     () => { $("dot").classList.remove("on"); next(); });
                 });
@@ -1270,14 +1375,14 @@ const Player = {
     $("w-sen-es").textContent = ses;
     $("sent-box").classList.add("show");
     const rate = Store.mem.settings.rate;
-    Voices.speak(sen, "en", rate,
+    Voices.speakV(sen, rate,
       () => $("dot").classList.add("on"),
       () => {
         $("dot").classList.remove("on");
         if(this.state!=="playing") return;
         if(Store.mem.settings.twice){
           this.wait(500, () => {
-            Voices.speak(sen, "en", rate,
+            Voices.speakV(sen, rate,
               () => $("dot").classList.add("on"),
               () => { $("dot").classList.remove("on"); this.afterWord(); });
           });
@@ -1588,6 +1693,531 @@ const Pron = {
 };
 
 /* ==================================================================
+   HISTORIAS — cada línea: [inglés, fonética, español]
+================================================================== */
+const STORIES = [
+{ id:"h1", emoji:"🤝", title:"A New Friend at Work", subtitle:"Un amigo nuevo en el trabajo", level:"Fácil · capítulos 1-4", speakers:["Antonio","David"], lines:[
+[0,"Good morning! Are you David?","gud MÓR-nin! ar iú DÉI-vid","¡Buenos días! ¿Eres David?"],
+[1,"Yes, I am. Nice to meet you.","iés, ái am. náis tu míit iú","Sí, soy yo. Encantado."],
+[0,"Nice to meet you too. My name is Antonio.","náis tu míit iú túu. mái néim is an-TÓ-nio","Encantado también. Me llamo Antonio."],
+[1,"Sorry, I don't speak Spanish.","SÓ-rri, ái dóunt spíik SPÁ-nish","Perdón, no hablo español."],
+[0,"It's okay. I speak a little English.","its ou-KÉI. ái spíik a LÍ-tel ÍN-glish","No pasa nada. Hablo un poco de inglés."],
+[0,"But please, speak slowly.","bat plíis, spíik SLÓU-li","Pero por favor, habla despacio."],
+[1,"No problem. Slowly.","nóu PRÓ-blem. SLÓU-li","Sin problema. Despacio."],
+[0,"Welcome to the factory.","UÉL-kam tu de FÁK-to-ri","Bienvenido a la fábrica."],
+[1,"Thank you. It is very big!","zánk iú. it is VÉ-ri big","Gracias. ¡Es muy grande!"],
+[0,"Yes. Two hundred people work here.","iés. túu JÁN-dred PÍI-pol uérk jíar","Sí. Aquí trabajan doscientas personas."],
+[1,"Wow. And what is your job?","uáu. and uót is iór chob","Vaya. ¿Y cuál es tu trabajo?"],
+[0,"I am an engineer. I work with the machines.","ái am an en-chi-NÍAR. ái uérk uíz de ma-SHÍINS","Soy ingeniero. Trabajo con las máquinas."],
+[1,"Perfect. I am an engineer too.","PÉR-fekt. ái am an en-chi-NÍAR túu","Perfecto. Yo también soy ingeniero."],
+[0,"Where are you from, David?","uéar ar iú from, DÉI-vid","¿De dónde eres, David?"],
+[1,"I am from England. From a small city near London.","ái am from ÍN-gland. from a smóol SÍ-ti níar LÁN-don","Soy de Inglaterra. De una ciudad pequeña cerca de Londres."],
+[0,"And do you like Spain?","and du iú láik spéin","¿Y te gusta España?"],
+[1,"Yes, I love it. The sun, the food, the people.","iés, ái lav it. de san, de fúud, de PÍI-pol","Sí, me encanta. El sol, la comida, la gente."],
+[0,"Ha! In England the weather is bad, no?","ja! in ÍN-gland de UÉ-der is bad, nóu","¡Ja! En Inglaterra el tiempo es malo, ¿no?"],
+[1,"Yes. Rain, rain and more rain.","iés. réin, réin and móor réin","Sí. Lluvia, lluvia y más lluvia."],
+[0,"Here we have sun every day.","jíar uí jav san É-vri déi","Aquí tenemos sol todos los días."],
+[1,"That is why I am here!","dat is uái ái am jíar","¡Por eso estoy aquí!"],
+[0,"Come, I want to show you the machines.","kam, ái uónt tu shóu iú de ma-SHÍINS","Ven, quiero enseñarte las máquinas."],
+[1,"Great. After you.","gréit. ÁF-ter iú","Genial. Tú primero."],
+[0,"This is the new machine.","dis is de niúu ma-SHÍIN","Esta es la máquina nueva."],
+[1,"It is beautiful. Is it fast?","it is BIÚ-ti-ful. is it fast","Es preciosa. ¿Es rápida?"],
+[0,"Very fast. But today it has a problem.","VÉ-ri fast. bat tu-DÉI it jas a PRÓ-blem","Muy rápida. Pero hoy tiene un problema."],
+[1,"What problem?","uót PRÓ-blem","¿Qué problema?"],
+[0,"It stops every ten minutes.","it stops É-vri ten MÍ-nits","Se para cada diez minutos."],
+[1,"Interesting. Can I look?","ÍN-tres-tin. kan ái luk","Interesante. ¿Puedo mirar?"],
+[0,"Of course. Here.","of kóors. jíar","Claro. Aquí."],
+[1,"Hmm. I think I see the problem.","jmm. ái zink ái síi de PRÓ-blem","Mmm. Creo que veo el problema."],
+[0,"Really? So fast?","RÍI-li? sóu fast","¿En serio? ¿Tan rápido?"],
+[1,"Yes. This sensor is dirty.","iés. dis SÉN-sor is DÉR-ti","Sí. Este sensor está sucio."],
+[0,"Ah, the sensor! Of course.","aa, de SÉN-sor! of kóors","¡Ah, el sensor! Claro."],
+[1,"Can you give me a tool, please?","kan iú guiv mi a túul, plíis","¿Me das una herramienta, por favor?"],
+[0,"Yes. Here you are.","iés. jíar iú ar","Sí. Aquí tienes."],
+[1,"Thank you. One minute...","zánk iú. uán MÍ-nit","Gracias. Un minuto..."],
+[0,"Take your time.","téik iór táim","Tómate tu tiempo."],
+[1,"Okay. Try it now.","ou-KÉI. trái it náu","Vale. Pruébala ahora."],
+[0,"Look! It works very well!","luk! it uérks VÉ-ri uél","¡Mira! ¡Funciona muy bien!"],
+[1,"Excellent. Easy problem.","ÉK-se-lent. ÍI-si PRÓ-blem","Excelente. Problema fácil."],
+[0,"Thank you very much, David.","zánk iú VÉ-ri mach, DÉI-vid","Muchas gracias, David."],
+[1,"You're welcome.","iór UÉL-kam","De nada."],
+[0,"Are you hungry? It is two o'clock.","ar iú JÁN-gri? it is túu o-KLÓK","¿Tienes hambre? Son las dos."],
+[1,"Yes, very hungry.","iés, VÉ-ri JÁN-gri","Sí, mucha hambre."],
+[0,"In Spain we eat late.","in spéin uí íit léit","En España comemos tarde."],
+[1,"I know! In England we eat at twelve.","ái nóu! in ÍN-gland uí íit at tuélv","¡Lo sé! En Inglaterra comemos a las doce."],
+[0,"Come, I know a good restaurant.","kam, ái nóu a gud RÉS-to-rant","Ven, conozco un buen restaurante."],
+[1,"Is it near?","is it níar","¿Está cerca?"],
+[0,"Yes, five minutes. We can walk.","iés, fáiv MÍ-nits. uí kan uók","Sí, cinco minutos. Podemos ir andando."],
+[1,"Perfect.","PÉR-fekt","Perfecto."],
+[0,"Here it is. The food here is very good.","jíar it is. de fúud jíar is VÉ-ri gud","Aquí es. La comida aquí es muy buena."],
+[1,"What do you recommend?","uót du iú re-ko-MÉND","¿Qué me recomiendas?"],
+[0,"The chicken with rice. Or the fish.","de CHÍ-ken uíz ráis. or de fish","El pollo con arroz. O el pescado."],
+[1,"Chicken with rice for me.","CHÍ-ken uíz ráis for mi","Pollo con arroz para mí."],
+[0,"Good choice. I want the fish.","gud chóis. ái uónt de fish","Buena elección. Yo quiero el pescado."],
+[1,"And two waters, please.","and túu UÓ-ters, plíis","Y dos aguas, por favor."],
+[0,"Do you have family, David?","du iú jav FÁ-mi-li, DÉI-vid","¿Tienes familia, David?"],
+[1,"Yes. A brother and a sister.","iés. a BRÁ-der and a SÍS-ter","Sí. Un hermano y una hermana."],
+[0,"Do they live in England?","du déi liv in ÍN-gland","¿Viven en Inglaterra?"],
+[1,"My brother lives in London. My sister lives in Italy.","mái BRÁ-der livs in LÁN-don. mái SÍS-ter livs in Í-ta-li","Mi hermano vive en Londres. Mi hermana vive en Italia."],
+[0,"And your parents?","and iór PÉA-rents","¿Y tus padres?"],
+[1,"They live near the sea. They are old, but strong.","déi liv níar de síi. déi ar óuld, bat strong","Viven cerca del mar. Son mayores, pero fuertes."],
+[0,"Like my father!","láik mái FÁ-der","¡Como mi padre!"],
+[1,"And you, Antonio? Do you have children?","and iú, an-TÓ-nio? du iú jav CHÍL-dren","¿Y tú, Antonio? ¿Tienes hijos?"],
+[0,"Yes, two. A boy and a girl.","iés, túu. a bói and a guérl","Sí, dos. Un niño y una niña."],
+[1,"How old are they?","jáu óuld ar déi","¿Cuántos años tienen?"],
+[0,"My son is five. My daughter is three.","mái san is fáiv. mái DÓO-ter is zríi","Mi hijo tiene cinco. Mi hija tiene tres."],
+[1,"Beautiful age.","BIÚ-ti-ful éich","Edad preciosa."],
+[0,"Yes. But I sleep very little!","iés. bat ái slíip VÉ-ri LÍ-tel","Sí. ¡Pero duermo muy poco!"],
+[1,"Ha ha! I understand.","ja ja! ái an-der-STÁND","¡Ja, ja! Lo entiendo."],
+[0,"And my wife is a teacher.","and mái uáif is a TÍI-cher","Y mi mujer es profesora."],
+[1,"Really? My mother is a teacher too.","RÍI-li? mái MÁ-der is a TÍI-cher túu","¿En serio? Mi madre también es profesora."],
+[0,"Small world!","smóol uérld","¡El mundo es un pañuelo!"],
+[1,"This chicken is delicious.","dis CHÍ-ken is de-LÍ-shos","Este pollo está delicioso."],
+[0,"I am happy. Do you want a coffee?","ái am JÁ-pi. du iú uónt a KÓ-fi","Me alegro. ¿Quieres un café?"],
+[1,"Yes, please. With milk.","iés, plíis. uíz milk","Sí, por favor. Con leche."],
+[0,"Two coffees with milk, please!","túu KÓ-fis uíz milk, plíis","¡Dos cafés con leche, por favor!"],
+[1,"Antonio, one question.","an-TÓ-nio, uán KUÉS-tion","Antonio, una pregunta."],
+[0,"Yes, tell me.","iés, tel mi","Sí, dime."],
+[1,"Where is the supermarket? I need food for my house.","uéar is de SÚ-per-mar-ket? ái níid fúud for mái jáus","¿Dónde está el supermercado? Necesito comida para mi casa."],
+[0,"It is near your hotel.","it is níar iór jou-TÉL","Está cerca de tu hotel."],
+[1,"How do I go there?","jáu du ái góu déar","¿Cómo voy?"],
+[0,"Take the first street. Then continue straight ahead.","téik de ferst stríit. den kon-TÍ-niu stréit a-JÉD","Coge la primera calle. Luego sigue todo recto."],
+[1,"First street, then straight ahead.","ferst stríit, den stréit a-JÉD","Primera calle, luego todo recto."],
+[0,"Yes. The supermarket is on the corner.","iés. de SÚ-per-mar-ket is on de KÓR-ner","Sí. El supermercado está en la esquina."],
+[1,"Perfect. Thanks a lot.","PÉR-fekt. zánks a lot","Perfecto. Muchas gracias."],
+[0,"One more thing, David.","uán móor zin, DÉI-vid","Una cosa más, David."],
+[1,"Yes?","iés","¿Sí?"],
+[0,"My English is not very good.","mái ÍN-glish is not VÉ-ri gud","Mi inglés no es muy bueno."],
+[1,"Your English is good, Antonio!","iór ÍN-glish is gud, an-TÓ-nio","¡Tu inglés es bueno, Antonio!"],
+[0,"I want to practice every day. Can you help me?","ái uónt tu PRÁK-tis É-vri déi. kan iú jelp mi","Quiero practicar cada día. ¿Puedes ayudarme?"],
+[1,"Of course! And you help me with my Spanish.","of kóors! and iú jelp mi uíz mái SPÁ-nish","¡Claro! Y tú me ayudas con mi español."],
+[0,"Deal! English in the morning, Spanish in the afternoon.","díil! ÍN-glish in de MÓR-nin, SPÁ-nish in di af-ter-NÚUN","¡Trato hecho! Inglés por la mañana, español por la tarde."],
+[1,"Ha! Perfect plan.","ja! PÉR-fekt plan","¡Ja! Plan perfecto."],
+[0,"Okay, back to work?","ou-KÉI, bak tu uérk","Vale, ¿volvemos al trabajo?"],
+[1,"Yes. The machines are waiting.","iés. de ma-SHÍINS ar UÉI-tin","Sí. Las máquinas esperan."],
+[0,"See you in five minutes.","síi iú in fáiv MÍ-nits","Nos vemos en cinco minutos."],
+[1,"See you, friend.","síi iú, frend","Hasta ahora, amigo."]
+]},
+{ id:"h2", emoji:"🏡", title:"A Saturday at Home", subtitle:"Un sábado en casa", level:"Media · capítulos 5-7", speakers:["Antonio","Laura"], lines:[
+[0,"Good morning! Breakfast is ready.","gud MÓR-nin! BRÉK-fast is RÉ-di","¡Buenos días! El desayuno está listo."],
+[1,"Mmm, coffee. Thank you, my love.","mmm, KÓ-fi. zánk iú, mái lav","Mmm, café. Gracias, mi amor."],
+[0,"Today is Saturday. No work!","tu-DÉI is SÁ-tur-dei. nóu uérk","Hoy es sábado. ¡No hay trabajo!"],
+[1,"At last. The weekend!","at last. de UÍIK-end","Por fin. ¡El fin de semana!"],
+[0,"Are the children sleeping?","ar de CHÍL-dren SLÍI-pin","¿Los niños están durmiendo?"],
+[1,"Yes. The house is quiet.","iés. de jáus is KUÁ-iet","Sí. La casa está tranquila."],
+[0,"Quiet... I love this moment.","KUÁ-iet... ái lav dis MÓU-ment","Tranquila... Me encanta este momento."],
+[1,"Me too. What is for breakfast?","mi túu. uót is for BRÉK-fast","Yo también. ¿Qué hay de desayuno?"],
+[0,"Bread with tomato and oil. And fruit.","bred uíz to-MÁ-to and óil. and frúut","Pan con tomate y aceite. Y fruta."],
+[1,"Perfect. And milk for the children.","PÉR-fekt. and milk for de CHÍL-dren","Perfecto. Y leche para los niños."],
+[0,"What is the plan for today?","uót is de plan for tu-DÉI","¿Cuál es el plan para hoy?"],
+[1,"First, we clean the house.","ferst, uí klíin de jáus","Primero, limpiamos la casa."],
+[0,"Okay. I wash the plates.","ou-KÉI. ái uósh de pléits","Vale. Yo lavo los platos."],
+[1,"And I open the windows.","and ái ÓU-pen de UÍN-dous","Y yo abro las ventanas."],
+[0,"The weather is great today.","de UÉ-der is gréit tu-DÉI","Hoy hace un tiempo estupendo."],
+[1,"Yes. Sun and no clouds.","iés. san and nóu kláuds","Sí. Sol y sin nubes."],
+[1,"Antonio, we need food for the week.","an-TÓ-nio, uí níid fúud for de uíik","Antonio, necesitamos comida para la semana."],
+[0,"Yes. Let's go to the market.","iés. lets góu tu de MÁR-ket","Sí. Vamos al mercado."],
+[1,"Good idea. It is open on Saturdays.","gud ai-DÍ-a. it is ÓU-pen on SÁ-tur-deis","Buena idea. Abre los sábados."],
+[0,"We can walk. It is near.","uí kan uók. it is níar","Podemos ir andando. Está cerca."],
+[1,"Children! We go to the market!","CHÍL-dren! uí góu tu de MÁR-ket","¡Niños! ¡Nos vamos al mercado!"],
+[0,"Look, the market is full of people.","luk, de MÁR-ket is ful of PÍI-pol","Mira, el mercado está lleno de gente."],
+[1,"Saturday morning. Normal.","SÁ-tur-dei MÓR-nin. NÓR-mal","Sábado por la mañana. Normal."],
+[0,"What do we need?","uót du uí níid","¿Qué necesitamos?"],
+[1,"Fruit, fish, chicken, eggs and cheese.","frúut, fish, CHÍ-ken, egs and chíis","Fruta, pescado, pollo, huevos y queso."],
+[0,"And bread.","and bred","Y pan."],
+[1,"Yes, and bread. First the fruit.","iés, and bred. ferst de frúut","Sí, y pan. Primero la fruta."],
+[0,"Two kilos of oranges, please.","túu KÍ-los of Ó-rin-ches, plíis","Dos kilos de naranjas, por favor."],
+[1,"And one kilo of strawberries.","and uán KÍ-lo of STRÓ-be-rris","Y un kilo de fresas."],
+[0,"How much is it?","jáu mach is it","¿Cuánto es?"],
+[1,"Seven euros. The fruit here is cheap.","SÉ-ven IÚ-ros. de frúut jíar is chíip","Siete euros. Aquí la fruta es barata."],
+[0,"And very fresh.","and VÉ-ri fresh","Y muy fresca."],
+[1,"Now the fish.","náu de fish","Ahora el pescado."],
+[0,"This fish looks very good.","dis fish luks VÉ-ri gud","Este pescado tiene muy buena pinta."],
+[1,"Don't forget the milk!","dóunt for-GUÉT de milk","¡No olvides la leche!"],
+[0,"Ah, yes! Milk for the children.","aa, iés! milk for de CHÍL-dren","¡Ah, sí! Leche para los niños."],
+[1,"Our son wants chocolate.","áuar san uónts CHÓK-lit","Nuestro hijo quiere chocolate."],
+[0,"Just a little.","chast a LÍ-tel","Solo un poco."],
+[1,"Okay, a small chocolate.","ou-KÉI, a smóol CHÓK-lit","Vale, un chocolate pequeño."],
+[0,"These bags are heavy!","díis bags ar JÉ-vi","¡Estas bolsas pesan!"],
+[1,"You are strong! Ha ha.","iú ar strong! ja ja","¡Tú eres fuerte! Ja, ja."],
+[0,"Very funny.","VÉ-ri FÁ-ni","Muy graciosa."],
+[1,"At home, put everything in the fridge.","at jóum, put É-vri-zin in de frich","En casa, ponlo todo en la nevera."],
+[0,"Yes. And then I cook.","iés. and den ái kuk","Sí. Y luego cocino."],
+[1,"What do you want to cook?","uót du iú uónt tu kuk","¿Qué quieres cocinar?"],
+[0,"Rice with chicken. My special dish.","ráis uíz CHÍ-ken. mái SPÉ-shal dish","Arroz con pollo. Mi plato especial."],
+[1,"Mmm! The children love it.","mmm! de CHÍL-dren lav it","¡Mmm! A los niños les encanta."],
+[0,"I need oil, garlic and onion.","ái níid óil, GAR-lik and Ó-nion","Necesito aceite, ajo y cebolla."],
+[1,"Everything is in the kitchen.","É-vri-zin is in de KÍT-chen","Todo está en la cocina."],
+[0,"Perfect. Thirty minutes and lunch is ready.","PÉR-fekt. ZÉR-ti MÍ-nits and lanch is RÉ-di","Perfecto. Treinta minutos y la comida está lista."],
+[1,"Children! Lunch is ready!","CHÍL-dren! lanch is RÉ-di","¡Niños! ¡La comida está lista!"],
+[0,"Everybody to the table.","É-vri-bo-di tu de TÉI-bol","Todos a la mesa."],
+[1,"This is very good, Antonio.","dis is VÉ-ri gud, an-TÓ-nio","Está muy bueno, Antonio."],
+[0,"Thank you. Old family recipe.","zánk iú. óuld FÁ-mi-li RÉ-si-pi","Gracias. Vieja receta familiar."],
+[1,"After lunch, rest?","ÁF-ter lanch, rest","Después de comer, ¿descanso?"],
+[0,"Yes. Thirty minutes on the sofa.","iés. ZÉR-ti MÍ-nits on de SÓU-fa","Sí. Treinta minutos en el sofá."],
+[1,"The sofa is yours. I read my book.","de SÓU-fa is iórs. ái ríid mái buk","El sofá es tuyo. Yo leo mi libro."],
+[0,"Is the book good?","is de buk gud","¿Es bueno el libro?"],
+[1,"Very good. A love story.","VÉ-ri gud. a lav STÓ-ri","Muy bueno. Una historia de amor."],
+[0,"Like our story!","láik áuar STÓ-ri","¡Como nuestra historia!"],
+[1,"Ha! Yes, but with less work.","ja! iés, bat uíz les uérk","¡Ja! Sí, pero con menos trabajo."],
+[0,"This afternoon I want to fix the garage door.","dis af-ter-NÚUN ái uónt tu fiks de ga-RÁCH dóor","Esta tarde quiero arreglar la puerta del garaje."],
+[1,"Again? That door is very old.","a-GUÉN? dat dóor is VÉ-ri óuld","¿Otra vez? Esa puerta es muy vieja."],
+[0,"Old and slow. But I have my tools.","óuld and slóu. bat ái jav mái túuls","Vieja y lenta. Pero tengo mis herramientas."],
+[1,"My engineer! Ha ha.","mái en-chi-NÍAR! ja ja","¡Mi ingeniero! Ja, ja."],
+[0,"One hour of work, you will see.","uán Á-uar of uérk, iú uil síi","Una hora de trabajo, ya verás."],
+[1,"And? The door?","and? de dóor","¿Y? ¿La puerta?"],
+[0,"Listen... it opens very well now!","LÍ-sen... it ÓU-pens VÉ-ri uél náu","Escucha... ¡ahora abre muy bien!"],
+[1,"Bravo! Good work.","BRÁ-vo! gud uérk","¡Bravo! Buen trabajo."],
+[0,"At six we visit my mother, okay?","at siks uí VÍ-sit mái MÁ-der, ou-KÉI","A las seis visitamos a mi madre, ¿vale?"],
+[1,"Of course. The children love their grandmother.","of kóors. de CHÍL-dren lav déar GRÁND-ma-der","Claro. Los niños adoran a su abuela."],
+[0,"And she makes a cake every Saturday.","and shi méiks a kéik É-vri SÁ-tur-dei","Y hace una tarta cada sábado."],
+[1,"Her cakes are delicious.","jer kéiks ar de-LÍ-shos","Sus tartas están deliciosas."],
+[0,"My mother is seventy, you know?","mái MÁ-der is SÉ-ven-ti, iú nóu","Mi madre tiene setenta, ¿sabes?"],
+[1,"Seventy and very strong.","SÉ-ven-ti and VÉ-ri strong","Setenta y muy fuerte."],
+[0,"Yes. She walks every day.","iés. shi uóks É-vri déi","Sí. Camina todos los días."],
+[1,"Antonio, how is your English?","an-TÓ-nio, jáu is iór ÍN-glish","Antonio, ¿cómo va tu inglés?"],
+[0,"Better every day.","BÉ-ter É-vri déi","Mejor cada día."],
+[1,"I see you with the app every morning.","ái síi iú uíz de ap É-vri MÓR-nin","Te veo con la aplicación cada mañana."],
+[0,"Yes. I listen, I repeat, I learn.","iés. ái LÍ-sen, ái ri-PÍIT, ái lern","Sí. Escucho, repito, aprendo."],
+[1,"I am proud of you.","ái am práud of iú","Estoy orgullosa de ti."],
+[0,"Thank you, my love.","zánk iú, mái lav","Gracias, mi amor."],
+[1,"The children are tired.","de CHÍL-dren ar TÁI-erd","Los niños están cansados."],
+[0,"Yes. To bed, kids!","iés. tu bed, kids","Sí. ¡A la cama, niños!"],
+[1,"Good night, my loves.","gud náit, mái lavs","Buenas noches, mis amores."],
+[0,"Now... a film?","náu... a film","Ahora... ¿una película?"],
+[1,"Yes! There is a film in English.","iés! déar is a film in ÍN-glish","¡Sí! Hay una película en inglés."],
+[0,"In English? Perfect for me.","in ÍN-glish? PÉR-fekt for mi","¿En inglés? Perfecto para mí."],
+[1,"Do you understand it?","du iú an-der-STÁND it","¿La entiendes?"],
+[0,"A little. I read the words on the screen.","a LÍ-tel. ái ríid de uérds on de skríin","Un poco. Leo las palabras en la pantalla."],
+[1,"You learn fast.","iú lern fast","Aprendes rápido."],
+[0,"Practice is everything.","PRÁK-tis is É-vri-zin","La práctica lo es todo."],
+[1,"Tomorrow is Sunday. Beach or mountains?","tu-MÓ-rrou is SÁN-dei. bíich or MÁUN-tens","Mañana es domingo. ¿Playa o montaña?"],
+[0,"Beach! The children love the water.","bíich! de CHÍL-dren lav de UÓ-ter","¡Playa! A los niños les encanta el agua."],
+[1,"Beach! I love the weekend.","bíich! ái lav de UÍIK-end","¡Playa! Me encanta el fin de semana."],
+[0,"Me too. Good night, Laura.","mi túu. gud náit, LÁU-ra","Yo también. Buenas noches, Laura."],
+[1,"Good night, Antonio.","gud náit, an-TÓ-nio","Buenas noches, Antonio."]
+]},
+{ id:"h3", emoji:"🚆", title:"A Trip to the City", subtitle:"Reunión con el cliente en Madrid", level:"Media-alta · capítulos 8-10", speakers:["Antonio","Mr. Brown"], lines:[
+[1,"Good morning. Are you Antonio?","gud MÓR-nin. ar iú an-TÓ-nio","Buenos días. ¿Es usted Antonio?"],
+[0,"Yes, I am. Mister Brown?","iés, ái am. MÍS-ter bráun","Sí, soy yo. ¿Señor Brown?"],
+[1,"That's me. Nice to meet you.","dats mi. náis tu míit iú","El mismo. Encantado."],
+[0,"Nice to meet you too.","náis tu míit iú túu","Encantado también."],
+[1,"How was the trip from Murcia?","jáu uós de trip from MÚR-zia","¿Qué tal el viaje desde Murcia?"],
+[0,"Very good. The train is fast and comfortable.","VÉ-ri gud. de tréin is fast and KÁM-for-ta-bol","Muy bien. El tren es rápido y cómodo."],
+[1,"You are here very early!","iú ar jíar VÉ-ri ÉR-li","¡Está aquí muy temprano!"],
+[0,"Yes. The train leaves Murcia at seven.","iés. de tréin líivs MÚR-zia at SÉ-ven","Sí. El tren sale de Murcia a las siete."],
+[1,"Do you want a coffee or a tea?","du iú uónt a KÓ-fi or a tíi","¿Quiere un café o un té?"],
+[0,"A coffee with milk, please.","a KÓ-fi uíz milk, plíis","Un café con leche, por favor."],
+[1,"Of course. Please, sit down.","of kóors. plíis, sit dáun","Claro. Por favor, siéntese."],
+[0,"Thank you. Your office is beautiful.","zánk iú. iór Ó-fis is BIÚ-ti-ful","Gracias. Su oficina es preciosa."],
+[1,"Thank you. Madrid is expensive, but I love it.","zánk iú. ma-DRÍD is iks-PÉN-siv, bat ái lav it","Gracias. Madrid es cara, pero me encanta."],
+[0,"It is a very big city.","it is a VÉ-ri big SÍ-ti","Es una ciudad muy grande."],
+[1,"Yes. Too many cars! Ha ha.","iés. túu MÉ-ni kars! ja ja","Sí. ¡Demasiados coches! Ja, ja."],
+[0,"The traffic is slow today.","de TRÁ-fik is slóu tu-DÉI","Hoy el tráfico va lento."],
+[1,"Always! Okay, let's talk about work.","ÓOL-ueis! ou-KÉI, lets tok a-BÁUT uérk","¡Siempre! Vale, hablemos de trabajo."],
+[0,"Perfect. I have the project here.","PÉR-fekt. ái jav de PRÓ-chekt jíar","Perfecto. Tengo el proyecto aquí."],
+[1,"Excellent. Show me.","ÉK-se-lent. shóu mi","Excelente. Enséñemelo."],
+[0,"One moment. I open my computer.","uán MÓU-ment. ái ÓU-pen mái kom-PIÚ-ter","Un momento. Abro el ordenador."],
+[1,"Take your time.","téik iór táim","Tómese su tiempo."],
+[0,"Here. This is the new machine.","jíar. dis is de niúu ma-SHÍIN","Aquí. Esta es la máquina nueva."],
+[1,"Interesting. Tell me more.","ÍN-tres-tin. tel mi móor","Interesante. Cuénteme más."],
+[0,"It is fast, safe and strong.","it is fast, séif and strong","Es rápida, segura y robusta."],
+[1,"How fast?","jáu fast","¿Cómo de rápida?"],
+[0,"One hundred boxes per minute.","uán JÁN-dred BÓK-ses per MÍ-nit","Cien cajas por minuto."],
+[1,"One hundred? Very good.","uán JÁN-dred? VÉ-ri gud","¿Cien? Muy bien."],
+[0,"And it works twenty-four hours a day.","and it uérks TUÉN-ti fóor Á-uars a déi","Y trabaja veinticuatro horas al día."],
+[1,"Day and night?","déi and náit","¿Día y noche?"],
+[0,"Day and night, all the week.","déi and náit, ool de uíik","Día y noche, toda la semana."],
+[1,"And the problems? Machines have problems.","and de PRÓ-blems? ma-SHÍINS jav PRÓ-blems","¿Y los problemas? Las máquinas tienen problemas."],
+[0,"Very few. And we help you fast.","VÉ-ri fiú. and uí jelp iú fast","Muy pocos. Y le ayudamos rápido."],
+[1,"How fast?","jáu fast","¿Cómo de rápido?"],
+[0,"We answer the phone in one hour.","uí ÁN-ser de fóun in uán Á-uar","Atendemos el teléfono en una hora."],
+[1,"That is important for me.","dat is im-PÓR-tant for mi","Eso es importante para mí."],
+[0,"I know. Time is money.","ái nóu. táim is MÁ-ni","Lo sé. El tiempo es dinero."],
+[1,"Exactly! Okay, the big question.","ig-SÁKT-li! ou-KÉI, de big KUÉS-tion","¡Exacto! Vale, la gran pregunta."],
+[0,"Yes?","iés","¿Sí?"],
+[1,"How much is it?","jáu mach is it","¿Cuánto cuesta?"],
+[0,"Ninety thousand euros.","NÁIN-ti ZÁU-sand IÚ-ros","Noventa mil euros."],
+[1,"Ninety thousand... It is not cheap.","NÁIN-ti ZÁU-sand... it is not chíip","Noventa mil... No es barata."],
+[0,"It is not cheap. But it is very good.","it is not chíip. bat it is VÉ-ri gud","No es barata. Pero es muy buena."],
+[1,"Hmm. Can I see it work?","jmm. kan ái síi it uérk","Mmm. ¿Puedo verla funcionar?"],
+[0,"Of course! Come to our factory in Murcia.","of kóors! kam tu áuar FÁK-to-ri in MÚR-zia","¡Claro! Venga a nuestra fábrica en Murcia."],
+[1,"To Murcia...","tu MÚR-zia","A Murcia..."],
+[0,"Murcia is beautiful in spring.","MÚR-zia is BIÚ-ti-ful in spring","Murcia es preciosa en primavera."],
+[1,"Ha! And the food?","ja! and de fúud","¡Ja! ¿Y la comida?"],
+[0,"The best food in Spain!","de best fúud in spéin","¡La mejor comida de España!"],
+[1,"Careful, I am from Madrid now!","KÉAR-ful, ái am from ma-DRÍD náu","¡Cuidado, ahora soy de Madrid!"],
+[0,"Ha ha! Come and see.","ja ja! kam and síi","¡Ja, ja! Venga y compruébelo."],
+[1,"All right. Maybe next month.","ool ráit. MÉI-bi nekst manz","De acuerdo. Quizás el mes que viene."],
+[0,"Perfect. You are welcome any day.","PÉR-fekt. iú ar UÉL-kam É-ni déi","Perfecto. Es bienvenido cualquier día."],
+[1,"Antonio, your English is good.","an-TÓ-nio, iór ÍN-glish is gud","Antonio, su inglés es bueno."],
+[0,"Thank you! I study every day.","zánk iú! ái STÁ-di É-vri déi","¡Gracias! Estudio cada día."],
+[1,"Every day? How?","É-vri déi? jáu","¿Cada día? ¿Cómo?"],
+[0,"With an app. I listen and repeat.","uíz an ap. ái LÍ-sen and ri-PÍIT","Con una aplicación. Escucho y repito."],
+[1,"Fantastic. Practice is everything.","fan-TÁS-tik. PRÁK-tis is É-vri-zin","Fantástico. La práctica lo es todo."],
+[0,"That is my idea too.","dat is mái ai-DÍ-a túu","Esa es mi idea también."],
+[1,"Are you hungry? It is almost two.","ar iú JÁN-gri? it is ÓL-moust túu","¿Tiene hambre? Son casi las dos."],
+[0,"A little, yes.","a LÍ-tel, iés","Un poco, sí."],
+[1,"I know a small restaurant near here.","ái nóu a smóol RÉS-to-rant níar jíar","Conozco un restaurante pequeño cerca de aquí."],
+[0,"Great idea.","gréit ai-DÍ-a","Gran idea."],
+[1,"It is cheap and very good.","it is chíip and VÉ-ri gud","Es barato y muy bueno."],
+[0,"Cheap? In Madrid? Ha!","chíip? in ma-DRÍD? ja","¿Barato? ¿En Madrid? ¡Ja!"],
+[1,"Twelve euros the menu!","tuélv IÚ-ros de MÉ-niu","¡Doce euros el menú!"],
+[0,"Okay, that is cheap.","ou-KÉI, dat is chíip","Vale, eso es barato."],
+[1,"What do you want? Meat or fish?","uót du iú uónt? míit or fish","¿Qué quiere? ¿Carne o pescado?"],
+[0,"Meat with potatoes for me.","míit uíz po-TÉI-tos for mi","Carne con patatas para mí."],
+[1,"For me, the salad and the fish.","for mi, de SÁ-lad and de fish","Para mí, la ensalada y el pescado."],
+[0,"And water, please.","and UÓ-ter, plíis","Y agua, por favor."],
+[1,"Do you have family, Antonio?","du iú jav FÁ-mi-li, an-TÓ-nio","¿Tiene familia, Antonio?"],
+[0,"Yes. My wife and two children.","iés. mái uáif and túu CHÍL-dren","Sí. Mi mujer y dos hijos."],
+[1,"How old are the children?","jáu óuld ar de CHÍL-dren","¿Cuántos años tienen los niños?"],
+[0,"Five and three.","fáiv and zríi","Cinco y tres."],
+[1,"Beautiful. I have three grandchildren.","BIÚ-ti-ful. ái jav zríi GRÁND-chil-dren","Precioso. Yo tengo tres nietos."],
+[0,"Do they live in Madrid?","du déi liv in ma-DRÍD","¿Viven en Madrid?"],
+[1,"No, in England. I visit them in summer.","nóu, in ÍN-gland. ái VÍ-sit dem in SÁ-mer","No, en Inglaterra. Los visito en verano."],
+[0,"Family is the most important thing.","FÁ-mi-li is de móust im-PÓR-tant zin","La familia es lo más importante."],
+[1,"True words, my friend.","trúu uérds, mái frend","Grandes palabras, amigo mío."],
+[0,"This meat is delicious.","dis míit is de-LÍ-shos","Esta carne está deliciosa."],
+[1,"I told you! And now, an ice cream?","ái tóuld iú! and náu, an áis kríim","¡Se lo dije! Y ahora, ¿un helado?"],
+[0,"Yes, please!","iés, plíis","¡Sí, por favor!"],
+[1,"The bill, please!","de bil, plíis","¡La cuenta, por favor!"],
+[0,"No, no. I pay.","nóu, nóu. ái péi","No, no. Pago yo."],
+[1,"Impossible. You are my guest.","im-PÓ-si-bol. iú ar mái guest","Imposible. Usted es mi invitado."],
+[0,"Thank you very much, Mister Brown.","zánk iú VÉ-ri mach, MÍS-ter bráun","Muchas gracias, señor Brown."],
+[1,"What time is your train?","uót táim is iór tréin","¿A qué hora es su tren?"],
+[0,"At six. I have free time.","at siks. ái jav fríi táim","A las seis. Tengo tiempo libre."],
+[1,"Walk in the center. There is a beautiful old church.","uók in de SÉN-ter. déar is a BIÚ-ti-ful óuld cherch","Pasee por el centro. Hay una iglesia antigua preciosa."],
+[0,"Good idea. I take a photo for my wife.","gud ai-DÍ-a. ái téik a FÓU-to for mái uáif","Buena idea. Hago una foto para mi mujer."],
+[1,"And buy a present for the children!","and bái a PRÉ-sent for de CHÍL-dren","¡Y compre un regalo para los niños!"],
+[0,"Ha! Yes. A toy and a football.","ja! iés. a tói and a FÚT-bol","¡Ja! Sí. Un juguete y un balón."],
+[1,"Antonio, thank you for the visit.","an-TÓ-nio, zánk iú for de VÍ-sit","Antonio, gracias por la visita."],
+[0,"Thank you for your time.","zánk iú for iór táim","Gracias por su tiempo."],
+[1,"I like the machine. And I like you.","ái láik de ma-SHÍIN. and ái láik iú","Me gusta la máquina. Y usted me cae bien."],
+[0,"So... do we have a deal?","sóu... du uí jav a díil","Entonces... ¿tenemos un trato?"],
+[1,"First I visit the factory. Then we talk.","ferst ái VÍ-sit de FÁK-to-ri. den uí tok","Primero visito la fábrica. Luego hablamos."],
+[0,"Perfect. See you in Murcia!","PÉR-fekt. síi iú in MÚR-zia","¡Perfecto! ¡Nos vemos en Murcia!"],
+[1,"See you in Murcia, Antonio. Good trip!","síi iú in MÚR-zia, an-TÓ-nio. gud trip","Nos vemos en Murcia, Antonio. ¡Buen viaje!"],
+[0,"Goodbye!","gud-BÁI","¡Adiós!"]
+]}
+];
+
+/* Índice de vocabulario para resaltar palabras en las historias */
+const VOCAB_TERMS = (function(){
+  const set = new Set();
+  CHAPTERS.forEach(c => c.series.forEach(s => s.forEach(w => {
+    const t = w[1].toLowerCase().replace(/^to /,"").replace(/[?!.]/g,"").trim();
+    if(t) set.add(t);
+  })));
+  return set;
+})();
+function tokenNorm(t){ return t.toLowerCase().replace(/[^a-z']/g,""); }
+function highlightEN(text){
+  const tokens = text.split(" ");
+  const norm = tokens.map(tokenNorm);
+  const out = [];
+  let i = 0;
+  while(i < tokens.length){
+    let matched = 0;
+    for(let n = Math.min(4, tokens.length-i); n >= 1; n--){
+      if(VOCAB_TERMS.has(norm.slice(i, i+n).join(" "))){ matched = n; break; }
+    }
+    if(matched){
+      out.push('<span class="vw">'+tokens.slice(i, i+matched).join(" ")+'</span>');
+      i += matched;
+    } else { out.push(tokens[i]); i++; }
+  }
+  return out.join(" ");
+}
+
+/* ==================================================================
+   MÓDULO HISTORIAS
+================================================================== */
+const Story = {
+  story:null, idx:0, state:"idle", timer:null, sessionStart:0, wakeLock:null,
+
+  open(id){
+    this.stopAll();
+    this.story = STORIES.find(s => s.id === id);
+    const rec = this.rec();
+    this.idx = (rec.idx && rec.idx < this.story.lines.length) ? rec.idx : 0;
+    this.state = "idle";
+    $("sp-title").textContent = this.story.title;
+    $("sp-sub").textContent = this.story.speakers[0]+" y "+this.story.speakers[1]+" · "+this.story.lines.length+" frases";
+    this.renderTranscript();
+    App.show("view-story");
+    this.setCur(this.idx, this.idx > 0);
+    this.updateProgress();
+    $("sp-play").innerHTML = "▶&nbsp; "+(this.idx > 0 ? "Continuar" : "Empezar");
+    $("sp-note").textContent = this.idx > 0
+      ? "Continuarás desde la frase "+(this.idx+1)+". Con ■ empiezas de cero. "+Voices.storyVoicesLabel()
+      : "Conversación continua en inglés. Toca una frase para empezar desde ella. "+Voices.storyVoicesLabel();
+    $("sp-note").classList.remove("ok");
+  },
+  rec(){
+    if(!Store.mem.stories[this.story.id]) Store.mem.stories[this.story.id] = { idx:0, completed:0 };
+    return Store.mem.stories[this.story.id];
+  },
+  renderTranscript(){
+    const box = $("story-scroll");
+    box.innerHTML = "";
+    this.story.lines.forEach((l, i) => {
+      const d = document.createElement("div");
+      d.id = "ln-"+i;
+      d.className = "line sp"+l[0];
+      d.innerHTML = '<div class="l-sp">'+this.story.speakers[l[0]]+'</div>'
+        + '<div class="l-en">'+highlightEN(l[1])+'</div>'
+        + (Store.mem.settings.showPhon ? '<div class="l-ph">/ '+l[2]+' /</div>' : '')
+        + '<div class="l-es">'+l[3]+'</div>';
+      d.onclick = () => {
+        if(this.state !== "playing"){
+          this.idx = i;
+          this.setCur(i, false);
+          this.updateProgress();
+          $("sp-play").innerHTML = "▶&nbsp; "+(i > 0 ? "Continuar" : "Empezar");
+        }
+      };
+      box.appendChild(d);
+    });
+  },
+  setCur(i, scroll){
+    document.querySelectorAll("#story-scroll .line").forEach((el, j) => {
+      el.classList.toggle("cur", j === i);
+      el.classList.toggle("past", j < i);
+    });
+    const el = $("ln-"+i);
+    if(el && scroll) el.scrollIntoView({ block:"center", behavior:"smooth" });
+  },
+  updateProgress(){
+    const n = this.story.lines.length;
+    const shown = this.state === "finished" ? n : Math.min(this.idx + (this.state === "idle" ? 0 : 1), n);
+    $("sp-prog").textContent = shown+" / "+n;
+    $("sp-bar").style.width = (shown/n*100)+"%";
+  },
+  toggle(){
+    if(this.state === "playing") this.pause();
+    else if(this.state === "paused") this.resume();
+    else this.start();
+  },
+  start(){
+    if(typeof speechSynthesis === "undefined"){ toast("Este navegador no soporta voz"); return; }
+    if(this.state === "finished"){ this.idx = 0; }
+    this.state = "playing";
+    this.sessionStart = Date.now();
+    const t = todayStr();
+    if(!Store.mem.stats.days.includes(t)){ Store.mem.stats.days.push(t); Store.save(); }
+    this.acquireWakeLock();
+    $("sp-play").innerHTML = "❚❚&nbsp; Pausa";
+    $("sp-note").textContent = "";
+    $("sp-note").classList.remove("ok");
+    try{
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(" ");
+      u.volume = 0;
+      speechSynthesis.speak(u);
+    }catch(e){}
+    this.speakLine();
+  },
+  pause(){
+    this.state = "paused";
+    clearTimeout(this.timer);
+    try{ speechSynthesis.cancel(); }catch(e){}
+    this.flushTime();
+    this.releaseWakeLock();
+    this.rec().idx = this.idx;
+    Store.save();
+    $("sp-play").innerHTML = "▶&nbsp; Continuar";
+    $("sp-note").textContent = "En pausa. La frase actual se repetirá al continuar.";
+  },
+  resume(){
+    this.state = "playing";
+    this.sessionStart = Date.now();
+    this.acquireWakeLock();
+    $("sp-play").innerHTML = "❚❚&nbsp; Pausa";
+    $("sp-note").textContent = "";
+    this.speakLine();
+  },
+  stop(){
+    clearTimeout(this.timer);
+    try{ speechSynthesis.cancel(); }catch(e){}
+    if(this.state === "playing") this.flushTime();
+    this.releaseWakeLock();
+    this.state = "idle";
+    this.idx = 0;
+    if(this.story){ this.rec().idx = 0; }
+    Store.save();
+    this.setCur(0, true);
+    this.updateProgress();
+    $("sp-play").innerHTML = "▶&nbsp; Empezar";
+    $("sp-note").textContent = "Toca Empezar para escuchar desde el principio.";
+    $("sp-note").classList.remove("ok");
+  },
+  exit(){
+    clearTimeout(this.timer);
+    try{ speechSynthesis.cancel(); }catch(e){}
+    if(this.state === "playing"){ this.flushTime(); this.rec().idx = this.idx; }
+    this.releaseWakeLock();
+    this.state = "idle";
+    Store.save();
+    App.openStories();
+  },
+  stopAll(){
+    clearTimeout(this.timer);
+    try{ speechSynthesis.cancel(); }catch(e){}
+  },
+  speakLine(){
+    if(this.state !== "playing") return;
+    const line = this.story.lines[this.idx];
+    this.setCur(this.idx, true);
+    this.updateProgress();
+    Voices.speakStory(line[1], Store.mem.settings.rate, line[0], () => {
+      if(this.state !== "playing") return;
+      this.timer = setTimeout(() => this.advance(), 150);
+    });
+  },
+  advance(){
+    if(this.state !== "playing") return;
+    this.idx++;
+    if(this.idx >= this.story.lines.length){ this.finish(); return; }
+    if(this.idx % 10 === 0){ this.rec().idx = this.idx; Store.save(); }
+    this.speakLine();
+  },
+  finish(){
+    this.flushTime();
+    const rec = this.rec();
+    rec.completed++;
+    rec.idx = 0;
+    Store.save();
+    this.state = "finished";
+    this.updateProgress();
+    this.releaseWakeLock();
+    $("sp-play").innerHTML = "↻&nbsp; Repetir";
+    $("sp-note").textContent = "✓ Historia completada. ¡Muy buen trabajo!";
+    $("sp-note").classList.add("ok");
+    toast("✓ «"+this.story.title+"» completada");
+  },
+  flushTime(){
+    if(this.sessionStart){
+      Store.mem.stats.totalSeconds += Math.round((Date.now()-this.sessionStart)/1000);
+      this.sessionStart = 0;
+    }
+  },
+  async acquireWakeLock(){
+    try{ if("wakeLock" in navigator){ this.wakeLock = await navigator.wakeLock.request("screen"); } }catch(e){}
+  },
+  releaseWakeLock(){
+    try{ if(this.wakeLock){ this.wakeLock.release(); this.wakeLock = null; } }catch(e){}
+  }
+};
+
+document.addEventListener("visibilitychange", () => {
+  if(document.hidden && Story.state === "playing"){
+    Story.pause();
+    $("sp-note").textContent = "La historia se pausó al salir de la app. Toca Continuar.";
+  } else if(!document.hidden && Story.state === "playing"){
+    Story.acquireWakeLock();
+  }
+});
+
+/* ==================================================================
    APP
 ================================================================== */
 const App = {
@@ -1605,6 +2235,35 @@ const App = {
     this.show("view-chapters");
   },
   openStats(){ this.renderStats(); this.show("view-stats"); },
+  openStories(){
+    this.renderStories();
+    this.show("view-stories");
+  },
+  renderStories(){
+    const box = $("story-list");
+    box.innerHTML = "";
+    STORIES.forEach(s => {
+      const rec = Store.mem.stories[s.id] || {};
+      const n = rec.completed || 0;
+      let badge = '<span class="badge new">Nueva</span>';
+      let cls = "chapter";
+      if(n > 0){
+        badge = '<span class="badge done">✓ ×'+n+'</span>';
+        cls += " done";
+      } else if(rec.idx > 0){
+        badge = '<span class="badge prog">Frase '+(rec.idx+1)+'</span>';
+      }
+      const card = document.createElement("div");
+      card.className = cls;
+      card.innerHTML =
+        '<div class="ch-num">'+s.emoji+'</div>'+
+        '<div class="ch-body"><div class="ch-title">'+s.title+'</div>'+
+        '<div class="ch-meta">'+s.subtitle+' · '+s.level+'</div></div>'+
+        '<div class="ch-right">'+badge+'</div>';
+      card.onclick = () => Story.open(s.id);
+      box.appendChild(card);
+    });
+  },
 
   switchSeries(chId, ev){
     ev.stopPropagation();
@@ -1752,6 +2411,10 @@ const App = {
     }
     if($("view-pron").classList.contains("active")){
       Pron.renderItem(false);
+    }
+    if($("view-story").classList.contains("active") && Story.story){
+      Story.renderTranscript();
+      Story.setCur(Story.idx, false);
     }
   },
   refreshOutputs(){
