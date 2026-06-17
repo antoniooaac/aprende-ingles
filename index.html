@@ -229,6 +229,13 @@
     box-shadow:0 8px 30px rgba(0,0,0,.45);max-width:88vw;text-align:center;
   }
   #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  /* ---------- selector de voces ---------- */
+  .voices-sec{margin-top:6px;border-top:1px solid var(--line);padding-top:16px}
+  .vs-h{font-size:12.5px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--text-dim);margin-bottom:10px}
+  .vsel{width:100%;margin-top:7px;padding:11px 12px;border-radius:12px;background:var(--bg-card);color:var(--text);border:1px solid var(--line);font-size:15px;-webkit-appearance:none;appearance:none}
+  .vtest{background:var(--bg-card);border:1px solid var(--line);border-radius:10px;padding:2px 11px;font-size:16px;line-height:1.6;cursor:pointer}
+  .vtest:active{background:var(--line)}
+  .vs-note{font-size:12px;color:var(--text-dim);margin-top:12px;line-height:1.45}
   /* ---------- módulo historias ---------- */
   .story-scroll{flex:1;overflow-y:auto;min-height:0;padding:4px 2px 14px;-webkit-overflow-scrolling:touch}
   .line{padding:11px 13px;border-radius:13px;margin-bottom:7px;border:1px solid transparent;opacity:.62;transition:opacity .25s,background .25s}
@@ -297,7 +304,7 @@
     <div class="home-stat"><b id="hs-cycles">0</b><span>ciclos totales</span></div>
     <div class="home-stat"><b id="hs-done">0/10</b><span>capítulos</span></div>
   </div>
-  <div class="version">Versión 7</div>
+  <div class="version">Versión 8</div>
 </div>
 
 <!-- ============ VISTA: CAPÍTULOS ============ -->
@@ -489,6 +496,22 @@
     <div class="sw-txt"><b>Saltar al siguiente capítulo</b><span>Al terminar todos los ciclos</span></div>
     <label class="switch"><input type="checkbox" id="in-autonext" checked><i></i></label>
   </div>
+  <div class="voices-sec">
+    <div class="vs-h">Voces</div>
+    <div class="field">
+      <div class="field-label"><span>Vocabulario, frases y pronunciación</span><button class="vtest" onclick="App.testVoice('vocab')">🔊</button></div>
+      <select id="in-voice-vocab" class="vsel"></select>
+    </div>
+    <div class="field">
+      <div class="field-label"><span>Historias · Antonio (voz 1)</span><button class="vtest" onclick="App.testVoice('a')">🔊</button></div>
+      <select id="in-voice-a" class="vsel"></select>
+    </div>
+    <div class="field">
+      <div class="field-label"><span>Historias · otro personaje (voz 2)</span><button class="vtest" onclick="App.testVoice('b')">🔊</button></div>
+      <select id="in-voice-b" class="vsel"></select>
+    </div>
+    <div class="vs-note" id="vs-note"></div>
+  </div>
   <button class="btn-sheet" onclick="App.closeSettings()">Listo</button>
 </div>
 
@@ -496,7 +519,7 @@
 
 <script>
 "use strict";
-const APP_VERSION = 7;
+const APP_VERSION = 8;
 
 /* ==================================================================
    DATOS — cada palabra: [español, inglés, fonética, frase EN, frase ES, fonética frase]
@@ -974,7 +997,7 @@ const Store = {
   persistent: true,
   defaults(){
     return {
-      settings:{ cycles:10, rate:0.95, pauseMs:1000, twice:false, autoNext:true, showPhon:true, sentences:false },
+      settings:{ cycles:10, rate:0.95, pauseMs:1000, twice:false, autoNext:true, showPhon:true, sentences:false, voiceVocab:"", voiceStoryA:"", voiceStoryB:"" },
       series:{},     // chId -> índice de serie activa (0 = Serie 1)
       chapters:{},   // "c01-s1" -> {timesCompleted, started, lastDate}
       stats:{ totalCycles:0, totalWords:0, totalSeconds:0, days:[] },
@@ -1140,7 +1163,12 @@ const Voices = {
     };
     pick();
     if(typeof speechSynthesis !== "undefined"){
-      speechSynthesis.onvoiceschanged = pick;
+      speechSynthesis.onvoiceschanged = () => {
+        pick();
+        if(typeof App !== "undefined" && $("sheet") && $("sheet").classList.contains("open")){
+          App.renderVoicePickers();
+        }
+      };
     }
   },
   speak(text, lang, rate, onStart, onDone, opts){
@@ -1172,32 +1200,53 @@ const Voices = {
       wd = setTimeout(done, est + 3500);
     }catch(e){ done(); }
   },
-  /* Voz inglesa por defecto del teléfono (para el módulo de vocabulario).
-     Si la voz por defecto del sistema es inglesa, la usa; si no, devuelve
-     null para que iOS use su propia voz inglesa por defecto. */
+  /* Lista de voces inglesas disponibles (en-GB primero) */
+  getEnglishVoices(){
+    const vs = (typeof speechSynthesis !== "undefined") ? speechSynthesis.getVoices() : [];
+    const en = vs.filter(v => v.lang && v.lang.toLowerCase().startsWith("en"));
+    return en.sort((a,b) => {
+      const ga = a.lang.toLowerCase().startsWith("en-gb") ? 0 : 1;
+      const gb = b.lang.toLowerCase().startsWith("en-gb") ? 0 : 1;
+      if(ga !== gb) return ga - gb;
+      return a.name.localeCompare(b.name);
+    });
+  },
+  findByName(name){
+    if(!name || typeof speechSynthesis === "undefined") return null;
+    return speechSynthesis.getVoices().find(v => v.name === name) || null;
+  },
+  /* Voz inglesa por defecto del teléfono (si la del sistema es inglesa) */
   defaultEn(){
     const vs = (typeof speechSynthesis !== "undefined") ? speechSynthesis.getVoices() : [];
     const d = vs.find(v => v.default && v.lang && v.lang.toLowerCase().startsWith("en"));
     return d || null;
   },
-  /* Habla en inglés con la voz por defecto del teléfono (vocabulario y frases) */
+  /* Inglés del módulo de vocabulario/frases/pronunciación: voz elegida en Ajustes;
+     si está en "Automático", usa la voz por defecto del teléfono. */
   speakV(text, rate, onStart, onDone){
-    this.speak(text, "en", rate, onStart, onDone, { defaultVoice:true });
+    const v = this.findByName(Store.mem.settings.voiceVocab);
+    if(v) this.speak(text, "en", rate, onStart, onDone, { voice:v });
+    else this.speak(text, "en", rate, onStart, onDone, { defaultVoice:true });
   },
-  /* Voz por personaje en los diálogos: voz B (mujer) si existe; si no, misma voz con tono más agudo */
+  /* Voz por personaje en los diálogos: voz elegida en Ajustes; si ambas coinciden, se diferencian por tono */
   speakStory(text, rate, who, onDone){
-    const hasB = !!this.enB;
-    const voice = (who === 1 && hasB) ? this.enB : this.en;
-    const pitch = hasB ? 1.0 : (who === 1 ? 1.4 : 0.85);
+    const s = Store.mem.settings;
+    const vA = this.findByName(s.voiceStoryA) || this.en;
+    const vB = this.findByName(s.voiceStoryB) || this.enB || this.en;
+    const voice = (who === 0) ? vA : vB;
+    const same = vA && vB && vA.name === vB.name;
+    const pitch = same ? (who === 1 ? 1.4 : 0.85) : 1.0;
     this.speak(text, "en", rate, null, onDone, { voice:voice, pitch:pitch });
   },
   /* Nombre corto de una voz, p. ej. "Kate" a partir de "Kate (Enhanced)" */
   shortName(v){ return v ? v.name.replace(/\s*\(.*\)/,"").trim() : "—"; },
   /* Texto para informar de las dos voces de los diálogos */
   storyVoicesLabel(){
-    const a = this.shortName(this.en);
-    if(this.enB) return "Voces: "+a+" y "+this.shortName(this.enB)+".";
-    return "Voz: "+a+" (con tono agudo para el 2º personaje). Instala una voz de mujer británica (Kate) para diferenciarlas.";
+    const s = Store.mem.settings;
+    const a = this.shortName(this.findByName(s.voiceStoryA) || this.en);
+    const bv = this.findByName(s.voiceStoryB) || this.enB;
+    if(bv) return "Voces: "+a+" y "+this.shortName(bv)+".";
+    return "Voz: "+a+" (2º personaje con tono más agudo). Elige una 2ª voz en Ajustes para diferenciarlas.";
   }
 };
 
@@ -1570,7 +1619,7 @@ const Pron = {
   },
   listen(){
     if(this.listening) return;
-    Voices.speak(this.target(), "en", Store.mem.settings.rate, null, null);
+    Voices.speakV(this.target(), Store.mem.settings.rate, null, null);
   },
   prev(){ if(this.idx>0){ this.stopRec(); this.idx--; this.renderItem(true); } },
   next(){ if(this.idx<this.words().length-1){ this.stopRec(); this.idx++; this.renderItem(true); } },
@@ -2396,6 +2445,7 @@ const App = {
     $("in-sen").checked = s.sentences;
     $("in-phon").checked = s.showPhon;
     $("in-autonext").checked = s.autoNext;
+    this.renderVoicePickers();
     this.refreshOutputs();
     $("sheet-bg").classList.add("open");
     $("sheet").classList.add("open");
@@ -2422,6 +2472,45 @@ const App = {
     $("o-cycles").textContent = s.cycles;
     $("o-rate").textContent = s.rate <= 0.75 ? "Lenta" : (s.rate <= 1.0 ? "Normal" : "Rápida");
     $("o-pause").textContent = (s.pauseMs/1000).toFixed(1).replace(".",",")+" s";
+  },
+  renderVoicePickers(){
+    const voices = Voices.getEnglishVoices();
+    const s = Store.mem.settings;
+    const fill = (id, val) => {
+      const sel = $(id);
+      if(!sel) return;
+      sel.innerHTML = "";
+      const o0 = document.createElement("option");
+      o0.value = ""; o0.textContent = "Automático (voz del teléfono)";
+      sel.appendChild(o0);
+      voices.forEach(v => {
+        const o = document.createElement("option");
+        o.value = v.name;
+        o.textContent = Voices.shortName(v)+" · "+v.lang;
+        sel.appendChild(o);
+      });
+      sel.value = (val && voices.some(v => v.name === val)) ? val : "";
+    };
+    fill("in-voice-vocab", s.voiceVocab);
+    fill("in-voice-a", s.voiceStoryA);
+    fill("in-voice-b", s.voiceStoryB);
+    $("vs-note").textContent = voices.length
+      ? "¿No ves la voz que quieres? Descárgala en Ajustes del iPhone → busca «voces» → Contenido hablado → Voces → Inglés. Luego vuelve aquí."
+      : "Aún no hay voces inglesas disponibles. Descárgalas en Ajustes del iPhone (busca «voces») y vuelve a abrir esta pantalla.";
+  },
+  testVoice(which){
+    if(typeof speechSynthesis === "undefined"){ toast("Este navegador no soporta voz"); return; }
+    const map = { vocab:"in-voice-vocab", a:"in-voice-a", b:"in-voice-b" };
+    const name = $(map[which]).value;
+    const v = Voices.findByName(name);
+    const rate = Store.mem.settings.rate;
+    const text = which === "vocab" ? "Hello! This is the voice for your words."
+              : (which === "a" ? "Hi, I am Antonio. Nice to meet you."
+                               : "Hello Antonio! How are you today?");
+    try{ speechSynthesis.cancel(); }catch(e){}
+    try{ const u = new SpeechSynthesisUtterance(" "); u.volume = 0; speechSynthesis.speak(u); }catch(e){}
+    if(v) Voices.speak(text, "en", rate, null, null, { voice:v });
+    else Voices.speak(text, "en", rate, null, null, { defaultVoice:true });
   }
 };
 
@@ -2432,6 +2521,9 @@ $("in-twice").addEventListener("change", e => { Store.mem.settings.twice = e.tar
 $("in-sen").addEventListener("change", e => { Store.mem.settings.sentences = e.target.checked; });
 $("in-phon").addEventListener("change", e => { Store.mem.settings.showPhon = e.target.checked; });
 $("in-autonext").addEventListener("change", e => { Store.mem.settings.autoNext = e.target.checked; });
+$("in-voice-vocab").addEventListener("change", e => { Store.mem.settings.voiceVocab = e.target.value; Store.save(); });
+$("in-voice-a").addEventListener("change", e => { Store.mem.settings.voiceStoryA = e.target.value; Store.save(); });
+$("in-voice-b").addEventListener("change", e => { Store.mem.settings.voiceStoryB = e.target.value; Store.save(); });
 
 /* ==================================================================
    ARRANQUE
